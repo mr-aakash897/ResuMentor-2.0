@@ -823,51 +823,40 @@ html[data-theme="light"] .faq-item {
 }
 
 .about-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 60px;
-    align-items: center;
-    max-width: 1100px;
+    max-width: 900px;
     margin: 0 auto;
 }
 
+.about-text h3 {
+    font-size: 20px;
+    color: var(--primary-color);
+    margin: 30px 0 15px 0;
+    font-weight: 600;
+}
+
+.about-text h3:first-child {
+    margin-top: 0;
+}
+
 .about-text p {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     color: var(--text-secondary);
     font-size: 16px;
     line-height: 1.8;
 }
 
-.about-stats {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 25px;
+.about-cta {
+    margin-top: 30px;
+    padding: 20px;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+    border-radius: 12px;
+    border-left: 4px solid var(--primary-color);
 }
 
-.stat-item {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    padding: 30px 20px;
-    border-radius: 16px;
-    text-align: center;
-    color: white;
-    transition: all 0.3s ease;
-    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.25);
-}
-
-.stat-item:hover {
-    transform: translateY(-5px) scale(1.02);
-    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.35);
-}
-
-.stat-item h3 {
-    font-size: 36px;
-    font-weight: 700;
-    margin-bottom: 5px;
-}
-
-.stat-item p {
+.about-cta p {
+    margin: 0;
     font-size: 14px;
-    opacity: 0.9;
+    color: var(--text-secondary);
 }
 
 /* ==================== Contact Section ==================== */
@@ -1335,21 +1324,11 @@ html[data-theme="dark"] .glass-card {
     }
     
     .about-content {
-        grid-template-columns: 1fr;
-        gap: 40px;
+        padding: 0 10px;
     }
     
-    .about-stats {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 15px;
-    }
-    
-    .stat-item {
-        padding: 25px 15px;
-    }
-    
-    .stat-item h3 {
-        font-size: 28px;
+    .about-text h3 {
+        font-size: 18px;
     }
     
     /* Modal Mobile */
@@ -1393,18 +1372,6 @@ html[data-theme="dark"] .glass-card {
     .btn {
         padding: 12px 24px;
         font-size: 15px;
-    }
-    
-    .about-stats {
-        grid-template-columns: 1fr 1fr;
-    }
-    
-    .stat-item h3 {
-        font-size: 24px;
-    }
-    
-    .stat-item p {
-        font-size: 12px;
     }
     
     .contact-form input,
