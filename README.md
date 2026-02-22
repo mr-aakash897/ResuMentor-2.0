@@ -2,8 +2,6 @@
 
 <div align="center">
 
-![ResuMentor Logo](src/main/resources/static/assets/favicon.svg)
-
 **AI-Powered Resume Analyzer & Mock Interview Platform**
 
 [![Java](https://img.shields.io/badge/Java-21-orange?style=for-the-badge&logo=openjdk)](https://openjdk.org/)
