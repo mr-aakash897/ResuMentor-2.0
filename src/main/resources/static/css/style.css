@@ -135,8 +135,10 @@ html[data-theme="light"] .navbar.scrolled {
 }
 
 .logo-icon {
-    font-size: 30px;
-    -webkit-text-fill-color: initial;
+    width: 32px;
+    height: 32px;
+    vertical-align: middle;
+    margin-right: 4px;
     animation: float 3s ease-in-out infinite;
 }
 
@@ -1358,7 +1360,8 @@ html[data-theme="dark"] .glass-card {
     }
     
     .logo-icon {
-        font-size: 26px;
+        width: 26px;
+        height: 26px;
     }
     
     .hero-title {

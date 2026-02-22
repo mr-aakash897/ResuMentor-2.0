@@ -18,7 +18,7 @@
     <nav class="navbar" id="navbar">
         <div class="navbar-container">
             <a href="../index.html" class="navbar-logo">
-                <span class="logo-icon">📝</span> ResuMentor
+                <img src="../assets/logo-icon.svg" alt="" class="logo-icon"> ResuMentor
             </a>
             
             <!-- Mobile Menu Toggle -->
@@ -140,11 +140,11 @@
                         <!-- Voice Control -->
                         <div class="voice-control-section">
                             <div class="mic-container">
-                                <button class="mic-button" id="micButton" onclick="toggleRecording()">
+                                <button class="mic-button" id="micButton" onclick="toggleRecording()" title="Click to start/stop voice recording">
                                     <span class="mic-icon">🎤</span>
                                     <div class="mic-pulse" id="micPulse"></div>
                                 </button>
-                                <p class="mic-status" id="micStatus">Click to speak</p>
+                                <p class="mic-status" id="micStatus">Click mic to speak OR type below</p>
                             </div>
                             <div class="voice-visualizer" id="voiceVisualizer">
                                 <div class="visualizer-bar"></div>
@@ -164,10 +164,10 @@
                             <div id="liveTranscript" class="live-transcript">Start speaking...</div>
                         </div>
 
-                        <!-- Fallback Text Input -->
-                        <div class="text-fallback" id="textFallback">
-                            <p class="fallback-note">💡 You can also type your answer:</p>
-                            <textarea id="userAnswer" placeholder="Type your answer here..." rows="4"></textarea>
+                        <!-- Text Input (Always Available) -->
+                        <div class="text-fallback visible" id="textFallback">
+                            <p class="fallback-note">✏️ Type your answer below (or click 🎤 mic to use voice):</p>
+                            <textarea id="userAnswer" placeholder="Type your answer here and click Submit..." rows="4"></textarea>
                         </div>
 
                         <!-- Submit Button -->

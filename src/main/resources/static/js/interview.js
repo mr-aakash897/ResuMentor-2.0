@@ -151,20 +151,23 @@ function loadVoices() {
 
 function showTextFallback() {
     const fallback = document.getElementById('textFallback');
-    if (fallback.classList.contains('visible')) return; // Already visible
-    
     fallback.classList.add('visible');
     
     // Sync textarea with transcript
     const textarea = document.getElementById('userAnswer');
     textarea.value = currentTranscript;
     
-    // Enable submit button when text is typed
-    textarea.addEventListener('input', () => {
-        currentTranscript = textarea.value;
-        document.getElementById('submitBtn').disabled = textarea.value.trim().length === 0;
-        document.getElementById('liveTranscript').textContent = textarea.value || 'Type your answer...';
-    });
+    // Only add event listener once
+    if (!textarea.hasAttribute('data-listener-added')) {
+        textarea.setAttribute('data-listener-added', 'true');
+        
+        // Enable submit button when text is typed
+        textarea.addEventListener('input', () => {
+            currentTranscript = textarea.value;
+            document.getElementById('submitBtn').disabled = textarea.value.trim().length === 0;
+            document.getElementById('liveTranscript').textContent = textarea.value || 'Type your answer...';
+        });
+    }
 }
 
 // ==================== Recording Controls ====================

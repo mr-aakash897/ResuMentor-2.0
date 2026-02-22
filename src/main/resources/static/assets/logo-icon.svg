@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <!-- Robot gradients matching favicon -->
+    <linearGradient id="robotBody" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#a4eeff"/>
+      <stop offset="73%" style="stop-color:#02c0fc"/>
+      <stop offset="100%" style="stop-color:#27a6ff"/>
+    </linearGradient>
+    <linearGradient id="robotFace" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="18%" style="stop-color:#e8f8fc"/>
+      <stop offset="60%" style="stop-color:#ade9f7"/>
+      <stop offset="94%" style="stop-color:#80cbf7"/>
+    </linearGradient>
+    <linearGradient id="robotArm" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#7994d8"/>
+      <stop offset="48%" style="stop-color:#425aa3"/>
+      <stop offset="100%" style="stop-color:#2a428b"/>
+    </linearGradient>
+    <linearGradient id="docGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff"/>
+      <stop offset="100%" style="stop-color:#e8f0ff"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Robot Head -->
+  <rect x="18" y="4" width="28" height="22" rx="5" fill="url(#robotBody)"/>
+  <rect x="20" y="6" width="24" height="18" rx="4" fill="url(#robotFace)"/>
+  
+  <!-- Robot Eyes (happy/friendly) -->
+  <path d="M26 14 Q28 11 30 14" fill="none" stroke="#384051" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M34 14 Q36 11 38 14" fill="none" stroke="#384051" stroke-width="2.5" stroke-linecap="round"/>
+  
+  <!-- Robot Antenna -->
+  <line x1="32" y1="4" x2="32" y2="0" stroke="url(#robotArm)" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="32" cy="0" r="2" fill="#02c0fc"/>
+  
+  <!-- Robot Ears -->
+  <rect x="12" y="10" width="6" height="10" rx="2" fill="url(#robotArm)"/>
+  <rect x="46" y="10" width="6" height="10" rx="2" fill="url(#robotArm)"/>
+  
+  <!-- Robot Body (holding document) -->
+  <path d="M22 26 L22 38 Q22 42 26 42 L38 42 Q42 42 42 38 L42 26" fill="url(#robotBody)"/>
+  
+  <!-- Robot Arms -->
+  <path d="M22 28 L14 34 L14 50" stroke="url(#robotArm)" stroke-width="4" stroke-linecap="round" fill="none"/>
+  <path d="M42 28 L50 34 L50 50" stroke="url(#robotArm)" stroke-width="4" stroke-linecap="round" fill="none"/>
+  
+  <!-- Document being held -->
+  <rect x="8" y="42" width="20" height="20" rx="2" fill="url(#docGrad)" stroke="#02c0fc" stroke-width="1.5"/>
+  <rect x="36" y="42" width="20" height="20" rx="2" fill="url(#docGrad)" stroke="#02c0fc" stroke-width="1.5"/>
+  
+  <!-- Document lines (left) -->
+  <rect x="11" y="46" width="14" height="2" rx="1" fill="#02c0fc" opacity="0.7"/>
+  <rect x="11" y="50" width="10" height="1.5" rx="0.75" fill="#7994d8" opacity="0.5"/>
+  <rect x="11" y="53" width="12" height="1.5" rx="0.75" fill="#7994d8" opacity="0.5"/>
+  <rect x="11" y="56" width="8" height="1.5" rx="0.75" fill="#7994d8" opacity="0.5"/>
+  
+  <!-- Document lines (right) -->
+  <rect x="39" y="46" width="14" height="2" rx="1" fill="#02c0fc" opacity="0.7"/>
+  <rect x="39" y="50" width="10" height="1.5" rx="0.75" fill="#7994d8" opacity="0.5"/>
+  <rect x="39" y="53" width="12" height="1.5" rx="0.75" fill="#7994d8" opacity="0.5"/>
+  <rect x="39" y="56" width="8" height="1.5" rx="0.75" fill="#7994d8" opacity="0.5"/>
+  
+  <!-- Robot hands (circles) -->
+  <circle cx="14" cy="50" r="3" fill="url(#robotBody)"/>
+  <circle cx="50" cy="50" r="3" fill="url(#robotBody)"/>
+  
+  <!-- Sparkle effect -->
+  <circle cx="6" cy="38" r="1.5" fill="#02c0fc" opacity="0.8"/>
+  <circle cx="58" cy="38" r="1.5" fill="#02c0fc" opacity="0.8"/>
+  <circle cx="32" cy="34" r="1" fill="#ffffff"/>
+</svg>
