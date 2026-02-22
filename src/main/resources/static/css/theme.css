@@ -1,0 +1,178 @@
+/* ==================== Light Theme (Default) ==================== */
+:root {
+    /* Primary gradient colors - vibrant purple-blue */
+    --primary-color: #6366f1;
+    --primary-hover: #4f46e5;
+    --secondary-color: #8b5cf6;
+    --secondary-hover: #7c3aed;
+    --accent-color: #06b6d4;
+    
+    /* Background colors */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8fafc;
+    --section-bg: #f1f5f9;
+    --card-bg: #ffffff;
+    --navbar-bg: rgba(255, 255, 255, 0.85);
+    --input-bg: #ffffff;
+    
+    /* Text colors */
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --text-light: #94a3b8;
+    
+    /* Border and shadow */
+    --border-color: #e2e8f0;
+    --shadow: rgba(0, 0, 0, 0.08);
+    --shadow-lg: rgba(0, 0, 0, 0.12);
+    
+    /* Status colors */
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+    --error-color: #ef4444;
+    --info-color: #3b82f6;
+}
+
+/* ==================== Dark Theme ==================== */
+html[data-theme="dark"] {
+    /* Primary gradient colors - brighter for dark mode */
+    --primary-color: #818cf8;
+    --primary-hover: #a5b4fc;
+    --secondary-color: #a78bfa;
+    --secondary-hover: #c4b5fd;
+    --accent-color: #22d3ee;
+    
+    /* Background colors */
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --section-bg: #1e293b;
+    --card-bg: #1e293b;
+    --navbar-bg: rgba(15, 23, 42, 0.85);
+    --input-bg: #334155;
+    
+    /* Text colors */
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-light: #64748b;
+    
+    /* Border and shadow */
+    --border-color: #334155;
+    --shadow: rgba(0, 0, 0, 0.3);
+    --shadow-lg: rgba(0, 0, 0, 0.5);
+    
+    /* Status colors */
+    --success-color: #34d399;
+    --warning-color: #fbbf24;
+    --error-color: #f87171;
+    --info-color: #60a5fa;
+}
+
+/* ==================== Smooth Transitions ==================== */
+* {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+.navbar {
+    background-color: var(--navbar-bg);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.card,
+.feature-card,
+.stat-card,
+.analysis-card,
+.modal-content,
+.profile-card,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+textarea,
+select {
+    background-color: var(--card-bg);
+    color: var(--text-primary);
+}
+
+/* ==================== Text Colors ==================== */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-primary);
+}
+
+p {
+    color: var(--text-secondary);
+}
+
+/* ==================== Form Elements ==================== */
+input,
+textarea,
+select {
+    background-color: var(--input-bg);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: var(--text-light);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 5px var(--primary-color);
+}
+
+/* ==================== Buttons ==================== */
+.btn-secondary {
+    background-color: var(--secondary-color);
+}
+
+.btn-secondary:hover {
+    background-color: var(--secondary-hover);
+}
+
+/* ==================== Links ==================== */
+a {
+    color: var(--primary-color);
+}
+
+a:hover {
+    color: var(--primary-hover);
+}
+
+/* ==================== Borders and Shadows ==================== */
+.feature-card,
+.stat-card,
+.analysis-card,
+.card {
+    box-shadow: 0 5px 15px var(--shadow);
+    border: 1px solid var(--border-color);
+}
+
+/* ==================== Special Elements ==================== */
+.modal {
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+html[data-theme="dark"] .modal {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.keywords-list,
+.items-list {
+    background-color: var(--section-bg);
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid var(--border-color);
+}
+
+.transcript-box {
+    background-color: var(--section-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+}

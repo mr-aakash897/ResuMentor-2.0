@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Tips & Resources - ResuMentor</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/tips.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+    <!-- Particle Background Canvas -->
+    <canvas id="particles-canvas"></canvas>
+    
+    <!-- Navigation Bar -->
+    <nav class="navbar" id="navbar">
+        <div class="navbar-container">
+            <a href="../index.html" class="navbar-logo">
+                <span class="logo-icon">📝</span> ResuMentor
+            </a>
+            
+            <!-- Mobile Menu Toggle -->
+            <button class="menu-toggle" id="menuToggle" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="../index.html" class="nav-link">Home</a></li>
+                <li><a href="../pages/resume-analyzer.html" class="nav-link">Resume Analyzer</a></li>
+                <li><a href="../pages/interview.html" class="nav-link">Interview</a></li>
+                <li><a href="#" class="nav-link">Tips</a></li>
+                <li><a href="../pages/dashboard.html" class="nav-link">Dashboard</a></li>
+            </ul>
+            <div class="navbar-controls">
+                <button id="theme-toggle" class="theme-btn" onclick="toggleTheme()">🌙</button>
+                <button id="auth-btn" class="login-btn" onclick="handleAuthClick()">Sign In</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="tips-hero">
+        <div class="container">
+            <h1>📚 Career Tips & Resources</h1>
+            <p>Expert guidance to help you land your dream job</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container tips-container">
+        <!-- Filter Tabs -->
+        <div class="filter-tabs">
+            <button class="filter-tab active" data-category="all">All</button>
+            <button class="filter-tab" data-category="resume">Resume Tips</button>
+            <button class="filter-tab" data-category="interview">Interview Tips</button>
+            <button class="filter-tab" data-category="career">Career Advice</button>
+            <button class="filter-tab" data-category="resources">Resources</button>
+        </div>
+
+        <!-- Tips Grid -->
+        <div class="tips-grid">
+            <!-- Resume Tips -->
+            <article class="tip-card" data-category="resume">
+                <div class="tip-header">
+                    <span class="tip-icon">📄</span>
+                    <span class="tip-category">Resume</span>
+                </div>
+                <h3>Optimize for ATS Systems</h3>
+                <p>Most companies use Applicant Tracking Systems to filter resumes. Use standard section headers, avoid graphics or tables, and include keywords from the job description.</p>
+                <ul class="tip-list">
+                    <li>Use standard fonts like Arial or Calibri</li>
+                    <li>Avoid headers and footers</li>
+                    <li>Include keywords naturally</li>
+                    <li>Save as PDF or .docx format</li>
+                </ul>
+            </article>
+
+            <article class="tip-card" data-category="resume">
+                <div class="tip-header">
+                    <span class="tip-icon">🎯</span>
+                    <span class="tip-category">Resume</span>
+                </div>
+                <h3>Quantify Your Achievements</h3>
+                <p>Numbers speak louder than words. Use metrics to demonstrate your impact and make your accomplishments tangible to hiring managers.</p>
+                <ul class="tip-list">
+                    <li>"Increased sales by 25%" vs "Improved sales"</li>
+                    <li>"Led team of 8 engineers" vs "Led team"</li>
+                    <li>"Reduced costs by $50K" vs "Cut costs"</li>
+                    <li>"Served 500+ customers daily" vs "Customer service"</li>
+                </ul>
+            </article>
+
+            <article class="tip-card" data-category="resume">
+                <div class="tip-header">
+                    <span class="tip-icon">✨</span>
+                    <span class="tip-category">Resume</span>
+                </div>
+                <h3>Tailor for Each Application</h3>
+                <p>A generic resume rarely succeeds. Customize your resume for each position by highlighting relevant skills and experiences.</p>
+                <ul class="tip-list">
+                    <li>Mirror the job description language</li>
+                    <li>Prioritize relevant experience</li>
+                    <li>Highlight matching skills</li>
+                    <li>Adjust your professional summary</li>
+                </ul>
+            </article>
+
+            <article class="tip-card" data-category="resume">
+                <div class="tip-header">
+                    <span class="tip-icon">📋</span>
+                    <span class="tip-category">Resume</span>
+                </div>
+                <h3>Action Verbs That Stand Out</h3>
+                <p>Start bullet points with strong action verbs to create impact and show initiative.</p>
+                <ul class="tip-list">
+                    <li><strong>Leadership:</strong> Spearheaded, Directed, Orchestrated</li>
+                    <li><strong>Creation:</strong> Developed, Designed, Implemented</li>
+                    <li><strong>Achievement:</strong> Achieved, Surpassed, Exceeded</li>
+                    <li><strong>Analysis:</strong> Analyzed, Evaluated, Assessed</li>
+                </ul>
+            </article>
+
+            <!-- Interview Tips -->
+            <article class="tip-card" data-category="interview">
+                <div class="tip-header">
+                    <span class="tip-icon">🎤</span>
+                    <span class="tip-category">Interview</span>
+                </div>
+                <h3>Master the STAR Method</h3>
+                <p>Structure your behavioral interview answers using the STAR framework for clear, impactful responses.</p>
+                <ul class="tip-list">
+                    <li><strong>Situation:</strong> Set the context</li>
+                    <li><strong>Task:</strong> Describe your responsibility</li>
+                    <li><strong>Action:</strong> Explain what you did</li>
+                    <li><strong>Result:</strong> Share the outcome</li>
+                </ul>
+            </article>
+
+            <article class="tip-card" data-category="interview">
+                <div class="tip-header">
+                    <span class="tip-icon">🔍</span>
+                    <span class="tip-category">Interview</span>
+                </div>
+                <h3>Research the Company</h3>
+                <p>Demonstrate genuine interest by thoroughly researching the company before your interview.</p>
+                <ul class="tip-list">
+                    <li>Study their mission and values</li>
+                    <li>Know their recent news and products</li>
+                    <li>Understand their competitors</li>
+                    <li>Research your interviewer on LinkedIn</li>
+                </ul>
+            </article>
+
+            <article class="tip-card" data-category="interview">
+                <div class="tip-header">
+                    <span class="tip-icon">❓</span>
+                    <span class="tip-category">Interview</span>
+                </div>
+                <h3>Questions to Ask Interviewers</h3>
+                <p>Asking thoughtful questions shows engagement and helps you evaluate the opportunity.</p>
+                <ul class="tip-list">
+                    <li>"What does success look like in this role?"</li>
+                    <li>"How would you describe the team culture?"</li>
+                    <li>"What are the biggest challenges facing the team?"</li>
+                    <li>"What opportunities for growth exist?"</li>
+                </ul>
+            </article>
+
+            <article class="tip-card" data-category="interview">
+                <div class="tip-header">
+                    <span class="tip-icon">💡</span>
+                    <span class="tip-category">Interview</span>
+                </div>
+                <h3>Technical Interview Strategies</h3>
+                <p>For technical interviews, focus on your problem-solving process, not just the answer.</p>
+                <ul class="tip-list">
+                    <li>Think out loud and explain your reasoning</li>
+                    <li>Ask clarifying questions first</li>
+                    <li>Start with a brute force approach</li>
+                    <li>Optimize and discuss trade-offs</li>
+                </ul>
+            </article>
+
+            <!-- Career Advice -->
+            <article class="tip-card" data-category="career">
+                <div class="tip-header">
+                    <span class="tip-icon">🚀</span>
+                    <span class="tip-category">Career</span>
+                </div>
+                <h3>Build Your Personal Brand</h3>
+                <p>In today's digital age, your online presence matters. Craft a professional image across platforms.</p>
+                <ul class="tip-list">
+                    <li>Optimize your LinkedIn profile</li>
+                    <li>Contribute to open source or blogs</li>
+                    <li>Network at industry events</li>
+                    <li>Showcase projects in a portfolio</li>
+                </ul>
+            </article>
+
+            <article class="tip-card" data-category="career">
+                <div class="tip-header">
+                    <span class="tip-icon">📈</span>
+                    <span class="tip-category">Career</span>
+                </div>
+                <h3>Continuous Learning</h3>
+                <p>Stay competitive by continuously updating your skills and knowledge.</p>
+                <ul class="tip-list">
+                    <li>Take online courses (Coursera, Udemy)</li>
+                    <li>Earn relevant certifications</li>
+                    <li>Attend conferences and webinars</li>
+                    <li>Read industry publications</li>
+                </ul>
+            </article>
+
+            <article class="tip-card" data-category="career">
+                <div class="tip-header">
+                    <span class="tip-icon">🤝</span>
+                    <span class="tip-category">Career</span>
+                </div>
+                <h3>Networking Effectively</h3>
+                <p>Many job opportunities are found through networking. Build genuine professional relationships.</p>
+                <ul class="tip-list">
+                    <li>Attend industry meetups</li>
+                    <li>Connect with alumni</li>
+                    <li>Offer help before asking</li>
+                    <li>Follow up and maintain relationships</li>
+                </ul>
+            </article>
+
+            <article class="tip-card" data-category="career">
+                <div class="tip-header">
+                    <span class="tip-icon">💼</span>
+                    <span class="tip-category">Career</span>
+                </div>
+                <h3>Negotiate Your Offer</h3>
+                <p>Don't leave money on the table. Learn to negotiate professionally and confidently.</p>
+                <ul class="tip-list">
+                    <li>Research market salary ranges</li>
+                    <li>Consider total compensation</li>
+                    <li>Be confident but professional</li>
+                    <li>Get the offer in writing</li>
+                </ul>
+            </article>
+
+            <!-- Resources -->
+            <article class="tip-card resource-card" data-category="resources">
+                <div class="tip-header">
+                    <span class="tip-icon">📚</span>
+                    <span class="tip-category">Resources</span>
+                </div>
+                <h3>Recommended Books</h3>
+                <p>Essential reading for career development and interview preparation.</p>
+                <ul class="tip-list">
+                    <li><strong>"Cracking the Coding Interview"</strong> - Gayle McDowell</li>
+                    <li><strong>"System Design Interview"</strong> - Alex Xu</li>
+                    <li><strong>"What Color Is Your Parachute?"</strong> - Richard Bolles</li>
+                    <li><strong>"Deep Work"</strong> - Cal Newport</li>
+                </ul>
+            </article>
+
+            <article class="tip-card resource-card" data-category="resources">
+                <div class="tip-header">
+                    <span class="tip-icon">🌐</span>
+                    <span class="tip-category">Resources</span>
+                </div>
+                <h3>Online Learning Platforms</h3>
+                <p>Level up your skills with these learning platforms.</p>
+                <div class="resource-links">
+                    <a href="https://leetcode.com" target="_blank" class="resource-link">LeetCode</a>
+                    <a href="https://www.coursera.org" target="_blank" class="resource-link">Coursera</a>
+                    <a href="https://www.udemy.com" target="_blank" class="resource-link">Udemy</a>
+                    <a href="https://www.pluralsight.com" target="_blank" class="resource-link">Pluralsight</a>
+                </div>
+            </article>
+
+            <article class="tip-card resource-card" data-category="resources">
+                <div class="tip-header">
+                    <span class="tip-icon">🛠️</span>
+                    <span class="tip-category">Resources</span>
+                </div>
+                <h3>Resume Tools</h3>
+                <p>Helpful tools to create and improve your resume.</p>
+                <div class="resource-links">
+                    <a href="https://www.overleaf.com" target="_blank" class="resource-link">Overleaf (LaTeX)</a>
+                    <a href="https://grammarly.com" target="_blank" class="resource-link">Grammarly</a>
+                    <a href="https://www.canva.com" target="_blank" class="resource-link">Canva</a>
+                    <a href="https://resumake.io" target="_blank" class="resource-link">Resumake</a>
+                </div>
+            </article>
+
+            <article class="tip-card resource-card" data-category="resources">
+                <div class="tip-header">
+                    <span class="tip-icon">💻</span>
+                    <span class="tip-category">Resources</span>
+                </div>
+                <h3>Job Search Platforms</h3>
+                <p>Top platforms to find your next opportunity.</p>
+                <div class="resource-links">
+                    <a href="https://linkedin.com/jobs" target="_blank" class="resource-link">LinkedIn Jobs</a>
+                    <a href="https://indeed.com" target="_blank" class="resource-link">Indeed</a>
+                    <a href="https://glassdoor.com" target="_blank" class="resource-link">Glassdoor</a>
+                    <a href="https://wellfound.com" target="_blank" class="resource-link">Wellfound</a>
+                </div>
+            </article>
+        </div>
+
+        <!-- Quick Reference Section -->
+        <section class="quick-reference">
+            <h2>📌 Quick Reference Checklists</h2>
+            <div class="checklist-grid">
+                <div class="checklist-card">
+                    <h3>✅ Before Submitting Your Resume</h3>
+                    <ul class="checklist">
+                        <li><input type="checkbox" id="r1"><label for="r1">Tailored to job description</label></li>
+                        <li><input type="checkbox" id="r2"><label for="r2">No spelling or grammar errors</label></li>
+                        <li><input type="checkbox" id="r3"><label for="r3">Contact info is correct</label></li>
+                        <li><input type="checkbox" id="r4"><label for="r4">Achievements are quantified</label></li>
+                        <li><input type="checkbox" id="r5"><label for="r5">Saved as PDF</label></li>
+                        <li><input type="checkbox" id="r6"><label for="r6">File named professionally</label></li>
+                    </ul>
+                </div>
+
+                <div class="checklist-card">
+                    <h3>✅ Before Your Interview</h3>
+                    <ul class="checklist">
+                        <li><input type="checkbox" id="i1"><label for="i1">Researched the company</label></li>
+                        <li><input type="checkbox" id="i2"><label for="i2">Prepared STAR stories</label></li>
+                        <li><input type="checkbox" id="i3"><label for="i3">Questions ready to ask</label></li>
+                        <li><input type="checkbox" id="i4"><label for="i4">Professional attire ready</label></li>
+                        <li><input type="checkbox" id="i5"><label for="i5">Tested tech (for virtual)</label></li>
+                        <li><input type="checkbox" id="i6"><label for="i6">Copy of resume ready</label></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 ResuMentor. Empowering careers with AI.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../js/api-client.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/particles.js"></script>
+    <script src="../js/theme.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/tips.js"></script>
+</body>
+</html>

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Error - ResuMentor</title>
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #8b5cf6;
+            --error-color: #ef4444;
+            --text-color: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --bg-color: #0f0f1a;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-color);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-color);
+            overflow: hidden;
+        }
+
+        .error-container {
+            text-align: center;
+            padding: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .error-code {
+            font-size: 180px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--error-color), #f97316);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 20px;
+            animation: shake 0.5s ease-in-out infinite;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .error-title {
+            font-size: 2rem;
+            color: var(--text-color);
+            margin-bottom: 15px;
+        }
+
+        .error-message {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            max-width: 450px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .error-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--primary-color);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(99, 102, 241, 0.25);
+            transform: translateY(-2px);
+        }
+
+        /* Animated background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .bg-animation span {
+            position: absolute;
+            display: block;
+            width: 20px;
+            height: 20px;
+            background: rgba(239, 68, 68, 0.1);
+            animation: fall 15s linear infinite;
+            top: -150px;
+            border-radius: 50%;
+        }
+
+        .bg-animation span:nth-child(1) { left: 10%; animation-delay: 0s; width: 80px; height: 80px; }
+        .bg-animation span:nth-child(2) { left: 25%; animation-delay: 2s; width: 40px; height: 40px; }
+        .bg-animation span:nth-child(3) { left: 40%; animation-delay: 4s; width: 60px; height: 60px; }
+        .bg-animation span:nth-child(4) { left: 55%; animation-delay: 1s; width: 50px; height: 50px; }
+        .bg-animation span:nth-child(5) { left: 70%; animation-delay: 3s; width: 30px; height: 30px; }
+        .bg-animation span:nth-child(6) { left: 85%; animation-delay: 5s; width: 70px; height: 70px; }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(1200px) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .emoji {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status-info {
+            background: rgba(99, 102, 241, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 30px;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .status-info p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .error-code {
+                font-size: 100px;
+            }
+
+            .error-title {
+                font-size: 1.5rem;
+            }
+
+            .error-message {
+                font-size: 1rem;
+                padding: 0 20px;
+            }
+
+            .error-actions {
+                flex-direction: column;
+                padding: 0 40px;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .emoji {
+                font-size: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <div class="error-container">
+        <div class="emoji">⚙️</div>
+        <div class="error-code">500</div>
+        <h1 class="error-title">Something Went Wrong</h1>
+        <p class="error-message">
+            Our servers are taking a quick break. We're working hard to fix this issue. 
+            Please try again in a few moments.
+        </p>
+        <div class="error-actions">
+            <a href="/" class="btn btn-primary">
+                🏠 Go Home
+            </a>
+            <button onclick="location.reload()" class="btn btn-secondary">
+                🔄 Try Again
+            </button>
+        </div>
+        <div class="status-info">
+            <p>If this problem persists, please contact our support team.</p>
+        </div>
+    </div>
+</body>
+</html>

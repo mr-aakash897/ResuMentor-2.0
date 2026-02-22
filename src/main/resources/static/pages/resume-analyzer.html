@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Analyzer - ResuMentor</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/resume-analyzer.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <!-- Particle Background Canvas -->
+    <canvas id="particles-canvas"></canvas>
+    
+    <!-- Navigation Bar -->
+    <nav class="navbar" id="navbar">
+        <div class="navbar-container">
+            <a href="../index.html" class="navbar-logo">
+                <span class="logo-icon">📝</span> ResuMentor
+            </a>
+            
+            <!-- Mobile Menu Toggle -->
+            <button class="menu-toggle" id="menuToggle" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="../index.html" class="nav-link">Home</a></li>
+                <li><a href="#" class="nav-link">Resume Analyzer</a></li>
+                <li><a href="../pages/interview.html" class="nav-link">Interview</a></li>
+                <li><a href="../pages/tips.html" class="nav-link">Tips</a></li>
+                <li><a href="../pages/dashboard.html" class="nav-link">Dashboard</a></li>
+            </ul>
+            <div class="navbar-controls">
+                <button id="theme-toggle" class="theme-btn" onclick="toggleTheme()">🌙</button>
+                <button id="logout-btn" class="login-btn" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container" style="margin-top: 90px;">
+        <div class="resume-analyzer">
+            <h1>Resume Analyzer</h1>
+            <p>Upload your resume and get instant ATS score and detailed analysis</p>
+
+            <div class="analyzer-content">
+                <!-- Upload Section -->
+                <div class="upload-section" id="uploadSection">
+                    <div class="upload-area" id="dropZone">
+                        <input type="file" id="resumeFile" accept=".pdf,.doc,.docx" hidden>
+                        <div class="upload-placeholder">
+                            <div class="upload-icon">📄</div>
+                            <p>Drag & drop your resume here or click to upload</p>
+                            <p class="upload-hint">Supported formats: PDF, DOC, DOCX</p>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="form-group">
+                            <label for="jobRole">Select Your Target Role:</label>
+                            <select id="jobRole">
+                                <option value="">-- Select Role --</option>
+                                <optgroup label="Software Development">
+                                    <option value="backend">Backend Developer</option>
+                                    <option value="frontend">Frontend Developer</option>
+                                    <option value="fullstack">Full Stack Developer</option>
+                                    <option value="mobile-android">Android Developer</option>
+                                    <option value="mobile-ios">iOS Developer</option>
+                                    <option value="mobile-crossplatform">Mobile Developer (Cross-Platform)</option>
+                                    <option value="game-developer">Game Developer</option>
+                                    <option value="embedded">Embedded Systems Engineer</option>
+                                </optgroup>
+                                <optgroup label="Data & AI/ML">
+                                    <option value="data-scientist">Data Scientist</option>
+                                    <option value="data-analyst">Data Analyst</option>
+                                    <option value="data-engineer">Data Engineer</option>
+                                    <option value="machine-learning">Machine Learning Engineer</option>
+                                    <option value="ai-engineer">AI Engineer</option>
+                                    <option value="nlp-engineer">NLP Engineer</option>
+                                    <option value="computer-vision">Computer Vision Engineer</option>
+                                    <option value="bi-analyst">Business Intelligence Analyst</option>
+                                </optgroup>
+                                <optgroup label="Cloud & DevOps">
+                                    <option value="devops">DevOps Engineer</option>
+                                    <option value="cloud-architect">Cloud Architect</option>
+                                    <option value="cloud-engineer">Cloud Engineer</option>
+                                    <option value="sre">Site Reliability Engineer (SRE)</option>
+                                    <option value="platform-engineer">Platform Engineer</option>
+                                    <option value="infrastructure">Infrastructure Engineer</option>
+                                </optgroup>
+                                <optgroup label="Security">
+                                    <option value="security-engineer">Security Engineer</option>
+                                    <option value="cybersecurity">Cybersecurity Analyst</option>
+                                    <option value="penetration-tester">Penetration Tester</option>
+                                    <option value="security-architect">Security Architect</option>
+                                </optgroup>
+                                <optgroup label="Quality & Testing">
+                                    <option value="qa">QA Engineer</option>
+                                    <option value="qa-automation">QA Automation Engineer</option>
+                                    <option value="sdet">SDET (Software Dev Engineer in Test)</option>
+                                    <option value="performance-engineer">Performance Engineer</option>
+                                </optgroup>
+                                <optgroup label="Design & UX">
+                                    <option value="ui-designer">UI Designer</option>
+                                    <option value="ux-designer">UX Designer</option>
+                                    <option value="product-designer">Product Designer</option>
+                                    <option value="ux-researcher">UX Researcher</option>
+                                </optgroup>
+                                <optgroup label="Management & Leadership">
+                                    <option value="tech-lead">Technical Lead</option>
+                                    <option value="engineering-manager">Engineering Manager</option>
+                                    <option value="product-manager">Product Manager</option>
+                                    <option value="project-manager">Project Manager</option>
+                                    <option value="scrum-master">Scrum Master</option>
+                                    <option value="cto">CTO / VP Engineering</option>
+                                </optgroup>
+                                <optgroup label="Specialized Roles">
+                                    <option value="blockchain">Blockchain Developer</option>
+                                    <option value="ar-vr">AR/VR Developer</option>
+                                    <option value="iot">IoT Engineer</option>
+                                    <option value="database-admin">Database Administrator</option>
+                                    <option value="network-engineer">Network Engineer</option>
+                                    <option value="solutions-architect">Solutions Architect</option>
+                                    <option value="technical-writer">Technical Writer</option>
+                                    <option value="devrel">Developer Advocate / DevRel</option>
+                                </optgroup>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="jobDescription">Job Description (Optional):</label>
+                            <textarea id="jobDescription" placeholder="Paste the job description to get more accurate analysis..."></textarea>
+                        </div>
+
+                        <button class="btn btn-primary" onclick="analyzeResume()" id="analyzeBtn">
+                            Analyze Resume
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Results Section -->
+                <div id="resultsSection" class="results-section" style="display: none;">
+                    <div class="results-header">
+                        <h2>Analysis Results</h2>
+                        <div class="results-actions">
+                            <button class="btn btn-export-resume" onclick="exportResumePDF()">📄 Download Report</button>
+                            <button class="btn btn-secondary" onclick="resetAnalyzer()">Analyze Another Resume</button>
+                        </div>
+                    </div>
+
+                    <!-- ATS Score Card -->
+                    <div class="ats-score-card">
+                        <div class="score-circle" id="scoreCircle">
+                            <div class="score-value" id="scoreValue">0</div>
+                            <div class="score-label">ATS Score</div>
+                        </div>
+                        <div class="score-info">
+                            <p id="scoreInterpretation"></p>
+                        </div>
+                    </div>
+
+                    <!-- Analysis Cards -->
+                    <div class="analysis-grid">
+                        <!-- Score Breakdown Card -->
+                        <div class="analysis-card full-width">
+                            <h3>📊 Score Breakdown</h3>
+                            <div class="score-breakdown-grid">
+                                <div class="score-item">
+                                    <div class="score-item-label">Keyword Match</div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" id="keywordMatchBar" style="width: 0%"></div>
+                                    </div>
+                                    <div class="score-item-value" id="keywordMatchValue">0%</div>
+                                </div>
+                                <div class="score-item">
+                                    <div class="score-item-label">Resume Structure</div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" id="structureBar" style="width: 0%"></div>
+                                    </div>
+                                    <div class="score-item-value" id="structureValue">0%</div>
+                                </div>
+                                <div class="score-item">
+                                    <div class="score-item-label">Experience Quality</div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" id="experienceBar" style="width: 0%"></div>
+                                    </div>
+                                    <div class="score-item-value" id="experienceValue">0%</div>
+                                </div>
+                                <div class="score-item">
+                                    <div class="score-item-label">Soft Skills</div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" id="softSkillsBar" style="width: 0%"></div>
+                                    </div>
+                                    <div class="score-item-value" id="softSkillsValue">0%</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- ATS Friendliness Card -->
+                        <div class="analysis-card full-width ats-friendly-card">
+                            <h3>🤖 ATS Friendliness Score</h3>
+                            <div class="ats-friendly-header">
+                                <div class="ats-score-circle" id="atsFriendlyCircle">
+                                    <span id="atsFriendlyScore">0</span>
+                                    <small>ATS Ready</small>
+                                </div>
+                                <div class="ats-summary" id="atsSummary">
+                                    <p>Analyzing ATS compatibility...</p>
+                                </div>
+                            </div>
+                            <div class="score-breakdown-grid">
+                                <div class="score-item">
+                                    <div class="score-item-label">📄 Formatting</div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" id="formattingBar" style="width: 0%"></div>
+                                    </div>
+                                    <div class="score-item-value" id="formattingValue">0%</div>
+                                </div>
+                                <div class="score-item">
+                                    <div class="score-item-label">🔍 Parsability</div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" id="parsabilityBar" style="width: 0%"></div>
+                                    </div>
+                                    <div class="score-item-value" id="parsabilityValue">0%</div>
+                                </div>
+                                <div class="score-item">
+                                    <div class="score-item-label">📞 Contact Info</div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" id="contactInfoBar" style="width: 0%"></div>
+                                    </div>
+                                    <div class="score-item-value" id="contactInfoValue">0%</div>
+                                </div>
+                                <div class="score-item">
+                                    <div class="score-item-label">📑 Section Organization</div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" id="sectionOrgBar" style="width: 0%"></div>
+                                    </div>
+                                    <div class="score-item-value" id="sectionOrgValue">0%</div>
+                                </div>
+                                <div class="score-item">
+                                    <div class="score-item-label">🔑 Keyword Density</div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" id="keywordDensityBar" style="width: 0%"></div>
+                                    </div>
+                                    <div class="score-item-value" id="keywordDensityValue">0%</div>
+                                </div>
+                            </div>
+                            <div class="ats-feedback">
+                                <div class="ats-issues" id="atsIssues"></div>
+                                <div class="ats-tips" id="atsTips"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Top Matched Skills -->
+                        <div class="analysis-card">
+                            <h3>✅ Top Matched Skills</h3>
+                            <div id="topMatchedSkills" class="keywords-list success"></div>
+                        </div>
+
+                        <!-- Critical Missing Skills -->
+                        <div class="analysis-card">
+                            <h3>🔴 Critical Missing Skills</h3>
+                            <div id="criticalMissingSkills" class="keywords-list danger"></div>
+                        </div>
+
+                        <!-- Matched Keywords -->
+                        <div class="analysis-card">
+                            <h3>✅ All Matched Keywords</h3>
+                            <div id="matchedKeywords" class="keywords-list"></div>
+                        </div>
+
+                        <!-- Missing Keywords -->
+                        <div class="analysis-card">
+                            <h3>❌ Missing Keywords</h3>
+                            <div id="missingKeywords" class="keywords-list"></div>
+                        </div>
+
+                        <!-- Skill Gaps -->
+                        <div class="analysis-card full-width">
+                            <h3>⚠️ Skill Gaps Analysis</h3>
+                            <div id="skillGaps" class="items-list"></div>
+                        </div>
+
+                        <!-- Suggestions -->
+                        <div class="analysis-card full-width">
+                            <h3>💡 Suggestions for Improvement</h3>
+                            <div id="suggestions" class="items-list"></div>
+                        </div>
+
+                        <!-- Competitive Analysis -->
+                        <div class="analysis-card full-width">
+                            <h3>📈 Competitive Analysis</h3>
+                            <pre id="competitiveAnalysis" class="competitive-text"></pre>
+                        </div>
+
+                        <!-- Overall Feedback -->
+                        <div class="analysis-card full-width">
+                            <h3>📋 Overall Feedback</h3>
+                            <pre id="overallFeedback" class="feedback-text"></pre>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="downloadReport()">📥 Download Report</button>
+                        <button class="btn btn-secondary" onclick="startInterview()">🎙️ Start Interview</button>
+                    </div>
+                </div>
+
+                <!-- Loading Section -->
+                <div id="loadingSection" class="loading-section" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Analyzing your resume...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 ResuMentor. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="#privacy">Privacy Policy</a>
+                <a href="#terms">Terms of Service</a>
+                <a href="#contact">Contact Us</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/api-client.js"></script>
+    <script src="../js/ui-utils.js"></script>
+    <script src="../js/particles.js"></script>
+    <script src="../js/theme.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/resume-analyzer.js"></script>
+</body>
+</html>

@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResuMentor - AI Resume Analyzer & Mock Interview Platform</title>
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/theme.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+    <!-- Three.js Particle Background -->
+    <canvas id="particles-canvas"></canvas>
+    
+    <!-- Navigation Bar -->
+    <nav class="navbar" id="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="navbar-logo">
+                <span class="logo-icon">📝</span> ResuMentor
+            </a>
+            
+            <!-- Mobile Menu Toggle -->
+            <button class="menu-toggle" id="menuToggle" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#home" class="nav-link">Home</a></li>
+                <li><a href="#features" class="nav-link">Features</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="#contact" class="nav-link">Contact</a></li>
+            </ul>
+            <div class="navbar-controls">
+                <button id="theme-toggle" class="theme-btn" onclick="toggleTheme()">🌙</button>
+                <button id="login-btn" class="login-btn" onclick="showLoginModal()">Login</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">Boost Your Career with AI Resume Analysis & Mock Interviews</h1>
+            <h2 class="hero-subtitle">Experience latest technology guiding your job search and interview success.</h2>
+            <p class="hero-description">Upload your resume, get AI-powered, tailored suggestions, and practice interviews in text or voice.</p>
+            <div class="hero-buttons">
+                <button class="btn btn-primary" onclick="redirectToResume()">Analyze Resume</button>
+                <button class="btn btn-secondary" onclick="redirectToInterview()">Start Interview</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2>Key Features</h2>
+            <p class="section-subtitle">Everything you need to ace your job search</p>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Resume Analysis</h3>
+                    <p>Get ATS score, missing keywords, and actionable suggestions to improve your resume</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎙️</div>
+                    <h3>AI Mock Interview</h3>
+                    <p>Practice with AI-powered interview questions tailored to your role</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <h3>Performance Tracking</h3>
+                    <p>Track your progress with detailed analytics and improvement suggestions</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Role-Specific Questions</h3>
+                    <p>Get questions tailored to your target job role and tech stack</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🗣️</div>
+                    <h3>Voice Recognition</h3>
+                    <p>Answer questions using voice with real-time transcription</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🏆</div>
+                    <h3>Detailed Reports</h3>
+                    <p>Comprehensive feedback and scoring for every interview session</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <h2>How It Works</h2>
+            <p class="section-subtitle">Get started in just 3 simple steps</p>
+            <div class="steps-container">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <div class="step-icon">📄</div>
+                    <h3>Upload Your Resume</h3>
+                    <p>Upload your resume and enter the job description you're targeting. Our AI will analyze the match.</p>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <div class="step-icon">🎤</div>
+                    <h3>Practice Interview</h3>
+                    <p>Start a mock interview session with AI-generated questions based on your resume and target role.</p>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <div class="step-icon">📊</div>
+                    <h3>Get Feedback</h3>
+                    <p>Receive detailed feedback, scores, and actionable tips to improve your interview performance.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <h2>What Our Users Say</h2>
+            <p class="section-subtitle">Join thousands of successful job seekers</p>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <div class="quote-icon">"</div>
+                        <p>ResuMentor helped me identify key gaps in my resume. After following the suggestions, I got 3x more interview calls!</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">👨‍💻</div>
+                        <div class="author-info">
+                            <h4>Rahul Sharma</h4>
+                            <p>Software Engineer at Google</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <div class="quote-icon">"</div>
+                        <p>The mock interview feature is incredible! It felt just like a real interview. The AI feedback was spot-on and very helpful.</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">👩‍💼</div>
+                        <div class="author-info">
+                            <h4>Priya Patel</h4>
+                            <p>Product Manager at Microsoft</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <div class="quote-icon">"</div>
+                        <p>As a fresh graduate, I was nervous about interviews. ResuMentor gave me the confidence I needed. Landed my dream job!</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">👨‍🎓</div>
+                        <div class="author-info">
+                            <h4>Amit Kumar</h4>
+                            <p>Data Analyst at Amazon</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <div class="container">
+            <h2>About ResuMentor</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>ResuMentor is an AI-powered platform designed to help job seekers succeed in the hiring process. Whether you're looking to optimize your resume for ATS systems or practice for technical interviews, we've got you covered.</p>
+                    <p>Our intelligent algorithms analyze your resume against job descriptions, identify gaps, and provide actionable feedback. Our mock interview system simulates real interview experiences with AI-powered questions and feedback.</p>
+                    <p>Join thousands of successful candidates who have used ResuMentor to land their dream jobs!</p>
+                </div>
+                <div class="about-stats">
+                    <div class="stat-item">
+                        <h3 class="counter" data-target="10" data-suffix="K+">0</h3>
+                        <p>Users</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3 class="counter" data-target="50" data-suffix="K+">0</h3>
+                        <p>Resumes Analyzed</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3 class="counter" data-target="100" data-suffix="K+">0</h3>
+                        <p>Interviews Completed</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3 class="counter" data-target="95" data-suffix="%">0</h3>
+                        <p>Success Rate</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq" id="faq">
+        <div class="container">
+            <h2>Frequently Asked Questions</h2>
+            <p class="section-subtitle">Got questions? We've got answers</p>
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>How does the AI resume analysis work?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Our AI analyzes your resume against the job description you provide, checking for keyword matches, formatting issues, and ATS compatibility. You'll receive a detailed score and actionable suggestions.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>Is the mock interview available for all roles?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Yes! Our AI generates role-specific questions based on your resume and target position. Whether you're in tech, management, or any other field, we've got you covered.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>Can I use voice or text for interviews?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Absolutely! You can respond to interview questions using voice recognition or by typing. Our system supports both modes for your convenience.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>Is my data secure?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Yes, we take data security seriously. Your resumes and interview responses are encrypted and stored securely. We never share your personal information with third parties.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>How do I track my progress?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Your dashboard shows all your resume analyses and interview sessions with detailed scores, progress charts, and improvement trends over time.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>Is ResuMentor free to use?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>You can start with our free tier which includes basic resume analysis and limited mock interviews. Premium features are available with our subscription plans.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="container">
+            <h2>Get in Touch</h2>
+            <form class="contact-form" onsubmit="handleContactForm(event)">
+                <input type="text" placeholder="Your Name" required>
+                <input type="email" placeholder="Your Email" required>
+                <textarea placeholder="Your Message" rows="5" required></textarea>
+                <button type="submit" class="btn btn-gradient">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 ResuMentor. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="#privacy">Privacy Policy</a>
+                <a href="#terms">Terms of Service</a>
+                <a href="#contact">Contact Us</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Login to ResuMentor</h2>
+                <button class="close-btn" onclick="closeLoginModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="g_id_onload"
+                     data-client_id="225615803189-2s400l8m4b216d9avon220gnfb23rjoa.apps.googleusercontent.com"
+                     data-callback="handleCredentialResponse">
+                </div>
+                <div class="g_id_signin" data-type="standard"></div>
+
+                <div class="divider">OR</div>
+
+                <button class="btn btn-guest" onclick="guestLogin()">Continue as Guest</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api-client.js"></script>
+    <script src="js/ui-utils.js"></script>
+    <script src="js/particles.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+</html>

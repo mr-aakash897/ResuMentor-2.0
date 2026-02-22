@@ -1,0 +1,566 @@
+/* ==================== Resume Analyzer Specific ==================== */
+.resume-analyzer {
+    margin-top: 40px;
+    margin-bottom: 40px;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.resume-analyzer h1 {
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 36px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.resume-analyzer > p {
+    text-align: center;
+    margin-bottom: 40px;
+    font-size: 18px;
+}
+
+.analyzer-content {
+    min-height: 500px;
+}
+
+/* ==================== Upload Section ==================== */
+.upload-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.upload-area {
+    background-color: var(--section-bg);
+    border: 3px dashed var(--border-color);
+    border-radius: 16px;
+    padding: 40px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    position: relative;
+    overflow: hidden;
+}
+
+.upload-area::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.upload-area:hover {
+    border-color: var(--primary-color);
+    background-color: var(--card-bg);
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px var(--shadow);
+}
+
+.upload-area:hover::before {
+    opacity: 0.05;
+}
+
+.upload-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    position: relative;
+    z-index: 1;
+}
+
+.upload-icon {
+    font-size: 60px;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.upload-placeholder p {
+    margin: 0;
+}
+
+.upload-hint {
+    font-size: 12px;
+    color: var(--text-light);
+}
+
+/* ==================== Form Section ==================== */
+.form-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 14px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    background-color: var(--input-bg);
+    color: var(--text-primary);
+    font-size: 14px;
+    font-family: inherit;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    outline: none;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+/* ==================== Results Section ==================== */
+.results-section {
+    animation: fadeIn 0.5s;
+}
+
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.results-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-export-resume {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #00d4aa, #00b894);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-export-resume:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(0, 212, 170, 0.4);
+}
+
+/* ==================== ATS Score Card ==================== */
+.ats-score-card {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 30px;
+    background-color: var(--card-bg);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px var(--shadow);
+    margin-bottom: 40px;
+    align-items: center;
+}
+
+.score-circle {
+    width: 180px;
+    height: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-radius: 50%;
+    color: white;
+    position: relative;
+}
+
+.score-value {
+    font-size: 60px;
+    font-weight: bold;
+}
+
+.score-label {
+    font-size: 14px;
+    opacity: 0.9;
+    margin-top: 5px;
+}
+
+.score-info p {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--text-primary);
+}
+
+/* ==================== Analysis Grid ==================== */
+.analysis-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.analysis-card {
+    background-color: var(--card-bg);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px var(--shadow);
+    border: 1px solid var(--border-color);
+}
+
+.analysis-card.full-width {
+    grid-column: 1 / -1;
+}
+
+.analysis-card h3 {
+    margin-bottom: 15px;
+    color: var(--primary-color);
+    font-size: 18px;
+}
+
+/* ==================== Keywords List ==================== */
+.keywords-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.keywords-list span {
+    background-color: var(--section-bg);
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    border: 1px solid var(--border-color);
+}
+
+/* ==================== Items List ==================== */
+.items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.items-list li {
+    list-style: none;
+    padding: 10px;
+    background-color: var(--section-bg);
+    border-radius: 5px;
+    border-left: 3px solid var(--primary-color);
+}
+
+.feedback-text {
+    line-height: 1.8;
+    color: var(--text-secondary);
+    white-space: pre-wrap;
+    font-family: inherit;
+    background: transparent;
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* ==================== Score Breakdown Grid ==================== */
+.score-breakdown-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.score-item {
+    background: var(--section-bg);
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.score-item-label {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+}
+
+.score-item-value {
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--primary-color);
+    text-align: right;
+    margin-top: 5px;
+}
+
+.progress-bar {
+    height: 10px;
+    background: var(--border-color);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 5px;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    transition: width 0.5s ease;
+}
+
+.progress-fill.high {
+    background: linear-gradient(90deg, #4caf50, #8bc34a);
+}
+
+.progress-fill.medium {
+    background: linear-gradient(90deg, #ff9800, #ffc107);
+}
+
+.progress-fill.low {
+    background: linear-gradient(90deg, #f44336, #ff5722);
+}
+
+/* ==================== Keywords List Variants ==================== */
+.keywords-list.success span {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border-color: #4caf50;
+}
+
+.keywords-list.danger span {
+    background: #ffebee;
+    color: #c62828;
+    border-color: #f44336;
+}
+
+/* ==================== Competitive Analysis ==================== */
+.competitive-text {
+    line-height: 1.8;
+    color: var(--text-primary);
+    white-space: pre-wrap;
+    font-family: inherit;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+    margin: 0;
+}
+
+/* ==================== Action Buttons ==================== */
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 30px;
+    flex-wrap: wrap;
+}
+
+.action-buttons .btn {
+    min-width: 200px;
+}
+
+/* ==================== Loading Section ==================== */
+.loading-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+}
+
+/* ==================== ATS Friendliness Card ==================== */
+.ats-friendly-card {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+    border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.ats-friendly-header {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.ats-score-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+}
+
+.ats-score-circle span {
+    font-size: 32px;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.ats-score-circle small {
+    font-size: 10px;
+    opacity: 0.9;
+    margin-top: 4px;
+}
+
+.ats-score-circle.high {
+    background: linear-gradient(135deg, #4caf50, #8bc34a);
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+}
+
+.ats-score-circle.medium {
+    background: linear-gradient(135deg, #ff9800, #ffc107);
+    box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4);
+}
+
+.ats-score-circle.low {
+    background: linear-gradient(135deg, #f44336, #ff5722);
+    box-shadow: 0 4px 15px rgba(244, 67, 54, 0.4);
+}
+
+.ats-summary {
+    flex: 1;
+}
+
+.ats-summary p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-primary);
+}
+
+.ats-feedback {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.ats-issues, .ats-tips {
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.ats-issues {
+    background: rgba(244, 67, 54, 0.1);
+    border-left: 3px solid #f44336;
+}
+
+.ats-tips {
+    background: rgba(76, 175, 80, 0.1);
+    border-left: 3px solid #4caf50;
+}
+
+.ats-issues h4, .ats-tips h4 {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.ats-issues h4 { color: #f44336; }
+.ats-tips h4 { color: #4caf50; }
+
+.ats-issues ul, .ats-tips ul {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+.ats-issues li { color: #c62828; }
+.ats-tips li { color: #2e7d32; }
+
+html[data-theme="light"] .ats-issues {
+    background: rgba(244, 67, 54, 0.08);
+}
+
+html[data-theme="light"] .ats-tips {
+    background: rgba(76, 175, 80, 0.08);
+}
+
+@media (max-width: 768px) {
+    .ats-friendly-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .ats-feedback {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ==================== Responsive ==================== */
+@media (max-width: 768px) {
+    .upload-section {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .ats-score-card {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .score-circle {
+        width: 150px;
+        height: 150px;
+    }
+
+    .score-value {
+        font-size: 45px;
+    }
+
+    .analysis-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .results-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+
+    .action-buttons .btn {
+        width: 100%;
+    }
+}
