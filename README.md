@@ -1,4 +1,4 @@
-# 🎯 ResuMentor 2.0
+# ResuMentor 2.0
 
 <div align="center">
 
@@ -9,95 +9,121 @@
 [![MySQL](https://img.shields.io/badge/MySQL-8.0-blue?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/)
 [![License](https://img.shields.io/badge/License-MIT-purple?style=for-the-badge)](LICENSE)
 
-[Features](#-features) • [Demo](#-demo) • [Installation](#-installation) • [Configuration](#-configuration) • [API Reference](#-api-reference) • [Contributing](#-contributing)
+[Features](#-features) · [Installation](#-installation) · [Configuration](#-configuration) · [API Reference](#-api-reference) · [Contributing](#-contributing)
 
 </div>
 
 ---
 
-## 📖 About
+## About
 
-**ResuMentor** is a comprehensive career development platform that helps job seekers optimize their resumes and practice for interviews. Using AI-powered analysis, it provides actionable feedback to improve your chances of landing your dream job.
+**ResuMentor** is a comprehensive career development platform that helps job seekers optimize their resumes and practice for interviews. Using AI-powered analysis (OpenAI GPT-3.5 with intelligent rule-based fallback), it provides actionable feedback to improve your chances of landing your dream job.
 
-### 🎯 Problem Statement
+### Problem Statement
 - Many job seekers struggle with ATS (Applicant Tracking System) optimization
 - Lack of access to quality interview practice and feedback
 - No personalized guidance for resume improvement
 
-### 💡 Solution
+### Solution
 ResuMentor provides:
-- Real-time ATS score analysis
-- AI-powered resume feedback
-- Voice-enabled mock interviews
-- Personalized improvement suggestions
-- Progress tracking with achievements
+- Real-time ATS score analysis with detailed breakdown
+- AI-powered resume feedback (OpenAI GPT-3.5 or rule-based fallback)
+- Voice-enabled mock interviews with webcam body language tracking
+- Dynamic AI follow-up questions based on your answers
+- PDF report downloads for both resume analysis and interview performance
+- Progress tracking with achievements and trend visualization
 
 ---
 
-## ✨ Features
+## Features
 
-### 📄 Resume Analysis
+### Resume Analysis
 - **ATS Score Calculation** - Get a compatibility score (0-100) for your resume
-- **Section-by-Section Analysis** - Detailed feedback on Contact, Summary, Experience, Skills, Education
-- **Keyword Optimization** - Suggestions for industry-specific keywords
-- **Format Recommendations** - Tips for ATS-friendly formatting
-- **PDF Export** - Download detailed analysis reports
+- **Dual-Mode AI Analysis** - OpenAI GPT-3.5-turbo as primary analyzer with intelligent rule-based fallback
+- **Score Breakdown** - Keyword match, structure, experience quality, and soft skills scores
+- **ATS Compatibility Breakdown** - Formatting, parsability, contact info, section organization, and keyword density scores
+- **Keyword Analysis** - Top matched skills, critical missing skills, matched vs missing keywords
+- **Skill Gap Identification** - Detailed analysis of what skills you need to develop
+- **Competitive Analysis** - How your resume compares against the market
+- **ATS Issues & Tips** - Specific formatting/content issues and optimization tips
+- **PDF Export** - Download comprehensive analysis reports with progress bars and color-coded sections
+- **40+ Job Roles** - Categorized across Software Development, Data & AI/ML, Cloud & DevOps, Security, QA, Design, Management, and Specialized Roles
 
-### 🎤 Mock Interviews
-- **Voice-Enabled Interviews** - Practice with speech recognition
-- **AI-Generated Questions** - Role-specific technical and behavioral questions
-- **Real-time Feedback** - Instant evaluation of your answers
-- **Difficulty Progression** - Basic → Intermediate → Advanced questions
-- **Comprehensive Reports** - Detailed performance breakdown with scores
+### Mock Interviews
+- **12-Question Sessions** - 4 Basic, 4 Intermediate, 4 Advanced questions per session
+- **Voice-Enabled Interviews** - Practice with Web Speech API speech recognition and synthesis
+- **AI-Generated Questions** - Role-specific technical and behavioral questions based on your resume
+- **Dynamic Follow-Up Questions** - OpenAI generates conversational follow-ups based on your answers
+- **Real-time Feedback** - Instant AI evaluation and scoring of each answer
+- **30-Minute Time Limit** - Count-up timer with automatic session completion
+- **Body Language Tracking** - Webcam-based eye contact and face centering analysis via face-api.js
+- **Performance Tiers** - Outstanding / Strong / Satisfactory / Needs Improvement / Requires Preparation
+- **Comprehensive Reports** - Breakdown by difficulty level, technical vs behavioral scores, communication rating, strength areas, improvement areas, skill gaps, and actionable recommendations
+- **Question-by-Question Review** - Detailed feedback for every question with your answers and AI assessment
+- **PDF Report Download** - Full interview performance report with all metrics
 
-### 📊 Dashboard & Progress
-- **Analytics Overview** - Track resume uploads, interviews completed, average scores
-- **Achievement System** - Unlock badges for milestones (First Resume, Interview Pro, etc.)
-- **Recent Activity** - Quick access to past analyses and interviews
-- **Progress Visualization** - Charts showing improvement over time
+### Dashboard & Progress
+- **User Profile** - Editable profile with tech role, experience level, skills, social links, and bio
+- **Progress Charts** - Chart.js line charts showing ATS score and interview performance trends over time
+- **Trend Badges** - Visual indicators showing improving, stable, or declining performance
+- **Feedback Themes** - Common themes across your interview sessions
+- **Resume History** - View analysis, download PDF, or delete past resume analyses
+- **Interview History** - View reports, download PDF, or delete past interviews
+- **Inline Detail Views** - View full analysis/reports without leaving the dashboard
+- **Achievement System** - Unlock 15 badges for milestones across Resume, Interview, Profile, and Milestone categories
+- **PDF Downloads** - Direct PDF download from history tables without viewing first
 
-### 🎨 User Experience
+### User Experience
 - **Dark/Light Theme** - Toggle between themes with system preference detection
-- **Responsive Design** - Works seamlessly on desktop, tablet, and mobile
+- **Responsive Design** - Works on desktop, tablet, and mobile
 - **Google OAuth** - Quick and secure authentication
 - **Guest Mode** - Try the platform without registration
+- **Skeleton Loaders** - Smooth loading states across the dashboard
+- **Toast Notifications** - Non-intrusive success/error feedback
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### Backend
 | Technology | Purpose |
 |------------|---------|
 | **Java 21** | Core programming language |
 | **Spring Boot 4.0.3** | Application framework |
-| **Spring Security** | Authentication & authorization |
+| **Spring Security** | Authentication & authorization (JWT + OAuth2) |
 | **Spring Data JPA** | Database ORM |
 | **Hibernate 7** | JPA implementation |
 | **MySQL 8** | Relational database |
-| **JWT** | Token-based authentication |
-| **Apache PDFBox** | PDF text extraction |
-| **Apache POI** | Word document processing |
+| **JWT (jjwt 0.11.5)** | Token-based authentication |
+| **OpenAI GPT-3.5-turbo** | AI-powered analysis and follow-up questions |
+| **Apache PDFBox 2.0.30** | PDF text extraction |
+| **Apache POI 5.2.3** | Word document processing |
+| **iTextPDF 5.5.13** | Server-side PDF generation |
+| **Spring WebSocket** | Real-time communication |
+| **Spring Actuator** | Health monitoring |
 
 ### Frontend
 | Technology | Purpose |
 |------------|---------|
 | **HTML5/CSS3** | Structure & styling |
-| **Vanilla JavaScript** | Client-side logic |
+| **Vanilla JavaScript** | Client-side logic (no frameworks) |
 | **Web Speech API** | Voice recognition & synthesis |
-| **Particles.js** | Background animations |
+| **face-api.js** | Webcam face detection for body language |
+| **Chart.js** | Progress visualization charts |
+| **jsPDF** | Client-side PDF report generation |
 | **Google OAuth** | Social authentication |
 
 ### DevOps & Tools
 | Technology | Purpose |
 |------------|---------|
 | **Maven** | Build automation |
+| **HikariCP** | Connection pool optimization |
 | **Spring Actuator** | Health monitoring |
 | **Git** | Version control |
 
 ---
 
-## 🚀 Installation
+## Installation
 
 ### Prerequisites
 - **Java 21** or higher
@@ -123,13 +149,40 @@ mysql -u root -p < database_schema.sql
 ```
 
 ### Step 3: Configure Application
-```bash
-# Copy the template
-cp src/main/resources/application.properties.template src/main/resources/application.properties
 
-# Edit with your credentials
-nano src/main/resources/application.properties  # or use any editor
+Create the configuration file at `src/main/resources/application.properties`:
+
+```properties
+# Server
+server.port=8080
+
+# Database
+spring.datasource.url=jdbc:mysql://localhost:3306/resumentor_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+spring.datasource.username=root
+spring.datasource.password=YOUR_MYSQL_PASSWORD
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+# JPA
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=false
+spring.jpa.open-in-view=false
+
+# JWT Secret (minimum 256 bits)
+jwt.secret=YOUR_SECURE_SECRET_KEY
+
+# Google OAuth
+spring.security.oauth2.client.registration.google.client-id=YOUR_GOOGLE_CLIENT_ID
+spring.security.oauth2.client.registration.google.client-secret=YOUR_GOOGLE_CLIENT_SECRET
+
+# OpenAI API Key (optional - enables AI-powered analysis and follow-up questions)
+openai.api.Key=YOUR_OPENAI_API_KEY
+
+# File Upload
+spring.servlet.multipart.max-file-size=10MB
+spring.servlet.multipart.max-request-size=10MB
 ```
+
+> **Note:** If OpenAI API key is not configured, the application falls back to a rule-based analyzer automatically.
 
 ### Step 4: Run the Application
 ```bash
@@ -148,25 +201,20 @@ http://localhost:8080
 
 ---
 
-## ⚙️ Configuration
+## Configuration
 
 ### Required Configuration
-Edit `src/main/resources/application.properties`:
+| Property | Description |
+|----------|-------------|
+| `spring.datasource.password` | Your MySQL root password |
+| `jwt.secret` | A secure random string (min 256 bits) for JWT signing |
 
-```properties
-# Database
-spring.datasource.password=YOUR_MYSQL_PASSWORD
-
-# JWT Secret (minimum 256 bits)
-jwt.secret=YOUR_SECURE_SECRET_KEY
-
-# Google OAuth (get from Google Cloud Console)
-spring.security.oauth2.client.registration.google.client-id=YOUR_CLIENT_ID
-spring.security.oauth2.client.registration.google.client-secret=YOUR_CLIENT_SECRET
-
-# OpenAI API Key (optional - for AI features)
-openai.api.Key=YOUR_OPENAI_KEY
-```
+### Optional Configuration
+| Property | Description |
+|----------|-------------|
+| `spring.security.oauth2.client.registration.google.client-id` | Google OAuth Client ID |
+| `spring.security.oauth2.client.registration.google.client-secret` | Google OAuth Client Secret |
+| `openai.api.Key` | OpenAI API key for GPT-3.5-turbo features |
 
 ### Google OAuth Setup
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
@@ -178,7 +226,6 @@ openai.api.Key=YOUR_OPENAI_KEY
 7. Copy Client ID and Client Secret to your config
 
 ### Environment Variables (Alternative)
-You can also use environment variables:
 ```bash
 export DB_PASSWORD=your_password
 export JWT_SECRET=your_secret
@@ -189,7 +236,7 @@ export OPENAI_API_KEY=your_openai_key
 
 ---
 
-## 📡 API Reference
+## API Reference
 
 ### Authentication
 | Method | Endpoint | Description |
@@ -203,126 +250,151 @@ export OPENAI_API_KEY=your_openai_key
 |--------|----------|-------------|
 | `POST` | `/api/resume/upload` | Upload and analyze resume |
 | `GET` | `/api/resume/user` | Get user's resumes |
-| `GET` | `/api/resume/{id}` | Get specific resume |
-| `GET` | `/api/resume/analysis/{id}` | Get analysis results |
-| `DELETE` | `/api/resume/{id}` | Delete resume |
+| `GET` | `/api/resume/{resumeId}` | Get specific resume |
+| `GET` | `/api/resume/analysis/{resumeId}` | Get analysis results |
+| `DELETE` | `/api/resume/{resumeId}` | Delete resume |
 
 ### Interview
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | `POST` | `/api/interview/start` | Start new interview session |
-| `POST` | `/api/interview/answer` | Submit answer |
-| `POST` | `/api/interview/{id}/end` | End interview |
-| `GET` | `/api/interview/{id}/report` | Get interview report |
-| `GET` | `/api/interview/user/sessions` | Get user's sessions |
+| `GET` | `/api/interview/{sessionId}/question` | Get next question |
+| `POST` | `/api/interview/submit-answer` | Submit answer with feedback |
+| `POST` | `/api/interview/{sessionId}/end` | End interview (with optional body language metrics) |
+| `GET` | `/api/interview/{sessionId}/report` | Get performance report |
+| `GET` | `/api/interview/user/history` | Get user's interview history |
+| `DELETE` | `/api/interview/{sessionId}` | Delete interview session |
 
 ### Dashboard
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `GET` | `/api/dashboard/stats` | Get user statistics |
-| `GET` | `/api/dashboard/achievements` | Get achievements |
-| `GET` | `/api/dashboard/recent-activity` | Get recent activity |
-
-### User
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/api/user/profile` | Get user profile |
-| `PUT` | `/api/user/profile` | Update profile |
+| `GET` | `/api/dashboard/user` | Get user profile and stats |
+| `GET` | `/api/dashboard/resume-history` | Get resume history list |
+| `GET` | `/api/dashboard/interview-history` | Get interview history list |
+| `GET` | `/api/dashboard/progress` | Get progress tracking data |
+| `GET` | `/api/dashboard/achievements` | Get achievements and stats |
+| `PUT` | `/api/dashboard/profile` | Update user profile |
 
 ### Health Check
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | `GET` | `/actuator/health` | Application health status |
-| `GET` | `/actuator/info` | Application info |
+
+> All `/api/**` endpoints (except `/api/auth/**`) require a valid JWT token in the `Authorization: Bearer <token>` header.
 
 ---
 
-## 🗄️ Database Schema
+## Database Schema
 
 ```
-┌─────────────────┐     ┌──────────────────────┐
-│     users       │     │       resumes        │
-├─────────────────┤     ├──────────────────────┤
-│ id (PK)         │────<│ user_id (FK)         │
-│ email           │     │ id (PK)              │
-│ name            │     │ file_url             │
-│ google_id       │     │ job_role             │
-│ profile_picture │     │ ats_score            │
-│ tech_role       │     │ analysis_result      │
-│ skills          │     │ created_at           │
-│ ...             │     └──────────────────────┘
-└─────────────────┘              │
-        │                        │
-        │     ┌──────────────────┴───────┐
-        │     │   interview_sessions     │
-        │     ├──────────────────────────┤
-        └────<│ user_id (FK)             │
-              │ resume_id (FK)           │
-              │ id (PK)                  │
-              │ score                    │
-              │ status                   │
-              │ feedback_report          │
-              └──────────────────────────┘
-                         │
-              ┌──────────┴───────────┐
-              │ interview_questions  │
-              ├──────────────────────┤
-              │ session_id (FK)      │
-              │ id (PK)              │
-              │ question_text        │
-              │ user_answer          │
-              │ ai_feedback          │
-              │ answer_score         │
-              └──────────────────────┘
+┌─────────────────────┐     ┌──────────────────────────┐
+│       users          │     │         resumes           │
+├─────────────────────┤     ├──────────────────────────┤
+│ id (PK)              │────<│ user_id (FK)              │
+│ email                │     │ id (PK)                   │
+│ name                 │     │ file_url                  │
+│ google_id            │     │ job_role                  │
+│ profile_picture_url  │     │ job_description           │
+│ tech_role            │     │ ats_score                 │
+│ experience_level     │     │ resume_text (LONGTEXT)    │
+│ skills               │     │ analysis_result (LONGTEXT)│
+│ location             │     │ created_at                │
+│ bio                  │     └──────────────────────────┘
+│ linkedin_url         │                │
+│ github_url           │                │
+│ portfolio_url        │     ┌──────────┴──────────────┐
+│ is_guest             │     │  interview_sessions      │
+│ created_at           │     ├─────────────────────────┤
+└─────────────────────┘     │ id (PK)                  │
+        │                    │ user_id (FK)             │
+        └───────────────────<│ resume_id (FK)           │
+                             │ score                    │
+                             │ status (ONGOING/         │
+                             │   COMPLETED/ABANDONED)   │
+                             │ start_time               │
+                             │ end_time                 │
+                             │ duration_minutes         │
+                             │ eye_contact_percentage   │
+                             │ face_centering_score     │
+                             │ transcript (LONGTEXT)    │
+                             │ feedback_report (LONGTEXT│
+                             └─────────────────────────┘
+                                        │
+                             ┌──────────┴──────────────┐
+                             │  interview_questions     │
+                             ├─────────────────────────┤
+                             │ id (PK)                  │
+                             │ session_id (FK)          │
+                             │ question_number          │
+                             │ question_text (LONGTEXT) │
+                             │ user_answer (LONGTEXT)   │
+                             │ ai_feedback (LONGTEXT)   │
+                             │ answer_score             │
+                             │ difficulty_level (BASIC/ │
+                             │   INTERMEDIATE/ADVANCED) │
+                             │ is_follow_up             │
+                             └─────────────────────────┘
 
-┌─────────────────────┐
-│    achievements     │
-├─────────────────────┤
-│ user_id (FK)        │
-│ id (PK)             │
-│ achievement_code    │
-│ title               │
-│ category            │
-│ earned_at           │
-└─────────────────────┘
+┌─────────────────────────┐
+│      achievements        │
+├─────────────────────────┤
+│ id (PK)                  │
+│ user_id (FK)             │
+│ achievement_code         │
+│ title                    │
+│ description              │
+│ icon                     │
+│ category (RESUME/        │
+│   INTERVIEW/PROFILE/     │
+│   MILESTONE)             │
+│ earned_at                │
+└─────────────────────────┘
 ```
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
-resumentor/
+resumentor-2.0/
 ├── src/
 │   ├── main/
 │   │   ├── java/com/a3n/resumentor/
-│   │   │   ├── config/           # Security, JWT, WebSocket configs
-│   │   │   ├── controller/       # REST API endpoints
-│   │   │   ├── dto/              # Data Transfer Objects
-│   │   │   ├── entity/           # JPA entities
-│   │   │   ├── exception/        # Custom exceptions & handlers
-│   │   │   ├── repository/       # Data access layer
-│   │   │   ├── service/          # Business logic
-│   │   │   ├── util/             # Utilities (JWT, PDF, File)
+│   │   │   ├── config/           # SecurityConfig, JwtAuthFilter, WebSocketConfig
+│   │   │   ├── controller/       # AuthController, ResumeController,
+│   │   │   │                     # InterviewController, DashboardController
+│   │   │   ├── dto/              # Request/Response DTOs (6 classes)
+│   │   │   ├── entity/           # JPA entities (5 classes)
+│   │   │   ├── exception/        # ResourceNotFoundException, GlobalExceptionHandler
+│   │   │   ├── repository/       # JPA repositories (5 interfaces)
+│   │   │   ├── service/          # Business logic (6 services)
+│   │   │   ├── util/             # JwtTokenProvider, PDFExtractor, FileUploadUtil,
+│   │   │   │                     # MockAIAnalyzer, OpenAIService
 │   │   │   └── ResumentorApplication.java
 │   │   └── resources/
 │   │       ├── static/
-│   │       │   ├── css/          # Stylesheets
-│   │       │   ├── js/           # JavaScript files
-│   │       │   ├── pages/        # HTML pages
-│   │       │   ├── assets/       # Images, icons
-│   │       │   └── error/        # Error pages (404, 500)
-│   │       └── application.properties.template
-│   └── test/                     # Unit & integration tests
-├── database_schema.sql           # MySQL schema
-├── pom.xml                       # Maven dependencies
-├── mvnw / mvnw.cmd              # Maven wrapper
+│   │       │   ├── index.html    # Landing page
+│   │       │   ├── css/          # 6 stylesheets (style, theme, dashboard,
+│   │       │   │                 #   resume-analyzer, interview, tips)
+│   │       │   ├── js/           # 10 scripts (api-client, auth, dashboard,
+│   │       │   │                 #   interview, resume-analyzer, main,
+│   │       │   │                 #   theme, ui-utils, tips, particles)
+│   │       │   ├── pages/        # dashboard, resume-analyzer, interview,
+│   │       │   │                 #   report, tips
+│   │       │   ├── assets/       # favicon.svg, logo-icon.svg
+│   │       │   └── error/        # 404.html, 500.html
+│   │       └── application.properties
+│   └── test/
+├── database_schema.sql
+├── pom.xml
+├── mvnw / mvnw.cmd
+├── LICENSE
 └── README.md
 ```
 
 ---
 
-## 🎮 Usage Guide
+## Usage Guide
 
 ### 1. Getting Started
 1. Sign in with Google or continue as Guest
@@ -330,57 +402,70 @@ resumentor/
 
 ### 2. Analyze Your Resume
 1. Go to **Resume Analyzer**
-2. Upload your resume (PDF or DOCX)
-3. Select your target job role
-4. (Optional) Paste job description for tailored analysis
+2. Upload your resume (PDF or DOCX, max 10MB)
+3. Select your target job role from 40+ options
+4. (Optional) Paste a job description for tailored analysis
 5. Click **Analyze Resume**
-6. Review your ATS score and detailed feedback
-7. Download PDF report for reference
+6. Review your ATS score, score breakdown, ATS compatibility, matched/missing keywords, skill gaps, and suggestions
+7. Download the full PDF report
 
 ### 3. Practice Interviews
 1. Go to **Mock Interview**
-2. Select a resume to base questions on
+2. Select a previously analyzed resume to base questions on
 3. Click **Start Interview**
-4. Answer questions using voice or text
-5. Receive instant AI feedback
-6. Complete all 18 questions or end early
-7. Review your comprehensive report
+4. (Optional) Enable webcam for body language tracking
+5. Answer 12 questions using voice or text (4 Basic, 4 Intermediate, 4 Advanced)
+6. Receive instant AI feedback after each answer
+7. AI generates follow-up questions based on your responses
+8. Complete all questions or let the 30-minute timer end the session
+9. Review your comprehensive performance report
+10. Download the PDF report
 
 ### 4. Track Progress
-- View statistics on Dashboard
-- Unlock achievements by reaching milestones
-- Monitor improvement over time
+- View resume ATS score trends and interview performance charts on Dashboard
+- Unlock 15 achievements by reaching milestones
+- Monitor improvement trends (improving/stable/declining indicators)
+- Download PDF reports directly from history tables
 
 ---
 
-## 🏆 Achievement System
+## Achievement System
 
-| Achievement | Requirement | Category |
+| Achievement | Description | Category |
 |-------------|-------------|----------|
-| 🎯 First Resume | Upload your first resume | Resume |
-| 📊 Resume Master | Achieve 80+ ATS score | Resume |
-| 📝 Resume Collector | Upload 5 resumes | Resume |
-| 🎤 First Interview | Complete first mock interview | Interview |
-| ⭐ Interview Pro | Score 80+ in an interview | Interview |
-| 🏆 Interview Champion | Complete 10 interviews | Interview |
-| 👤 Profile Complete | Fill in all profile fields | Profile |
-| 🔥 Consistent Learner | Use app 7 days in a row | Milestone |
+| First Steps | Analyzed your first resume | Resume |
+| Resume Master | Analyzed 5 resumes | Resume |
+| Resume Expert | Achieved 80%+ ATS score | Resume |
+| Interview Ready | Completed your first interview | Interview |
+| Interview Pro | Completed 5 interviews | Interview |
+| Interview Master | Completed 10 interviews | Interview |
+| High Scorer | Scored 80%+ in an interview | Interview |
+| Perfect Score | Achieved a perfect interview score | Interview |
+| Outstanding | Scored 90%+ in an interview | Interview |
+| Strong Performer | Scored 70%+ in an interview | Interview |
+| Quick Thinker | Completed interview in under 20 min | Interview |
+| Profile Complete | Filled out your profile | Profile |
+| Google Connected | Linked your Google account | Profile |
+| All-Rounder | Used both resume and interview features | Milestone |
+| Early Bird | One of the first users | Milestone |
 
 ---
 
-## 🔒 Security Features
+## Security Features
 
-- **JWT Authentication** - Stateless token-based auth
-- **Password Encryption** - BCrypt hashing
+- **JWT Authentication** - Stateless token-based auth (24-hour expiration)
+- **Google OAuth 2.0** - Secure social login
+- **BCrypt Password Encryption** - Industry-standard hashing
 - **CORS Protection** - Configured allowed origins
-- **Input Validation** - Request validation on all endpoints
 - **SQL Injection Prevention** - Parameterized queries via JPA
-- **XSS Protection** - Content-Type headers enforced
-- **Authorization Checks** - Resource ownership verification
+- **Resource Ownership Verification** - Users can only access their own data
+- **Stateless Session Management** - No server-side session storage
+- **Protected API Layer** - All `/api/**` endpoints require JWT (except auth routes)
+- **Public Static Assets** - CSS, JS, pages, and assets served without authentication
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
@@ -388,13 +473,16 @@ resumentor/
 ```
 Error: Access denied for user 'root'@'localhost'
 ```
-→ Check your MySQL password in `application.properties`
+Check your MySQL password in `application.properties`.
 
 **Google OAuth Not Working**
-→ Verify Client ID/Secret and authorized redirect URIs in Google Console
+Verify Client ID/Secret and authorized redirect URIs in Google Console.
 
 **File Upload Failed**
-→ Ensure `uploads/` directory exists and has write permissions
+Ensure `uploads/` directory exists and has write permissions. The application creates it automatically on first upload.
+
+**OpenAI Features Not Working**
+If `openai.api.Key` is not set or invalid, the app automatically falls back to rule-based analysis. Check your API key and ensure you have credits available.
 
 **Port Already in Use**
 ```bash
@@ -402,9 +490,12 @@ Error: Access denied for user 'root'@'localhost'
 server.port=8081
 ```
 
+**Voice Recognition Not Working**
+Web Speech API requires a modern browser (Chrome/Edge recommended) and microphone permissions.
+
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please follow these steps:
 
@@ -422,32 +513,34 @@ Contributions are welcome! Please follow these steps:
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## 👨‍💻 Author
+## Author
 
 **Aakash**
 - GitHub: [@mr-aakash897](https://github.com/mr-aakash897)
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - [Spring Boot](https://spring.io/projects/spring-boot) - Backend framework
-- [Particles.js](https://vincentgarreau.com/particles.js/) - Background effects
+- [OpenAI](https://openai.com/) - AI-powered analysis
+- [Chart.js](https://www.chartjs.org/) - Progress visualization
+- [jsPDF](https://github.com/parallax/jsPDF) - Client-side PDF generation
+- [face-api.js](https://github.com/justadudewhohacks/face-api.js) - Face detection
 - [Google Fonts](https://fonts.google.com/) - Typography
-- [Font Awesome](https://fontawesome.com/) - Icons
 
 ---
 
 <div align="center">
 
-**⭐ Star this repo if you find it helpful!**
+**Star this repo if you find it helpful!**
 
-Made with ❤️ by Aakash
+Made with care by Aakash
 
 </div>

@@ -161,8 +161,8 @@ class APIClient {
         return this.post('/interview/submit-answer', { sessionId, questionId, answer });
     }
 
-    async endInterview(sessionId) {
-        return this.post(`/interview/${sessionId}/end`);
+    async endInterview(sessionId, bodyMetrics = {}) {
+        return this.post(`/interview/${sessionId}/end`, bodyMetrics);
     }
 
     async getInterviewReport(sessionId) {

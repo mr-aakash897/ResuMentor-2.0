@@ -12,6 +12,7 @@ import com.a3n.resumentor.repository.InterviewSessionRepository;
 import com.a3n.resumentor.repository.ResumeRepository;
 import com.a3n.resumentor.repository.UserRepository;
 import com.a3n.resumentor.util.MockAIAnalyzer;
+import com.a3n.resumentor.util.OpenAIService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,7 @@ import java.util.stream.IntStream;
 public class InterviewService {
 
     private static final int INTERVIEW_DURATION_MINUTES = 30;
-    private static final int TOTAL_QUESTIONS = 18;
+    private static final int TOTAL_QUESTIONS = 12;
 
     @Autowired
     private InterviewSessionRepository interviewSessionRepository;
@@ -46,6 +47,9 @@ public class InterviewService {
 
     @Autowired
     private MockAIAnalyzer mockAIAnalyzer;
+
+    @Autowired
+    private OpenAIService openAIService;
 
     @Autowired
     private AchievementService achievementService;
@@ -80,12 +84,12 @@ public class InterviewService {
                 resume.getJobRole()
         );
 
-        // Create basic, intermediate, advanced distribution (6-6-6 for 18 questions)
+        // Create basic, intermediate, advanced distribution (4-4-4 for 12 questions)
         int[] difficulties = new int[TOTAL_QUESTIONS];
         for (int i = 0; i < TOTAL_QUESTIONS; i++) {
-            if (i < 6) difficulties[i] = 0; // BASIC (6 questions)
-            else if (i < 12) difficulties[i] = 1; // INTERMEDIATE (6 questions)
-            else difficulties[i] = 2; // ADVANCED (6 questions)
+            if (i < 4) difficulties[i] = 0; // BASIC (4 questions)
+            else if (i < 8) difficulties[i] = 1; // INTERMEDIATE (4 questions)
+            else difficulties[i] = 2; // ADVANCED (4 questions)
         }
 
         IntStream.range(0, TOTAL_QUESTIONS).forEach(i -> {
@@ -94,11 +98,12 @@ public class InterviewService {
             question.setQuestionNumber(i + 1);
             question.setQuestionText(questionTexts.get(i % questionTexts.size()));
             question.setDifficultyLevel(InterviewQuestion.DifficultyLevel.values()[difficulties[i]]);
+            question.setIsFollowUp(false);
 
             interviewQuestionRepository.save(question);
         });
 
-        log.info("Generated 18 interview questions for session: {}", session.getId());
+        log.info("Generated {} interview questions for session: {}", TOTAL_QUESTIONS, session.getId());
     }
 
     public InterviewResponse getNextQuestion(Long sessionId, Long userId) {
@@ -140,7 +145,7 @@ public class InterviewService {
 
         // Score the answer (mock scoring)
         int score = calculateScore(answer, feedback);
-        
+
         log.info("Generated score: {}, Feedback length: {}", score, feedback != null ? feedback.length() : 0);
 
         question.setUserAnswer(answer);
@@ -148,15 +153,41 @@ public class InterviewService {
         question.setAnswerScore(score);
 
         InterviewQuestion savedQuestion = interviewQuestionRepository.save(question);
-        log.info("Saved question - ID: {}, Score: {}, Answer saved: {}", 
+        log.info("Saved question - ID: {}, Score: {}, Answer saved: {}",
             savedQuestion.getId(), savedQuestion.getAnswerScore(), savedQuestion.getUserAnswer() != null);
+
+        // Try to generate a conversational follow-up question via AI
+        if (!Boolean.TRUE.equals(question.getIsFollowUp())) {
+            try {
+                String jobRole = session.getResume() != null ? session.getResume().getJobRole() : "General";
+                String followUpText = openAIService.generateFollowUpQuestion(
+                        question.getQuestionText(), answer, jobRole);
+
+                if (followUpText != null && !followUpText.isBlank()) {
+                    // Get current max question number
+                    List<InterviewQuestion> allQs = interviewQuestionRepository.findBySessionOrderByQuestionNumberAsc(session);
+                    int maxNum = allQs.stream().mapToInt(InterviewQuestion::getQuestionNumber).max().orElse(0);
+
+                    InterviewQuestion followUp = new InterviewQuestion();
+                    followUp.setSession(session);
+                    followUp.setQuestionNumber(maxNum + 1);
+                    followUp.setQuestionText(followUpText);
+                    followUp.setDifficultyLevel(question.getDifficultyLevel());
+                    followUp.setIsFollowUp(true);
+                    interviewQuestionRepository.save(followUp);
+                    log.info("Generated follow-up question for session: {}", sessionId);
+                }
+            } catch (Exception e) {
+                log.warn("Failed to generate follow-up question: {}", e.getMessage());
+            }
+        }
 
         // Check if all questions answered or time exceeded
         if (isInterviewCompleted(session)) {
             session.setStatus(InterviewSession.SessionStatus.COMPLETED);
             session.setEndTime(LocalDateTime.now());
             session.setDurationMinutes((int) ChronoUnit.MINUTES.between(session.getStartTime(), session.getEndTime()));
-            
+
             // Calculate and save the session score
             List<InterviewQuestion> allQuestions = interviewQuestionRepository.findBySessionOrderByQuestionNumberAsc(session);
             int avgScore = (int) allQuestions.stream()
@@ -165,7 +196,7 @@ public class InterviewService {
                     .average()
                     .orElse(0);
             session.setScore(avgScore);
-            
+
             interviewSessionRepository.save(session);
             log.info("Interview completed for session: {}, Final Score: {}", sessionId, avgScore);
 
@@ -181,12 +212,20 @@ public class InterviewService {
         return getNextQuestion(sessionId, userId);
     }
 
-    public void endInterview(Long sessionId, Long userId) {
+    public void endInterview(Long sessionId, Long userId, Integer eyeContactPercentage, Integer faceCenteringScore) {
         InterviewSession session = verifySessionOwnership(sessionId, userId);
 
         session.setStatus(InterviewSession.SessionStatus.COMPLETED);
         session.setEndTime(LocalDateTime.now());
         session.setDurationMinutes((int) ChronoUnit.MINUTES.between(session.getStartTime(), session.getEndTime()));
+
+        // Store body language metrics
+        if (eyeContactPercentage != null) {
+            session.setEyeContactPercentage(eyeContactPercentage);
+        }
+        if (faceCenteringScore != null) {
+            session.setFaceCenteringScore(faceCenteringScore);
+        }
 
         // Calculate overall score from ANSWERED questions only
         List<InterviewQuestion> questions = interviewQuestionRepository.findBySessionOrderByQuestionNumberAsc(session);
@@ -395,6 +434,45 @@ public class InterviewService {
         }
         report.setActionableRecommendations(recommendations);
 
+        // Body language analysis
+        if (session.getEyeContactPercentage() != null || session.getFaceCenteringScore() != null) {
+            int eyeContact = session.getEyeContactPercentage() != null ? session.getEyeContactPercentage() : 0;
+            int centering = session.getFaceCenteringScore() != null ? session.getFaceCenteringScore() : 0;
+            report.setEyeContactPercentage(eyeContact);
+            report.setFaceCenteringScore(centering);
+
+            // Generate body language feedback
+            StringBuilder blFeedback = new StringBuilder();
+            if (eyeContact >= 80) {
+                blFeedback.append("Excellent eye contact! You maintained strong visual engagement throughout the interview. ");
+            } else if (eyeContact >= 60) {
+                blFeedback.append("Good eye contact overall. You were mostly engaged but had some moments where you looked away. ");
+            } else if (eyeContact >= 40) {
+                blFeedback.append("Your eye contact was inconsistent. Try to look at the camera more during responses. ");
+            } else {
+                blFeedback.append("Your eye contact needs improvement. Practice looking directly at the camera while speaking. ");
+            }
+
+            if (centering >= 80) {
+                blFeedback.append("Your positioning was excellent - you stayed well-centered in the frame.");
+            } else if (centering >= 60) {
+                blFeedback.append("Your positioning was generally good but could be more centered.");
+            } else {
+                blFeedback.append("Try to position yourself more centrally in the camera frame.");
+            }
+            report.setBodyLanguageFeedback(blFeedback.toString());
+
+            // Body language tips
+            List<String> blTips = new ArrayList<>();
+            if (eyeContact < 70) blTips.add("Position your webcam at eye level to improve natural eye contact");
+            if (eyeContact < 50) blTips.add("Practice looking at the camera lens, not the screen, when speaking");
+            if (centering < 70) blTips.add("Sit centered in your chair and adjust the camera so your face is in the middle");
+            if (centering < 50) blTips.add("Avoid leaning or moving too much during responses");
+            blTips.add("Ensure good lighting on your face from the front");
+            blTips.add("Keep a neutral, professional background behind you");
+            report.setBodyLanguageTips(blTips);
+        }
+
         // Generate overall feedback
         report.setOverallFeedback(generateOverallFeedback(report));
 
@@ -469,6 +547,7 @@ public class InterviewService {
         response.setElapsedMinutes((int) elapsedMinutes);
         response.setIsCompleted(elapsedMinutes >= INTERVIEW_DURATION_MINUTES || hasAllQuestionsAnswered(session));
         response.setDifficultyLevel(question.getDifficultyLevel());
+        response.setIsFollowUp(Boolean.TRUE.equals(question.getIsFollowUp()));
 
         return response;
     }

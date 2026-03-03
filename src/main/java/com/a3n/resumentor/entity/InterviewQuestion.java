@@ -36,6 +36,9 @@ public class InterviewQuestion {
     private Integer answerScore;
     private Integer questionNumber;
 
+    @Column(name = "is_follow_up")
+    private Boolean isFollowUp = false;
+
     public enum DifficultyLevel {
         BASIC, INTERMEDIATE, ADVANCED
     }

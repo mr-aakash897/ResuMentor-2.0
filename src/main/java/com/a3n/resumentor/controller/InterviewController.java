@@ -101,13 +101,25 @@ public class InterviewController {
     @PostMapping("/{sessionId}/end")
     public ResponseEntity<?> endInterview(
             @PathVariable Long sessionId,
+            @RequestBody(required = false) Map<String, Object> body,
             @RequestHeader("Authorization") String token) {
 
         try {
             Long userId = extractUserIdFromToken(token);
             log.info("Ending interview session: {} for user: {}", sessionId, userId);
 
-            interviewService.endInterview(sessionId, userId);
+            Integer eyeContactPercentage = null;
+            Integer faceCenteringScore = null;
+            if (body != null) {
+                if (body.get("eyeContactPercentage") != null) {
+                    eyeContactPercentage = ((Number) body.get("eyeContactPercentage")).intValue();
+                }
+                if (body.get("faceCenteringScore") != null) {
+                    faceCenteringScore = ((Number) body.get("faceCenteringScore")).intValue();
+                }
+            }
+
+            interviewService.endInterview(sessionId, userId, eyeContactPercentage, faceCenteringScore);
 
             Map<String, String> response = new HashMap<>();
             response.put("message", "Interview ended successfully");

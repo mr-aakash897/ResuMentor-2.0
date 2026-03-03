@@ -20,4 +20,5 @@ public class InterviewResponse {
     private String feedback;
     private Integer currentScore;
     private InterviewQuestion.DifficultyLevel difficultyLevel;
+    private Boolean isFollowUp;
 }

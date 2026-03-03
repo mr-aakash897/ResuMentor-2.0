@@ -1,4 +1,13 @@
-// ==================== Three.js Particle Background ====================
+/*
+ * ==================== Three.js Particle Background ====================
+ * DISABLED - Uncomment this file and enable in HTML files to use Three.js particles
+ * To re-enable:
+ * 1. Uncomment all code below
+ * 2. In each HTML file, uncomment the three.js script tag and particles-canvas
+ * 3. Uncomment the particles.js script tag
+ */
+
+/*
 class ParticleBackground {
     constructor() {
         this.container = document.getElementById('particles-canvas');
@@ -245,3 +254,10 @@ function updateParticleTheme(isDark) {
         particleBackground.updateColors(isDark);
     }
 }
+*/
+
+// Placeholder function to prevent errors if called from theme.js
+function updateParticleTheme(isDark) {
+    // Three.js particles disabled - do nothing
+}
+

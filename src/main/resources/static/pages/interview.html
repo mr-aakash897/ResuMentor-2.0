@@ -3,31 +3,503 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interview - ResuMentor</title>
+    <title>AI Interview - ResuMentor</title>
     <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/theme.css">
-    <link rel="stylesheet" href="../css/interview.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+    <style>
+        .interview-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: calc(100vh - 160px);
+        }
+
+        .video-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .webcam-container {
+            position: relative;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            aspect-ratio: 4/3;
+        }
+
+        .webcam-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+        }
+
+        .webcam-overlay {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            gap: 8px;
+            z-index: 2;
+        }
+
+        .webcam-badge {
+            background: rgba(0,0,0,0.6);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .webcam-badge .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #f44336;
+            animation: pulse-dot 1.5s infinite;
+        }
+
+        .webcam-badge .dot.green { background: #4caf50; }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .ai-avatar-section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 2px 10px var(--shadow);
+        }
+
+        .ai-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+
+        .ai-avatar.speaking {
+            animation: avatar-pulse 1s infinite;
+        }
+
+        @keyframes avatar-pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4); }
+            50% { box-shadow: 0 0 0 12px rgba(102, 126, 234, 0); }
+        }
+
+        .ai-info { flex: 1; }
+
+        .ai-info h3 {
+            margin: 0;
+            font-size: 16px;
+            color: var(--text-primary);
+        }
+
+        .ai-info p {
+            margin: 3px 0 0;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .interview-status-bar {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px var(--shadow);
+        }
+
+        .timer-display {
+            font-size: 24px;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            color: var(--primary-color);
+        }
+
+        .progress-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-info .progress-bar {
+            width: 120px;
+            height: 8px;
+            background: var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-info .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .difficulty-badge {
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .difficulty-badge.basic { background: #e8f5e9; color: #2e7d32; }
+        .difficulty-badge.intermediate { background: #fff3e0; color: #ef6c00; }
+        .difficulty-badge.advanced { background: #ffebee; color: #c62828; }
+
+        .interaction-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .question-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px var(--shadow);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .question-card h3 {
+            margin: 0 0 12px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .question-card p {
+            margin: 0;
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-primary);
+        }
+
+        .follow-up-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            margin-bottom: 8px;
+        }
+
+        .answer-area {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px var(--shadow);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mic-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .mic-button {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            font-size: 22px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .mic-button:hover { transform: scale(1.05); }
+
+        .mic-button.recording {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+            animation: mic-pulse 1s infinite;
+        }
+
+        @keyframes mic-pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.4); }
+            50% { box-shadow: 0 0 0 10px rgba(244, 67, 54, 0); }
+        }
+
+        .mic-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .mic-status {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .live-transcript {
+            flex: 1;
+            min-height: 80px;
+            max-height: 150px;
+            overflow-y: auto;
+            padding: 12px;
+            background: var(--section-bg);
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .text-fallback textarea {
+            width: 100%;
+            min-height: 80px;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            resize: vertical;
+            background: var(--section-bg);
+            color: var(--text-primary);
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+
+        .answer-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .answer-actions .btn { flex: 1; }
+
+        .transcript-panel {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 15px;
+            max-height: 250px;
+            overflow-y: auto;
+            box-shadow: 0 2px 10px var(--shadow);
+        }
+
+        .transcript-panel h4 {
+            margin: 0 0 10px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .transcript-message {
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+
+        .transcript-message.ai {
+            background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1));
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .transcript-message.user {
+            background: var(--section-bg);
+            border-left: 3px solid #4caf50;
+        }
+
+        .transcript-message .message-header {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 4px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .resume-selection {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .resume-selection h2 { text-align: center; margin-bottom: 30px; }
+
+        .resume-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .resume-item:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px var(--shadow);
+        }
+
+        .resume-item h4 { margin: 0 0 5px; color: var(--text-primary); }
+        .resume-item p { margin: 0; font-size: 13px; color: var(--text-secondary); }
+
+        .loading-section {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .loading-section .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--border-color);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .completion-section {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        .completion-section .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 30px auto;
+            color: white;
+        }
+
+        .completion-section .score-circle .score-value {
+            font-size: 42px;
+            font-weight: bold;
+        }
+
+        .completion-section .score-circle .score-label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .completion-stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0 30px;
+        }
+
+        .completion-stats .stat { text-align: center; }
+
+        .completion-stats .stat .value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .completion-stats .stat .label {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .completion-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .end-interview-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .end-interview-btn:hover { background: #d32f2f; }
+
+        .confirm-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .confirm-modal.active { display: flex; }
+
+        .confirm-modal-content {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .confirm-modal-content h3 { margin: 0 0 10px; }
+        .confirm-modal-content p { color: var(--text-secondary); margin-bottom: 20px; }
+
+        .confirm-modal-content .btn-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        @media (max-width: 900px) {
+            .interview-layout { grid-template-columns: 1fr; }
+            .webcam-container { aspect-ratio: 16/9; }
+        }
+    </style>
 </head>
 <body>
-    <!-- Particle Background Canvas -->
-    <canvas id="particles-canvas"></canvas>
-    
     <!-- Navigation Bar -->
     <nav class="navbar" id="navbar">
         <div class="navbar-container">
             <a href="../index.html" class="navbar-logo">
                 <img src="../assets/logo-icon.svg" alt="" class="logo-icon"> ResuMentor
             </a>
-            
-            <!-- Mobile Menu Toggle -->
             <button class="menu-toggle" id="menuToggle" onclick="toggleMobileMenu()">
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span><span></span>
             </button>
-            
             <ul class="nav-menu" id="navMenu">
                 <li><a href="../index.html" class="nav-link">Home</a></li>
                 <li><a href="../pages/resume-analyzer.html" class="nav-link">Resume Analyzer</a></li>
@@ -36,222 +508,138 @@
                 <li><a href="../pages/dashboard.html" class="nav-link">Dashboard</a></li>
             </ul>
             <div class="navbar-controls">
-                <button id="theme-toggle" class="theme-btn" onclick="toggleTheme()">🌙</button>
+                <button id="theme-toggle" class="theme-btn" onclick="toggleTheme()">&#127769;</button>
                 <button id="logout-btn" class="login-btn" onclick="logout()">Logout</button>
             </div>
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <main class="container" style="margin-top: 90px;">
-        <!-- Resume Selection (if not coming from resume analyzer) -->
+    <main class="main-content" style="margin-top: 80px;">
+        <!-- Resume Selection -->
         <div id="resumeSelectionSection" class="resume-selection">
-            <div class="selection-header">
-                <h2>🎯 Select a Resume for Interview</h2>
-                <p class="selection-subtitle">Choose a previously analyzed resume to start your AI-powered mock interview</p>
-            </div>
-            <div id="resumeList" class="resume-list"></div>
-            
-            <!-- Interview Tips Card -->
-            <div class="interview-tips-card">
-                <h3>💡 Interview Tips</h3>
-                <ul class="tips-list">
-                    <li><span class="tip-icon">🎤</span> Speak clearly and at a moderate pace</li>
-                    <li><span class="tip-icon">⏱️</span> Take your time to structure your answers</li>
-                    <li><span class="tip-icon">📝</span> Use the STAR method for behavioral questions</li>
-                    <li><span class="tip-icon">🔄</span> You can replay questions if needed</li>
-                </ul>
-            </div>
+            <h2>Select a Resume for AI Interview</h2>
+            <p style="text-align:center; color: var(--text-secondary); margin-bottom: 20px;">Choose a resume to start your mock interview session with webcam and AI voice.</p>
+            <div id="resumeList"><p style="text-align:center;">Loading resumes...</p></div>
         </div>
 
-        <!-- Interview Session -->
-        <div id="interviewSection" class="interview-container" style="display: none;">
-            <!-- Interview Header -->
-            <div class="interview-header">
-                <div class="header-left">
-                    <div class="session-badge">
-                        <span class="badge-icon">🎙️</span>
-                        <span>Live Session</span>
-                    </div>
-                    <h2>AI Interview Session</h2>
-                    <p id="roleInfo" class="role-info"></p>
-                </div>
-                <div class="header-right">
-                    <div class="timer-section">
-                        <span class="timer-label">Time Remaining</span>
-                        <div class="timer" id="timer">30:00</div>
-                    </div>
-                    <div class="progress-section">
-                        <span class="progress-label">Progress</span>
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
-                        </div>
-                        <span id="questionCount">1/12</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Interview Content -->
-            <div class="interview-content">
-                <!-- Left Panel - AI & Question -->
-                <div class="interview-left-panel">
-                    <!-- AI Avatar Section -->
-                    <div class="ai-avatar-section">
-                        <div class="ai-avatar" id="aiAvatar">
-                            <div class="avatar-circle">
-                                <span class="avatar-icon">🤖</span>
-                                <div class="speaking-indicator" id="speakingIndicator">
-                                    <span></span><span></span><span></span>
-                                </div>
-                            </div>
-                            <p class="avatar-status" id="avatarStatus">AI Interviewer</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Question Display -->
-                    <div class="question-section">
-                        <div class="question-header">
-                            <div class="difficulty-badge" id="difficultyBadge">BASIC</div>
-                            <button class="replay-btn" onclick="replayQuestion()" title="Replay Question" id="replayBtn">
-                                🔊 Replay
-                            </button>
-                        </div>
-                        <h3>Current Question</h3>
-                        <p id="currentQuestion" class="question-text"></p>
-                    </div>
-                    
-                    <!-- Quick Tips Panel -->
-                    <div class="quick-tips-panel">
-                        <h4>💡 Quick Tips</h4>
-                        <div class="tips-scroll">
-                            <div class="tip-item"><span>🎯</span> Be specific with examples</div>
-                            <div class="tip-item"><span>⏰</span> 2-3 minutes per answer</div>
-                            <div class="tip-item"><span>📊</span> Quantify your achievements</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Right Panel - User Response -->
-                <div class="interview-right-panel">
-                    <!-- User Response Section -->
-                    <div class="user-response-section">
-                        <h3>Your Response</h3>
-                        
-                        <!-- Voice Control -->
-                        <div class="voice-control-section">
-                            <div class="mic-container">
-                                <button class="mic-button" id="micButton" onclick="toggleRecording()" title="Click to start/stop voice recording">
-                                    <span class="mic-icon">🎤</span>
-                                    <div class="mic-pulse" id="micPulse"></div>
-                                </button>
-                                <p class="mic-status" id="micStatus">Click mic to speak OR type below</p>
-                            </div>
-                            <div class="voice-visualizer" id="voiceVisualizer">
-                                <div class="visualizer-bar"></div>
-                                <div class="visualizer-bar"></div>
-                                <div class="visualizer-bar"></div>
-                                <div class="visualizer-bar"></div>
-                                <div class="visualizer-bar"></div>
-                            </div>
-                        </div>
-
-                        <!-- Live Transcript -->
-                        <div class="live-transcript-section">
-                            <div class="transcript-header">
-                                <h4>Live Transcript</h4>
-                                <button class="btn btn-small btn-clear" onclick="clearTranscript()" title="Clear">🗑️</button>
-                            </div>
-                            <div id="liveTranscript" class="live-transcript">Start speaking...</div>
-                        </div>
-
-                        <!-- Text Input (Always Available) -->
-                        <div class="text-fallback visible" id="textFallback">
-                            <p class="fallback-note">✏️ Type your answer below (or click 🎤 mic to use voice):</p>
-                            <textarea id="userAnswer" placeholder="Type your answer here and click Submit..." rows="4"></textarea>
-                        </div>
-
-                        <!-- Submit Button -->
-                        <button class="btn btn-primary btn-submit" onclick="submitAnswer()" id="submitBtn" disabled>
-                            ✓ Submit Answer
-                        </button>
-                    </div>
-
-                    <!-- Conversation History -->
-                    <div class="transcript-section">
-                        <h3>📝 Conversation History</h3>
-                        <div id="transcriptBox" class="transcript-box">
-                            <p class="transcript-placeholder">Interview transcript will appear here...</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Interview Footer -->
-            <div class="interview-footer">
-                <div class="footer-left">
-                    <span class="keyboard-hint">💡 Press <kbd>Space</kbd> to toggle mic</span>
-                </div>
-                <div class="footer-right">
-                    <button class="btn btn-secondary" onclick="confirmEndInterview()">End Session</button>
-                    <button class="btn btn-primary" onclick="viewReport()" id="reportBtn" style="display: none;">📊 View Report</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Completion Section -->
-        <div id="completionSection" class="completion-section" style="display: none;">
-            <div class="completion-card">
-                <h2>🎉 Interview Complete!</h2>
-                <div class="completion-stats">
-                    <div class="stat">
-                        <span class="stat-value" id="finalScore">0</span>
-                        <span class="stat-label">Overall Score</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-value" id="questionsAnswered">0</span>
-                        <span class="stat-label">Questions Answered</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-value" id="sessionDuration">0</span>
-                        <span class="stat-label">Duration (Minutes)</span>
-                    </div>
-                </div>
-                <div class="completion-buttons">
-                    <button class="btn btn-primary" onclick="viewDetailedReport()">📊 View Detailed Report</button>
-                    <button class="btn btn-secondary" onclick="goToDashboard()">📈 Go to Dashboard</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Loading Section -->
-        <div id="loadingSection" class="loading-section" style="display: none;">
+        <!-- Loading -->
+        <div id="loadingSection" style="display: none;" class="loading-section">
             <div class="spinner"></div>
-            <p id="loadingText">Preparing interview...</p>
+            <p id="loadingText">Preparing your interview...</p>
+        </div>
+
+        <!-- Interview Section -->
+        <div id="interviewSection" style="display: none;">
+            <div class="interview-layout">
+                <div class="video-panel">
+                    <div class="webcam-container">
+                        <video id="userVideo" autoplay muted playsinline></video>
+                        <div class="webcam-overlay">
+                            <div class="webcam-badge">
+                                <span class="dot" id="cameraDot"></span>
+                                <span id="cameraStatus">Camera</span>
+                            </div>
+                            <div class="webcam-badge" id="faceDetectBadge" style="display:none;">
+                                <span class="dot green"></span>
+                                <span>Face Detected</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ai-avatar-section">
+                        <div class="ai-avatar" id="aiAvatar">&#129302;</div>
+                        <div class="ai-info">
+                            <h3 id="avatarStatus">AI Interviewer</h3>
+                            <p id="roleInfo">Preparing interview...</p>
+                        </div>
+                        <button class="btn btn-secondary" onclick="replayQuestion()" style="font-size:12px; padding:6px 12px;">Replay</button>
+                    </div>
+                    <div class="interview-status-bar">
+                        <div class="timer-display" id="timer">00:00</div>
+                        <div class="progress-info">
+                            <span id="questionCount">0/0</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progressFill" style="width:0%"></div>
+                            </div>
+                            <span class="difficulty-badge basic" id="difficultyBadge">BASIC</span>
+                        </div>
+                        <button class="end-interview-btn" onclick="confirmEndInterview()">End Interview</button>
+                    </div>
+                </div>
+                <div class="interaction-panel">
+                    <div class="question-card">
+                        <div id="followUpBadge" style="display:none;"><span class="follow-up-badge">Follow-up Question</span></div>
+                        <h3>Current Question</h3>
+                        <p id="currentQuestion">Preparing your first question...</p>
+                    </div>
+                    <div class="answer-area">
+                        <div class="mic-controls">
+                            <button class="mic-button" id="micButton" onclick="toggleRecording()">&#127908;</button>
+                            <span class="mic-status" id="micStatus">Click mic to speak</span>
+                        </div>
+                        <div class="live-transcript" id="liveTranscript">Start speaking...</div>
+                        <div class="text-fallback" id="textFallback">
+                            <textarea id="userAnswer" placeholder="Type your answer here..."></textarea>
+                        </div>
+                        <div class="answer-actions">
+                            <button class="btn btn-secondary" onclick="clearTranscript()">Clear</button>
+                            <button class="btn btn-primary" id="submitBtn" onclick="submitAnswer()" disabled>Submit Answer</button>
+                        </div>
+                    </div>
+                    <div class="transcript-panel">
+                        <h4>Conversation History</h4>
+                        <div id="transcriptBox">
+                            <p class="transcript-placeholder" style="color: var(--text-secondary); font-size: 13px;">Interview transcript will appear here...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Completion -->
+        <div id="completionSection" style="display: none;" class="completion-section">
+            <h1>Interview Complete!</h1>
+            <p style="color: var(--text-secondary);">Great job completing your mock interview session.</p>
+            <div class="score-circle">
+                <span class="score-value" id="finalScore">0%</span>
+                <span class="score-label">Overall Score</span>
+            </div>
+            <div class="completion-stats">
+                <div class="stat"><div class="value" id="questionsAnswered">0</div><div class="label">Questions</div></div>
+                <div class="stat"><div class="value" id="sessionDuration">0</div><div class="label">Minutes</div></div>
+            </div>
+            <div class="completion-actions">
+                <button class="btn btn-primary" id="reportBtn" onclick="viewDetailedReport()">View Detailed Report</button>
+                <button class="btn btn-secondary" onclick="goToDashboard()">Go to Dashboard</button>
+                <button class="btn btn-secondary" onclick="location.reload()">New Interview</button>
+            </div>
         </div>
     </main>
 
-    <!-- Confirmation Modal -->
-    <div id="confirmModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <h3>End Interview Session?</h3>
-            <p>Are you sure you want to end the interview? You'll receive a report with your performance.</p>
-            <div class="modal-buttons">
-                <button class="btn btn-secondary" onclick="closeConfirmModal()">Cancel</button>
-                <button class="btn btn-primary" onclick="endInterview()">End Interview</button>
+    <!-- Confirm End Modal -->
+    <div class="confirm-modal" id="confirmModal">
+        <div class="confirm-modal-content">
+            <h3>End Interview?</h3>
+            <p>Are you sure you want to end the interview? Your progress so far will be saved.</p>
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="closeConfirmModal()">Continue</button>
+                <button class="btn btn-primary" style="background:#f44336;" onclick="endInterview()">End Interview</button>
             </div>
         </div>
     </div>
 
-    <!-- Footer -->
-    <!-- <footer class="footer">
+    <footer class="footer">
         <div class="container">
             <p>&copy; 2026 ResuMentor. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="#privacy">Privacy Policy</a>
+                <a href="#terms">Terms of Service</a>
+                <a href="#contact">Contact Us</a>
+            </div>
         </div>
-    </footer> -->
+    </footer>
 
     <script src="../js/api-client.js"></script>
     <script src="../js/ui-utils.js"></script>
-    <script src="../js/particles.js"></script>
     <script src="../js/theme.js"></script>
     <script src="../js/auth.js"></script>
     <script src="../js/interview.js"></script>

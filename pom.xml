@@ -30,14 +30,22 @@
 		<java.version>21</java.version>
 	</properties>
 	<dependencies>
-		<!-- Removed duplicate spring-boot-starter-data-jpa and spring-boot-starter-security -->
+		<!-- Spring Boot Core Starters (removed duplicates for faster startup) -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security-oauth2-client</artifactId>
+			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-webmvc</artifactId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-oauth2-client</artifactId>
 		</dependency>
 		
 		<!-- Actuator for health monitoring -->
@@ -94,26 +102,6 @@
 			<artifactId>jackson-databind</artifactId>
 		</dependency>
 
-		<!-- Spring Boot Web, Security, Data JPA -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
-
-		<!-- OAuth2 -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-oauth2-client</artifactId>
-		</dependency>
-
 		<!-- MySQL & Connection Pool -->
 		<!-- Removed duplicate/incorrect MySQL connector, already present as com.mysql:mysql-connector-j -->
 
@@ -143,12 +131,7 @@
 			<scope>runtime</scope>
 		</dependency>
 
-		<!-- OpenAI -->
-		<dependency>
-			<groupId>com.theokanning.openai-gpt3-java</groupId>
-			<artifactId>service</artifactId>
-			<version>0.12.0</version>
-		</dependency>
+		<!-- OpenAI - Using Spring RestTemplate directly (theokanning library has Jackson conflicts with Spring Boot 4.x) -->
 
 		<!-- PDF Generation -->
 		<dependency>

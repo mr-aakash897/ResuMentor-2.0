@@ -414,12 +414,41 @@
                 justify-content: center;
             }
         }
+
+        .score-breakdown-items {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .score-item-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .score-label-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            min-width: 110px;
+        }
+
+        .score-value-text {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--primary-color);
+            min-width: 40px;
+            text-align: right;
+        }
     </style>
+    <!-- THREE.JS DISABLED - Uncomment to enable particle background
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    -->
 </head>
 <body>
-    <!-- Particle Background Canvas -->
+    <!-- THREE.JS DISABLED - Uncomment to enable particle background
     <canvas id="particles-canvas"></canvas>
+    -->
     
     <!-- Navigation Bar -->
     <nav class="navbar" id="navbar">
@@ -592,6 +621,37 @@
                     </div>
                 </div>
 
+                <!-- Body Language Analysis -->
+                <div class="analysis-grid" id="bodyLanguageSection" style="display: none;">
+                    <div class="analysis-card">
+                        <h3>📷 Body Language Analysis</h3>
+                        <div class="score-breakdown-items">
+                            <div class="score-item-row">
+                                <span class="score-label-text">Eye Contact</span>
+                                <div class="progress-bar" style="flex:1; margin: 0 10px;">
+                                    <div class="progress-fill" id="eyeContactBar" style="width: 0%; height: 8px; border-radius: 4px;"></div>
+                                </div>
+                                <span class="score-value-text" id="eyeContactScore">0%</span>
+                            </div>
+                            <div class="score-item-row">
+                                <span class="score-label-text">Face Centering</span>
+                                <div class="progress-bar" style="flex:1; margin: 0 10px;">
+                                    <div class="progress-fill" id="faceCenteringBar" style="width: 0%; height: 8px; border-radius: 4px;"></div>
+                                </div>
+                                <span class="score-value-text" id="faceCenteringScoreValue">0%</span>
+                            </div>
+                        </div>
+                        <div style="margin-top: 15px;">
+                            <p id="bodyLanguageFeedbackText" style="font-size: 14px; line-height: 1.6; color: var(--text-primary);"></p>
+                        </div>
+                    </div>
+
+                    <div class="analysis-card">
+                        <h3>💡 Body Language Tips</h3>
+                        <div class="list-items" id="bodyLanguageTipsList"></div>
+                    </div>
+                </div>
+
                 <!-- Overall Feedback -->
                 <div class="feedback-section">
                     <h2>📊 Detailed Assessment</h2>
@@ -609,7 +669,7 @@
                 <div class="actions">
                     <button class="btn btn-secondary" onclick="window.print()">🖨️ Print Report</button>
                     <button class="btn btn-primary" onclick="location.href='/pages/interview.html'">🔄 New Interview</button>
-                    <button class="btn btn-secondary" onclick="location.href='/pages/dashboard.html'">📊 Dashboard</button>
+                    <button class="btn btn-secondary" onclick="goToDashboard()">📊 View on Dashboard</button>
                 </div>
             </div>
 
@@ -702,6 +762,21 @@
 
             // Recommendations
             renderList('recommendationsList', report.actionableRecommendations || [], 'recommendation', '💡');
+
+            // Body Language Analysis
+            if (report.eyeContactPercentage != null || report.faceCenteringScore != null) {
+                document.getElementById('bodyLanguageSection').style.display = 'grid';
+                const eyeContact = report.eyeContactPercentage || 0;
+                const centering = report.faceCenteringScore || 0;
+                document.getElementById('eyeContactScore').textContent = eyeContact + '%';
+                document.getElementById('eyeContactBar').style.width = eyeContact + '%';
+                document.getElementById('faceCenteringScoreValue').textContent = centering + '%';
+                document.getElementById('faceCenteringBar').style.width = centering + '%';
+                if (report.bodyLanguageFeedback) {
+                    document.getElementById('bodyLanguageFeedbackText').textContent = report.bodyLanguageFeedback;
+                }
+                renderList('bodyLanguageTipsList', report.bodyLanguageTips || [], 'tip', '💡');
+            }
 
             // Overall feedback
             document.getElementById('overallFeedback').textContent = report.overallFeedback || 'Great job completing the interview!';
@@ -968,9 +1043,19 @@
                 }
             });
         }
+
+        function goToDashboard() {
+            if (sessionId) {
+                window.location.href = `/pages/dashboard.html?interviewSessionId=${sessionId}`;
+            } else {
+                window.location.href = '/pages/dashboard.html';
+            }
+        }
     </script>
     <script src="../js/ui-utils.js"></script>
+    <!-- THREE.JS DISABLED - Uncomment to enable particle background
     <script src="../js/particles.js"></script>
+    -->
     <script src="../js/theme.js"></script>
 </body>
 </html>

@@ -1,8 +1,8 @@
-// ==================== Voice Interview Functions ==================== 
+// ==================== Voice Interview Functions ====================
 let currentSession = null;
 let currentQuestion = null;
 let interviewTimer = null;
-let remainingSeconds = 1800; // 30 minutes
+let elapsedSeconds = 0;
 let currentQuestionIndex = 0;
 
 // Speech Recognition & Synthesis
@@ -13,26 +13,114 @@ let isSpeaking = false;
 let currentTranscript = '';
 let selectedVoice = null;
 
+// Webcam & Face Detection
+let webcamStream = null;
+let faceTrackingInterval = null;
+let faceStats = { detected: 0, total: 0, centerScores: [] };
+let faceApiLoaded = false;
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
     checkAuthentication();
     initializeSpeech();
     initializeInterview();
-    
-    // Initialize scroll-to-top button
+
     if (typeof initScrollToTop === 'function') {
         initScrollToTop();
     }
 });
 
+// ==================== Webcam ====================
+async function initWebcam() {
+    try {
+        webcamStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        const videoEl = document.getElementById('userVideo');
+        videoEl.srcObject = webcamStream;
+        document.getElementById('cameraDot').classList.add('green');
+        document.getElementById('cameraStatus').textContent = 'Live';
+        console.log('Webcam initialized');
+        return webcamStream;
+    } catch (e) {
+        console.warn('Webcam access denied:', e.message);
+        document.getElementById('cameraStatus').textContent = 'No camera';
+        return null;
+    }
+}
+
+function stopWebcam() {
+    if (webcamStream) {
+        webcamStream.getTracks().forEach(track => track.stop());
+        webcamStream = null;
+    }
+}
+
+// ==================== Face Detection ====================
+async function initFaceDetection() {
+    try {
+        await faceapi.nets.tinyFaceDetector.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/');
+        faceApiLoaded = true;
+        console.log('Face detection model loaded');
+        startFaceTracking();
+    } catch (e) {
+        console.warn('Face detection failed to load:', e.message);
+    }
+}
+
+function startFaceTracking() {
+    if (!faceApiLoaded) return;
+
+    const videoEl = document.getElementById('userVideo');
+    const badge = document.getElementById('faceDetectBadge');
+
+    faceTrackingInterval = setInterval(async () => {
+        if (!videoEl || videoEl.readyState < 2) return;
+
+        faceStats.total++;
+        try {
+            const detection = await faceapi.detectSingleFace(videoEl, new faceapi.TinyFaceDetectorOptions());
+            if (detection) {
+                faceStats.detected++;
+                badge.style.display = 'flex';
+
+                // Calculate centering score (0-100)
+                const box = detection.box;
+                const centerX = box.x + box.width / 2;
+                const videoCenterX = videoEl.videoWidth / 2;
+                const offset = Math.abs(centerX - videoCenterX) / videoCenterX;
+                faceStats.centerScores.push(Math.round((1 - offset) * 100));
+            } else {
+                badge.style.display = 'none';
+            }
+        } catch (e) {
+            // Silently ignore detection errors
+        }
+    }, 3000);
+}
+
+function stopFaceTracking() {
+    if (faceTrackingInterval) {
+        clearInterval(faceTrackingInterval);
+        faceTrackingInterval = null;
+    }
+}
+
+function getBodyLanguageMetrics() {
+    const eyeContactPercentage = faceStats.total > 0
+        ? Math.round((faceStats.detected / faceStats.total) * 100)
+        : 0;
+    const faceCenteringScore = faceStats.centerScores.length > 0
+        ? Math.round(faceStats.centerScores.reduce((a, b) => a + b, 0) / faceStats.centerScores.length)
+        : 0;
+    return { eyeContactPercentage, faceCenteringScore };
+}
+
 // ==================== Speech Initialization ====================
 function initializeSpeech() {
-    // Initialize Speech Recognition
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    
+
     if (SpeechRecognition) {
         recognition = new SpeechRecognition();
-        recognition.continuous = true; // Keep listening
+        recognition.continuous = true;
         recognition.interimResults = true;
         recognition.lang = 'en-US';
         recognition.maxAlternatives = 1;
@@ -40,7 +128,7 @@ function initializeSpeech() {
         recognition.onstart = () => {
             isRecording = true;
             updateMicUI(true);
-            document.getElementById('micStatus').textContent = '🔴 Recording... Speak now';
+            document.getElementById('micStatus').textContent = 'Recording... Speak now';
         };
 
         recognition.onresult = (event) => {
@@ -56,39 +144,34 @@ function initializeSpeech() {
                 }
             }
 
-            // Append final transcript
             if (finalTranscript.trim()) {
                 currentTranscript += finalTranscript;
             }
-            
-            // Show real-time feedback
+
             const displayText = currentTranscript + interimTranscript;
             document.getElementById('liveTranscript').textContent = displayText || 'Listening...';
             document.getElementById('userAnswer').value = currentTranscript.trim();
-            
-            // Enable submit button when there's content
             document.getElementById('submitBtn').disabled = currentTranscript.trim().length === 0;
         };
 
         recognition.onerror = (event) => {
             console.error('Speech recognition error:', event.error);
-            
+
             if (event.error === 'not-allowed') {
-                document.getElementById('micStatus').textContent = '❌ Microphone access denied';
+                document.getElementById('micStatus').textContent = 'Microphone access denied';
                 showTextFallback();
                 isRecording = false;
                 updateMicUI(false);
             } else if (event.error === 'network') {
-                document.getElementById('micStatus').textContent = '⚠️ Network error - type your answer instead';
+                document.getElementById('micStatus').textContent = 'Network error - type your answer';
                 showTextFallback();
                 recognition = null;
                 isRecording = false;
                 updateMicUI(false);
             } else if (event.error === 'no-speech') {
-                // Don't stop, just notify
-                document.getElementById('micStatus').textContent = '🎤 No speech detected - keep talking';
+                document.getElementById('micStatus').textContent = 'No speech detected - keep talking';
             } else if (event.error === 'audio-capture') {
-                document.getElementById('micStatus').textContent = '❌ Microphone not found';
+                document.getElementById('micStatus').textContent = 'Microphone not found';
                 showTextFallback();
                 isRecording = false;
                 updateMicUI(false);
@@ -98,7 +181,6 @@ function initializeSpeech() {
         };
 
         recognition.onend = () => {
-            // Auto-restart if we should still be recording
             if (isRecording && recognition) {
                 try {
                     setTimeout(() => {
@@ -112,7 +194,7 @@ function initializeSpeech() {
             } else {
                 updateMicUI(false);
                 if (currentTranscript.trim()) {
-                    document.getElementById('micStatus').textContent = '✓ Recording stopped. Click Submit or mic to continue.';
+                    document.getElementById('micStatus').textContent = 'Recording stopped. Click Submit or mic to continue.';
                 } else {
                     document.getElementById('micStatus').textContent = 'Click mic to speak';
                 }
@@ -120,8 +202,7 @@ function initializeSpeech() {
         };
 
         recognition.onspeechend = () => {
-            // Speech ended but don't stop recording yet
-            document.getElementById('micStatus').textContent = '🎤 Listening... (speak or click mic to stop)';
+            document.getElementById('micStatus').textContent = 'Listening... (speak or click mic to stop)';
         };
     } else {
         console.warn('Speech Recognition not supported');
@@ -129,20 +210,16 @@ function initializeSpeech() {
         showTextFallback();
     }
 
-    // Initialize Text-to-Speech voices
     if (synthesis) {
-        // Load voices
         loadVoices();
         synthesis.onvoiceschanged = loadVoices;
     }
-    
-    // Always show text fallback as a backup option
+
     showTextFallback();
 }
 
 function loadVoices() {
     const voices = synthesis.getVoices();
-    // Try to find a good English voice
     selectedVoice = voices.find(v => v.lang.startsWith('en') && v.name.includes('Google')) ||
                     voices.find(v => v.lang.startsWith('en-US')) ||
                     voices.find(v => v.lang.startsWith('en')) ||
@@ -151,32 +228,26 @@ function loadVoices() {
 
 function showTextFallback() {
     const fallback = document.getElementById('textFallback');
-    fallback.classList.add('visible');
-    
-    // Sync textarea with transcript
+    if (fallback) fallback.style.display = 'block';
+
     const textarea = document.getElementById('userAnswer');
-    textarea.value = currentTranscript;
-    
-    // Only add event listener once
-    if (!textarea.hasAttribute('data-listener-added')) {
-        textarea.setAttribute('data-listener-added', 'true');
-        
-        // Enable submit button when text is typed
-        textarea.addEventListener('input', () => {
-            currentTranscript = textarea.value;
-            document.getElementById('submitBtn').disabled = textarea.value.trim().length === 0;
-            document.getElementById('liveTranscript').textContent = textarea.value || 'Type your answer...';
-        });
+    if (textarea) {
+        textarea.value = currentTranscript;
+
+        if (!textarea.hasAttribute('data-listener-added')) {
+            textarea.setAttribute('data-listener-added', 'true');
+            textarea.addEventListener('input', () => {
+                currentTranscript = textarea.value;
+                document.getElementById('submitBtn').disabled = textarea.value.trim().length === 0;
+                document.getElementById('liveTranscript').textContent = textarea.value || 'Type your answer...';
+            });
+        }
     }
 }
 
 // ==================== Recording Controls ====================
 function toggleRecording() {
-    if (isSpeaking) {
-        // Don't allow recording while AI is speaking
-        return;
-    }
-
+    if (isSpeaking) return;
     if (isRecording) {
         stopRecording();
     } else {
@@ -189,9 +260,7 @@ function startRecording() {
         showTextFallback();
         return;
     }
-
     try {
-        // Don't clear transcript - allow appending for multi-click recording
         document.getElementById('liveTranscript').textContent = currentTranscript || 'Listening...';
         recognition.start();
     } catch (e) {
@@ -203,18 +272,11 @@ function startRecording() {
 function stopRecording() {
     isRecording = false;
     updateMicUI(false);
-    
     if (recognition) {
-        try {
-            recognition.stop();
-        } catch (e) {
-            // Ignore
-        }
+        try { recognition.stop(); } catch (e) { /* ignore */ }
     }
-    
-    // Update status based on whether we have content
     if (currentTranscript.trim()) {
-        document.getElementById('micStatus').textContent = '✓ Captured. Click Submit or mic to add more.';
+        document.getElementById('micStatus').textContent = 'Captured. Click Submit or mic to add more.';
     } else {
         document.getElementById('micStatus').textContent = 'Click mic to speak';
     }
@@ -230,29 +292,18 @@ function clearTranscript() {
 
 function updateMicUI(recording) {
     const micButton = document.getElementById('micButton');
-    const micPulse = document.getElementById('micPulse');
-    const visualizer = document.getElementById('voiceVisualizer');
-
     if (recording) {
         micButton.classList.add('recording');
-        micPulse.classList.add('active');
-        visualizer.classList.add('active');
     } else {
         micButton.classList.remove('recording');
-        micPulse.classList.remove('active');
-        visualizer.classList.remove('active');
     }
 }
 
 // ==================== Text-to-Speech ====================
 function speakText(text) {
     return new Promise((resolve) => {
-        if (!synthesis) {
-            resolve();
-            return;
-        }
+        if (!synthesis) { resolve(); return; }
 
-        // Stop any ongoing speech
         synthesis.cancel();
 
         const utterance = new SpeechSynthesisUtterance(text);
@@ -283,16 +334,16 @@ function speakText(text) {
 }
 
 function updateSpeakingUI(speaking) {
-    const indicator = document.getElementById('speakingIndicator');
+    const avatar = document.getElementById('aiAvatar');
     const status = document.getElementById('avatarStatus');
     const micButton = document.getElementById('micButton');
 
     if (speaking) {
-        indicator.classList.add('active');
+        avatar.classList.add('speaking');
         status.textContent = 'AI is speaking...';
         micButton.disabled = true;
     } else {
-        indicator.classList.remove('active');
+        avatar.classList.remove('speaking');
         status.textContent = 'AI Interviewer';
         micButton.disabled = false;
     }
@@ -322,7 +373,7 @@ async function loadResumeList() {
         const resumeList = document.getElementById('resumeList');
 
         if (resumes.length === 0) {
-            resumeList.innerHTML = '<p>No resumes found. Please analyze a resume first.</p>';
+            resumeList.innerHTML = '<p style="text-align:center;">No resumes found. Please analyze a resume first.</p>';
             return;
         }
 
@@ -332,7 +383,7 @@ async function loadResumeList() {
                 <p>File: ${resume.fileName}</p>
                 <p>Uploaded: ${new Date(resume.createdAt).toLocaleDateString()}</p>
                 <button class="btn btn-primary" onclick="event.stopPropagation(); startInterviewSession(${resume.id})">
-                    🎙️ Start Voice Interview
+                    Start Interview
                 </button>
             </div>
         `).join('');
@@ -345,30 +396,30 @@ async function startInterviewSession(resumeId) {
     try {
         document.getElementById('resumeSelectionSection').style.display = 'none';
         document.getElementById('loadingSection').style.display = 'block';
-        document.getElementById('loadingText').textContent = 'Preparing voice interview...';
+        document.getElementById('loadingText').textContent = 'Initializing webcam and interview...';
 
-        // Request microphone permission early
-        try {
-            await navigator.mediaDevices.getUserMedia({ audio: true });
-        } catch (e) {
-            console.warn('Microphone access denied, falling back to text');
-            showTextFallback();
-        }
+        // Start webcam
+        await initWebcam();
 
         const response = await apiClient.startInterview(resumeId);
         currentSession = response.sessionId;
 
         document.getElementById('loadingSection').style.display = 'none';
-        document.getElementById('interviewSection').style.display = 'flex';
+        document.getElementById('interviewSection').style.display = 'block';
+
+        // Init face detection (non-blocking)
+        initFaceDetection();
 
         // Welcome message
-        await speakText("Welcome to your AI interview session. I will ask you questions based on your resume and the role you're applying for. Let's begin.");
+        await speakText("Welcome to your AI interview session. I will ask you questions based on your resume. Let's begin.");
 
         getNextQuestion();
         startTimer();
     } catch (error) {
         console.error('Error starting interview:', error);
-        showError('Error starting interview');
+        if (typeof Toast !== 'undefined') {
+            Toast.error('Error starting interview');
+        }
     }
 }
 
@@ -377,7 +428,6 @@ async function getNextQuestion() {
         const response = await apiClient.getNextQuestion(currentSession);
         currentQuestion = response;
 
-        // Update header info
         if (currentQuestionIndex === 0) {
             document.getElementById('roleInfo').textContent = `Role: ${response.jobRole || 'Technical Interview'}`;
         }
@@ -387,9 +437,17 @@ async function getNextQuestion() {
         badge.textContent = response.difficultyLevel || 'BASIC';
         badge.className = `difficulty-badge ${(response.difficultyLevel || 'BASIC').toLowerCase()}`;
 
+        // Show/hide follow-up badge
+        const followUpBadge = document.getElementById('followUpBadge');
+        if (response.isFollowUp) {
+            followUpBadge.style.display = 'block';
+        } else {
+            followUpBadge.style.display = 'none';
+        }
+
         // Display question
         document.getElementById('currentQuestion').textContent = response.currentQuestion;
-        
+
         // Clear previous answer
         document.getElementById('userAnswer').value = '';
         document.getElementById('liveTranscript').textContent = 'Start speaking...';
@@ -404,17 +462,16 @@ async function getNextQuestion() {
 
         // Check if completed
         if (response.isCompleted) {
-            completeInterview();
+            await completeInterview();
             return;
         }
 
         // Speak the question
-        await speakText(response.currentQuestion);
+        const prefix = response.isFollowUp ? "Follow-up: " : "";
+        await speakText(prefix + response.currentQuestion);
 
-        // Add to transcript
         addToTranscript('AI', response.currentQuestion);
 
-        // Show text fallback if no voice, otherwise prompt to click mic
         if (!recognition) {
             showTextFallback();
             document.getElementById('micStatus').textContent = 'Voice unavailable - type your answer';
@@ -424,20 +481,20 @@ async function getNextQuestion() {
 
     } catch (error) {
         console.error('Error getting question:', error);
-        showError('Error loading question');
+        if (typeof Toast !== 'undefined') {
+            Toast.error('Error loading question');
+        }
     }
 }
 
 async function submitAnswer() {
-    // Get answer from transcript or text input
     const answer = currentTranscript.trim() || document.getElementById('userAnswer').value.trim();
 
     if (!answer) {
-        showError('Please provide an answer');
+        if (typeof Toast !== 'undefined') Toast.error('Please provide an answer');
         return;
     }
 
-    // Stop recording if active
     stopRecording();
 
     try {
@@ -445,121 +502,103 @@ async function submitAnswer() {
         document.getElementById('micStatus').textContent = 'Processing...';
 
         const response = await apiClient.submitAnswer(currentSession, currentQuestion.questionId, answer);
-        
-        // Add user's answer to transcript
+
         addToTranscript('You', answer);
 
-        // Reset for next question
         document.getElementById('userAnswer').value = '';
         document.getElementById('liveTranscript').textContent = '';
         currentTranscript = '';
 
-        // Provide feedback and move to next question
         if (response.feedback) {
             await speakText(response.feedback);
         }
 
-        // Small delay before next question
         setTimeout(() => {
             getNextQuestion();
         }, 1000);
 
     } catch (error) {
         console.error('Error submitting answer:', error);
-        showError('Error submitting answer');
+        if (typeof Toast !== 'undefined') Toast.error('Error submitting answer');
         document.getElementById('submitBtn').disabled = false;
     }
 }
 
 function addToTranscript(speaker, message) {
     const transcriptBox = document.getElementById('transcriptBox');
-    
-    // Clear placeholder if exists
+
     const placeholder = transcriptBox.querySelector('.transcript-placeholder');
-    if (placeholder) {
-        placeholder.remove();
-    }
+    if (placeholder) placeholder.remove();
 
     const messageDiv = document.createElement('div');
     messageDiv.className = `transcript-message ${speaker.toLowerCase() === 'ai' ? 'ai' : 'user'}`;
-    
-    const icon = speaker.toLowerCase() === 'ai' ? '🤖' : '👤';
+
+    const icon = speaker.toLowerCase() === 'ai' ? '&#129302;' : '&#128100;';
     messageDiv.innerHTML = `
         <div class="message-header">
-            <span class="message-icon">${icon}</span>
+            <span>${icon}</span>
             <strong>${speaker}</strong>
         </div>
-        <p class="message-text">${message}</p>
+        <p style="margin:0; line-height:1.5;">${message}</p>
     `;
-    
+
     transcriptBox.appendChild(messageDiv);
     transcriptBox.scrollTop = transcriptBox.scrollHeight;
 }
 
-// ==================== Timer Functions ====================
+// ==================== Timer Functions (Count UP) ====================
 function startTimer() {
-    remainingSeconds = 1800;
+    elapsedSeconds = 0;
     updateTimer();
 
     interviewTimer = setInterval(() => {
-        remainingSeconds--;
+        elapsedSeconds++;
         updateTimer();
-
-        if (remainingSeconds <= 0) {
-            clearInterval(interviewTimer);
-            speakText("Time is up. The interview session has ended.").then(() => {
-                completeInterview();
-            });
-        }
     }, 1000);
 }
 
 function updateTimer() {
-    const minutes = Math.floor(remainingSeconds / 60);
-    const seconds = remainingSeconds % 60;
-    const timerDisplay = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-    document.getElementById('timer').textContent = timerDisplay;
-
-    const timerElement = document.getElementById('timer');
-    timerElement.classList.remove('warning', 'danger');
-    if (remainingSeconds <= 300) {
-        timerElement.classList.add('danger');
-    } else if (remainingSeconds <= 600) {
-        timerElement.classList.add('warning');
-    }
+    const minutes = Math.floor(elapsedSeconds / 60);
+    const seconds = elapsedSeconds % 60;
+    document.getElementById('timer').textContent =
+        `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 }
 
 // ==================== Interview Completion ====================
 function confirmEndInterview() {
-    document.getElementById('confirmModal').style.display = 'block';
+    document.getElementById('confirmModal').classList.add('active');
 }
 
 function closeConfirmModal() {
-    document.getElementById('confirmModal').style.display = 'none';
+    document.getElementById('confirmModal').classList.remove('active');
 }
 
 async function endInterview() {
     clearInterval(interviewTimer);
     closeConfirmModal();
     stopRecording();
+    stopFaceTracking();
     synthesis.cancel();
 
     try {
-        await apiClient.endInterview(currentSession);
+        const bodyMetrics = getBodyLanguageMetrics();
+        await apiClient.endInterview(currentSession, bodyMetrics);
         await speakText("Thank you for completing the interview. Let me prepare your performance report.");
         await loadReport();
     } catch (error) {
         console.error('Error ending interview:', error);
-        showError('Error ending interview');
+        if (typeof Toast !== 'undefined') Toast.error('Error ending interview');
     }
 }
 
 async function completeInterview() {
     clearInterval(interviewTimer);
     stopRecording();
-    
+    stopFaceTracking();
+
     try {
-        await apiClient.endInterview(currentSession);
+        const bodyMetrics = getBodyLanguageMetrics();
+        await apiClient.endInterview(currentSession, bodyMetrics);
         await speakText("Congratulations! You have completed all the interview questions. Let me prepare your detailed performance report.");
         await loadReport();
     } catch (error) {
@@ -571,17 +610,19 @@ async function loadReport() {
     try {
         const report = await apiClient.getInterviewReport(currentSession);
 
+        stopWebcam();
+
         document.getElementById('interviewSection').style.display = 'none';
         document.getElementById('completionSection').style.display = 'block';
 
         document.getElementById('finalScore').textContent = report.totalScore + '%';
         document.getElementById('questionsAnswered').textContent = report.totalQuestionsAsked;
-        document.getElementById('sessionDuration').textContent = report.durationMinutes || Math.round((1800 - remainingSeconds) / 60);
+        document.getElementById('sessionDuration').textContent = report.durationMinutes || Math.round(elapsedSeconds / 60);
 
         document.getElementById('reportBtn').style.display = 'inline-block';
     } catch (error) {
         console.error('Error loading report:', error);
-        showError('Error loading report');
+        if (typeof Toast !== 'undefined') Toast.error('Error loading report');
     }
 }
 
@@ -594,25 +635,21 @@ function goToDashboard() {
 }
 
 function showError(message) {
-    const micStatus = document.getElementById('micStatus');
-    if (micStatus) {
-        micStatus.textContent = message;
-        micStatus.classList.add('error');
-        setTimeout(() => {
-            micStatus.classList.remove('error');
-            micStatus.textContent = 'Click to speak';
-        }, 3000);
-    } else {
+    if (typeof Toast !== 'undefined') {
         Toast.error(message);
+    } else {
+        const micStatus = document.getElementById('micStatus');
+        if (micStatus) {
+            micStatus.textContent = message;
+            setTimeout(() => { micStatus.textContent = 'Click mic to speak'; }, 3000);
+        }
     }
 }
 
 // Clean up on page unload
 window.addEventListener('beforeunload', () => {
-    if (recognition) {
-        recognition.stop();
-    }
-    if (synthesis) {
-        synthesis.cancel();
-    }
+    if (recognition) recognition.stop();
+    if (synthesis) synthesis.cancel();
+    stopWebcam();
+    stopFaceTracking();
 });

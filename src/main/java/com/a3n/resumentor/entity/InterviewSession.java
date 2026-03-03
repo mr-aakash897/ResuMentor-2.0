@@ -47,6 +47,12 @@ public class InterviewSession {
 
     private Integer score;
 
+    @Column(name = "eye_contact_percentage")
+    private Integer eyeContactPercentage;
+
+    @Column(name = "face_centering_score")
+    private Integer faceCenteringScore;
+
     @Enumerated(EnumType.STRING)
     private SessionStatus status = SessionStatus.ONGOING;
 

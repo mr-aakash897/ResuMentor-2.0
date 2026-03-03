@@ -301,19 +301,18 @@ html[data-theme="light"] .navbar.scrolled {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, 
-        rgba(99, 102, 241, 0.15) 0%, 
-        rgba(139, 92, 246, 0.1) 50%, 
-        rgba(168, 85, 247, 0.15) 100%);
+    background:
+        linear-gradient(135deg, rgb(38 27 90 / 70%) 12%, rgb(18 18 18 / 80%) 88%),
+         url(https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1200&q=80) center / cover no-repeat ;
     z-index: -1;
 }
 
-html[data-theme="dark"] .hero-bg {
+ /* html[data-theme="dark"] .hero-bg {
     background: linear-gradient(135deg, 
         rgba(99, 102, 241, 0.1) 0%, 
         rgba(139, 92, 246, 0.08) 50%, 
-        rgba(168, 85, 247, 0.1) 100%);
-}
+        rgba(168, 85, 247, 0.1) 100%); 
+} */
 
 /* Three.js handles particles now - kept for fallback */
 .hero::before,
@@ -349,7 +348,7 @@ html[data-theme="dark"] .hero-bg {
 }
 
 html[data-theme="light"] .hero-title {
-    color: #1e293b;
+    color: #efefef;
     text-shadow: 0 4px 30px rgba(99, 102, 241, 0.15);
 }
 
@@ -361,7 +360,7 @@ html[data-theme="light"] .hero-title {
 }
 
 html[data-theme="light"] .hero-subtitle {
-    color: #475569;
+    color: #ffffff;
 }
 
 .hero-description {
@@ -374,7 +373,7 @@ html[data-theme="light"] .hero-subtitle {
 }
 
 html[data-theme="light"] .hero-description {
-    color: #64748b;
+    color: #ffffff;
 }
 
 .hero-buttons {
@@ -431,8 +430,8 @@ html[data-theme="light"] .btn-primary:hover {
 }
 
 html[data-theme="light"] .btn-secondary {
-    color: var(--primary-color);
-    border: 2px solid rgba(99, 102, 241, 0.5);
+    color: #ffffff;
+    border: 2px solid rgba(255, 255, 255, 0.5);
 }
 
 .btn-secondary:hover {

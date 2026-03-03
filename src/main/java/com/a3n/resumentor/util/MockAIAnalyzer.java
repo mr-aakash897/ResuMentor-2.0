@@ -76,13 +76,8 @@ public class MockAIAnalyzer {
         String overallFeedback = generateOverallFeedback(atsScore, matchedKeywords, 
                                                           missingKeywords, jobRole);
 
-        // Determine resume strength
+        // Resume strength will be determined after merging scores below
         String resumeStrength;
-        if (atsScore >= 85) resumeStrength = "EXCELLENT";
-        else if (atsScore >= 70) resumeStrength = "STRONG";
-        else if (atsScore >= 55) resumeStrength = "GOOD";
-        else if (atsScore >= 40) resumeStrength = "AVERAGE";
-        else resumeStrength = "NEEDS_IMPROVEMENT";
 
         // Get top matched skills (first 5)
         List<String> topMatchedSkills = matchedKeywords.stream()
@@ -101,17 +96,28 @@ public class MockAIAnalyzer {
 
         // Calculate ATS Friendliness Breakdown
         Map<String, Object> atsFriendliness = calculateATSFriendliness(resumeText, matchedKeywords, missingKeywords);
+        int friendlinessScore = (Integer) atsFriendliness.get("overallScore");
+
+        // Merge into a single unified ATS score (content 65% + friendliness 35% + friendly boost)
+        int unifiedScore = (int) Math.min(Math.round(atsScore * 0.65 + friendlinessScore * 0.35 + 3), 100);
+
+        // Recalculate strength based on unified score
+        if (unifiedScore >= 85) resumeStrength = "EXCELLENT";
+        else if (unifiedScore >= 70) resumeStrength = "STRONG";
+        else if (unifiedScore >= 55) resumeStrength = "GOOD";
+        else if (unifiedScore >= 40) resumeStrength = "AVERAGE";
+        else resumeStrength = "NEEDS_IMPROVEMENT";
 
         // Build response
         ResumeAnalysisResponse response = new ResumeAnalysisResponse();
-        response.setAtsScore(atsScore);
+        response.setAtsScore(unifiedScore);
         response.setJobRole(jobRole);
         response.setMatchedKeywords(matchedKeywords);
         response.setMissingKeywords(missingKeywords);
         response.setSuggestions(suggestions);
         response.setSkillGaps(skillGaps);
         response.setOverallFeedback(overallFeedback);
-        
+
         // Set additional analysis fields
         response.setKeywordMatchPercentage(keywordMatchPercentage);
         response.setStructureScore((int) Math.round(structureScore));
@@ -121,9 +127,9 @@ public class MockAIAnalyzer {
         response.setTopMatchedSkills(topMatchedSkills);
         response.setCriticalMissingSkills(criticalMissingSkills);
         response.setCompetitiveAnalysis(competitiveAnalysis);
-        
-        // Set ATS Friendliness fields
-        response.setAtsFriendlinessScore((Integer) atsFriendliness.get("overallScore"));
+
+        // Set ATS Friendliness breakdown fields (sub-scores kept for detailed view)
+        response.setAtsFriendlinessScore(unifiedScore);
         response.setFormattingScore((Integer) atsFriendliness.get("formattingScore"));
         response.setParsabilityScore((Integer) atsFriendliness.get("parsabilityScore"));
         response.setContactInfoScore((Integer) atsFriendliness.get("contactInfoScore"));

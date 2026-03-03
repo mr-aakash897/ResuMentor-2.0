@@ -9,11 +9,15 @@
     <link rel="stylesheet" href="../css/theme.css">
     <link rel="stylesheet" href="../css/dashboard.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- THREE.JS DISABLED - Uncomment to enable particle background
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    -->
 </head>
 <body>
-    <!-- Particle Background Canvas -->
+    <!-- THREE.JS DISABLED - Uncomment to enable particle background
     <canvas id="particles-canvas"></canvas>
+    -->
     
     <!-- Navigation Bar -->
     <nav class="navbar" id="navbar">
@@ -221,7 +225,10 @@
         <section id="resumeAnalysisSection" class="history-section" style="display: none;">
             <div class="history-header">
                 <h2>📋 Resume Analysis Details</h2>
-                <button class="btn btn-secondary" onclick="closeInlineAnalysis()">Close</button>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn btn-primary btn-sm" onclick="downloadResumePDF()">📥 Download PDF</button>
+                    <button class="btn btn-secondary" onclick="closeInlineAnalysis()">Close</button>
+                </div>
             </div>
             <div id="inlineAnalysisContent" class="analysis-content"></div>
         </section>
@@ -235,6 +242,18 @@
             <div id="interviewHistory" class="history-table">
                 <p class="empty-message">No interviews conducted yet</p>
             </div>
+        </section>
+
+        <!-- Inline Interview Report -->
+        <section id="interviewReportSection" class="history-section" style="display: none;">
+            <div class="history-header">
+                <h2>📊 Interview Report Details</h2>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn btn-primary btn-sm" onclick="downloadInterviewPDF()">📥 Download PDF</button>
+                    <button class="btn btn-secondary" onclick="closeInlineInterviewReport()">Close</button>
+                </div>
+            </div>
+            <div id="inlineInterviewReportContent" class="analysis-content"></div>
         </section>
     </main>
 
@@ -371,7 +390,9 @@
 
     <script src="../js/api-client.js"></script>
     <script src="../js/ui-utils.js"></script>
+    <!-- THREE.JS DISABLED - Uncomment to enable particle background
     <script src="../js/particles.js"></script>
+    -->
     <script src="../js/theme.js"></script>
     <script src="../js/auth.js"></script>
     <script src="../js/dashboard.js"></script>

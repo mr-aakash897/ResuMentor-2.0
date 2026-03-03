@@ -37,6 +37,12 @@ public class ReportDTO {
     private List<String> actionableRecommendations;
     private String interviewReadinessLevel;
 
+    // Body Language Analysis
+    private Integer eyeContactPercentage;
+    private Integer faceCenteringScore;
+    private String bodyLanguageFeedback;
+    private List<String> bodyLanguageTips;
+
     @Data
     @NoArgsConstructor
     @AllArgsConstructor

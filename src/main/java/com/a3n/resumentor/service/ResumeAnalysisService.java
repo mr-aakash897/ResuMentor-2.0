@@ -8,6 +8,7 @@ import com.a3n.resumentor.repository.ResumeRepository;
 import com.a3n.resumentor.repository.UserRepository;
 import com.a3n.resumentor.util.FileUploadUtil;
 import com.a3n.resumentor.util.MockAIAnalyzer;
+import com.a3n.resumentor.util.OpenAIService;
 import com.a3n.resumentor.util.PDFExtractor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +41,9 @@ public class ResumeAnalysisService {
     private MockAIAnalyzer mockAIAnalyzer;
 
     @Autowired
+    private OpenAIService openAIService;
+
+    @Autowired
     private AchievementService achievementService;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -59,8 +63,30 @@ public class ResumeAnalysisService {
         String resumeText = pdfExtractor.extractText(fileUrl);
         log.info("Resume text extracted successfully");
 
-        // Analyze using mock AI
-        ResumeAnalysisResponse analysisResponse = mockAIAnalyzer.analyzeResume(resumeText, jobRole, jobDescription);
+        // Try AI-powered analysis first, fall back to rule-based analyzer
+        ResumeAnalysisResponse analysisResponse = null;
+
+        if (openAIService.isAvailable()) {
+            try {
+                String aiResult = openAIService.analyzeResumeWithGPT(resumeText, jobRole, jobDescription);
+                if (aiResult != null && !aiResult.isBlank()) {
+                    // Clean potential markdown code fences from GPT response
+                    String cleanJson = aiResult.trim();
+                    if (cleanJson.startsWith("```")) {
+                        cleanJson = cleanJson.replaceAll("^```(?:json)?\\s*", "").replaceAll("\\s*```$", "");
+                    }
+                    analysisResponse = objectMapper.readValue(cleanJson, ResumeAnalysisResponse.class);
+                    log.info("Resume analyzed using OpenAI GPT");
+                }
+            } catch (Exception e) {
+                log.warn("AI analysis failed, falling back to rule-based analyzer: {}", e.getMessage());
+            }
+        }
+
+        if (analysisResponse == null) {
+            analysisResponse = mockAIAnalyzer.analyzeResume(resumeText, jobRole, jobDescription);
+            log.info("Resume analyzed using rule-based analyzer (fallback)");
+        }
 
         // Save to database
         Resume resume = new Resume();
