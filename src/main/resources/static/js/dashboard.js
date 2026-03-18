@@ -1270,133 +1270,232 @@ function downloadResumePDF() {
         const data = currentResumeAnalysis;
         const pageWidth = pdf.internal.pageSize.getWidth();
         const pageHeight = pdf.internal.pageSize.getHeight();
-        const margin = 18;
+        const margin = 16;
         const contentWidth = pageWidth - 2 * margin;
-        const h = pdfHelpers(pdf, margin, contentWidth, pageHeight);
+        let y = 0;
 
-        // Header Banner
-        pdf.setFillColor(102, 126, 234);
-        pdf.rect(0, 0, pageWidth, 50, 'F');
-        pdf.setFillColor(118, 75, 162);
-        pdf.rect(0, 46, pageWidth, 4, 'F');
+        // Color palette
+        const C = {
+            primary: [79, 70, 229], secondary: [124, 58, 237],
+            success: [16, 185, 129], danger: [239, 68, 68],
+            warning: [245, 158, 11], info: [59, 130, 246],
+            dark: [30, 41, 59], muted: [100, 116, 139],
+            light: [241, 245, 249], white: [255, 255, 255],
+            barBg: [226, 232, 240],
+        };
 
-        pdf.setTextColor(255, 255, 255);
-        pdf.setFontSize(24);
-        pdf.setFont('helvetica', 'bold');
-        pdf.text('Resume Analysis Report', pageWidth / 2, 16, { align: 'center' });
-
-        pdf.setFontSize(10);
-        pdf.setFont('helvetica', 'normal');
-        pdf.text('ResuMentor - AI Resume Analyzer', pageWidth / 2, 24, { align: 'center' });
-
-        const scoreLabel = (data.atsScore || 0) >= 85 ? 'EXCELLENT' :
-                          (data.atsScore || 0) >= 70 ? 'STRONG' :
-                          (data.atsScore || 0) >= 55 ? 'GOOD' :
-                          (data.atsScore || 0) >= 40 ? 'AVERAGE' : 'NEEDS WORK';
-        pdf.setFontSize(16);
-        pdf.setFont('helvetica', 'bold');
-        pdf.text(`ATS Score: ${data.atsScore || 0}/100`, pageWidth / 2, 35, { align: 'center' });
-        pdf.setFontSize(11);
-        pdf.text(`${data.resumeStrength || scoreLabel}`, pageWidth / 2, 44, { align: 'center' });
-
-        h.yPos = 58;
-
-        pdf.setTextColor(100, 100, 100);
-        pdf.setFontSize(9);
-        pdf.setFont('helvetica', 'normal');
-        pdf.text(`Job Role: ${data.jobRole || 'General'}`, margin, h.yPos);
-        pdf.text(`Date: ${new Date().toLocaleDateString()}`, pageWidth - margin, h.yPos, { align: 'right' });
-        h.yPos += 10;
-
-        // Score Interpretation
-        h.sectionHeader('Score Interpretation', [102, 126, 234]);
         const score = data.atsScore || 0;
-        let interpretation;
-        if (score >= 85) interpretation = 'EXCELLENT! Your resume is ATS-friendly and exceptionally well-optimized. You have a strong match for this position.';
-        else if (score >= 70) interpretation = 'STRONG! Your resume has most required keywords and good formatting. Minor improvements can significantly boost visibility.';
-        else if (score >= 55) interpretation = 'GOOD. Your resume meets basic requirements but could be improved. Focus on adding more relevant keywords.';
-        else if (score >= 40) interpretation = 'AVERAGE. Your resume needs improvements to compete effectively. Review suggestions and skill gaps.';
-        else interpretation = 'NEEDS WORK. Your resume requires significant improvements. Focus on acquiring missing skills and restructuring.';
-        h.renderText(interpretation, [50, 50, 50]);
+        const tierLabel = score >= 85 ? 'Excellent' : score >= 70 ? 'Strong' : score >= 55 ? 'Good' : score >= 40 ? 'Average' : 'Needs Work';
+        const tierColor = score >= 85 ? C.success : score >= 70 ? C.info : score >= 55 ? C.warning : score >= 40 ? [249, 115, 22] : C.danger;
 
-        // Score Breakdown
-        h.sectionHeader('Score Breakdown', [102, 126, 234]);
-        h.drawProgressBar('Keyword Match', data.keywordMatchPercentage || 0);
-        h.drawProgressBar('Structure', data.structureScore || 0);
-        h.drawProgressBar('Experience', data.experienceScore || 0);
-        h.drawProgressBar('Soft Skills', data.softSkillsScore || 0);
-        h.yPos += 3;
+        function needsPage(needed) { if (y + needed > pageHeight - 18) { pdf.addPage(); y = 16; } }
 
-        // ATS Compatibility
-        h.sectionHeader('ATS Compatibility Breakdown', [118, 75, 162]);
-        h.drawProgressBar('Formatting', data.formattingScore || 0);
-        h.drawProgressBar('Parsability', data.parsabilityScore || 0);
-        h.drawProgressBar('Contact Info', data.contactInfoScore || 0);
-        h.drawProgressBar('Section Organization', data.sectionOrganizationScore || 0);
-        h.drawProgressBar('Keyword Density', data.keywordDensityScore || 0);
-        h.yPos += 3;
-
-        // Top Matched Skills
-        if (data.topMatchedSkills && data.topMatchedSkills.length > 0) {
-            h.sectionHeader('Top Matched Skills', [76, 175, 80]);
-            h.renderBulletList(data.topMatchedSkills, [46, 125, 50]);
+        function drawSectionTitle(title, iconColor) {
+            needsPage(14); y += 4;
+            pdf.setFillColor(...iconColor);
+            pdf.roundedRect(margin, y - 4.5, 3, 7, 1.5, 1.5, 'F');
+            pdf.setFont('helvetica', 'bold'); pdf.setFontSize(12); pdf.setTextColor(...C.dark);
+            pdf.text(title, margin + 7, y); y += 3;
+            pdf.setDrawColor(...C.barBg); pdf.setLineWidth(0.4);
+            pdf.line(margin, y, margin + contentWidth, y); y += 6;
         }
 
-        // Critical Missing Skills
-        if (data.criticalMissingSkills && data.criticalMissingSkills.length > 0) {
-            h.sectionHeader('Critical Missing Skills', [244, 67, 54]);
-            h.renderBulletList(data.criticalMissingSkills, [200, 40, 40]);
+        function drawProgressRow(label, value, barW) {
+            needsPage(10); const bw = barW || 90; const barH = 4.5; const labelWidth = 48;
+            const barX = margin + labelWidth;
+            pdf.setFont('helvetica', 'normal'); pdf.setFontSize(9); pdf.setTextColor(...C.dark);
+            pdf.text(label, margin + 2, y);
+            pdf.setFillColor(...C.barBg); pdf.roundedRect(barX, y - 3.5, bw, barH, 2, 2, 'F');
+            const fillW = Math.max(0, (value / 100) * bw);
+            const barColor = value >= 70 ? C.success : value >= 50 ? C.warning : C.danger;
+            pdf.setFillColor(...barColor); if (fillW > 0) pdf.roundedRect(barX, y - 3.5, fillW, barH, 2, 2, 'F');
+            pdf.setFont('helvetica', 'bold'); pdf.setFontSize(9); pdf.setTextColor(...barColor);
+            pdf.text(`${value}%`, barX + bw + 3, y); y += 8;
         }
 
-        // Matched Keywords
-        if (data.matchedKeywords && data.matchedKeywords.length > 0) {
-            h.sectionHeader('Matched Keywords', [76, 175, 80]);
-            h.renderText(data.matchedKeywords.join(',  '), [46, 125, 50]);
+        function drawKeywordTags(items, color, bgColor) {
+            if (!items || items.length === 0) return;
+            const safe = items.filter(i => i != null && String(i).trim() !== '');
+            let xPos = margin + 2; const tagH = 6; const tagPad = 3; const tagGap = 2.5;
+            pdf.setFontSize(7.5); pdf.setFont('helvetica', 'bold');
+            safe.forEach(item => {
+                const text = String(item).trim(); const tw = pdf.getTextWidth(text) + tagPad * 2;
+                if (xPos + tw > margin + contentWidth - 2) { xPos = margin + 2; y += tagH + 2; needsPage(tagH + 4); }
+                pdf.setFillColor(...bgColor); pdf.roundedRect(xPos, y - 4, tw, tagH, 2, 2, 'F');
+                pdf.setTextColor(...color); pdf.text(text, xPos + tagPad, y - 0.5);
+                xPos += tw + tagGap;
+            }); y += tagH + 2;
         }
 
-        // Missing Keywords
-        if (data.missingKeywords && data.missingKeywords.length > 0) {
-            h.sectionHeader('Missing Keywords', [244, 67, 54]);
-            h.renderText(data.missingKeywords.join(',  '), [200, 40, 40]);
+        function drawNumberedList(items, textColor) {
+            if (!items || items.length === 0) return;
+            const safe = items.filter(i => i != null && String(i).trim() !== '');
+            safe.forEach((item, i) => {
+                needsPage(6);
+                pdf.setFillColor(...C.light); pdf.circle(margin + 5, y - 1.5, 3, 'F');
+                pdf.setFont('helvetica', 'bold'); pdf.setFontSize(7); pdf.setTextColor(...C.primary);
+                pdf.text(`${i + 1}`, margin + 5, y - 0.5, { align: 'center' });
+                pdf.setFont('helvetica', 'normal'); pdf.setFontSize(8.5); pdf.setTextColor(...textColor);
+                const lines = pdf.splitTextToSize(String(item), contentWidth - 14);
+                lines.forEach((line, li) => { if (li > 0) needsPage(4.5); pdf.text(line, margin + 10, y); y += 4.5; });
+                y += 1.5;
+            }); y += 2;
         }
 
-        // ATS Issues
-        if (data.atsIssues && data.atsIssues.length > 0) {
-            h.sectionHeader('ATS Issues Found', [255, 152, 0]);
-            h.renderList(data.atsIssues, [180, 100, 0]);
+        function drawParagraph(text, textColor) {
+            if (!text) return;
+            pdf.setFont('helvetica', 'normal'); pdf.setFontSize(8.5); pdf.setTextColor(...textColor);
+            const lines = pdf.splitTextToSize(String(text), contentWidth - 4);
+            lines.forEach(line => { needsPage(4.5); pdf.text(line, margin + 2, y); y += 4.5; }); y += 3;
         }
 
-        // ATS Tips
-        if (data.atsTips && data.atsTips.length > 0) {
-            h.sectionHeader('ATS Optimization Tips', [33, 150, 243]);
-            h.renderList(data.atsTips, [0, 100, 180]);
+        function getScoreInterpretation(s) {
+            if (s >= 85) return 'Your resume is ATS-friendly and exceptionally well-optimized. You have a strong match for this position.';
+            if (s >= 70) return 'Your resume has most required keywords and good formatting. Minor improvements can significantly boost visibility.';
+            if (s >= 55) return 'Your resume meets basic requirements but could be improved. Focus on adding more relevant keywords.';
+            if (s >= 40) return 'Your resume needs improvements to compete effectively. Review suggestions and skill gaps.';
+            return 'Your resume requires significant improvements. Focus on acquiring missing skills and restructuring.';
         }
 
-        // Skill Gaps
-        if (data.skillGaps && data.skillGaps.length > 0) {
-            h.sectionHeader('Skill Gaps Identified', [255, 152, 0]);
-            h.renderList(data.skillGaps, [140, 80, 0]);
+        const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        // ── HEADER ──
+        pdf.setFillColor(...C.primary); pdf.rect(0, 0, pageWidth, 52, 'F');
+        pdf.setFillColor(...C.secondary); pdf.rect(0, 48, pageWidth, 4, 'F');
+        pdf.setTextColor(...C.white); pdf.setFont('helvetica', 'bold'); pdf.setFontSize(22);
+        pdf.text('ATS Resume Analysis Report', pageWidth / 2, 15, { align: 'center' });
+        pdf.setFont('helvetica', 'normal'); pdf.setFontSize(9);
+        pdf.text('Powered by ResuMentor AI', pageWidth / 2, 22, { align: 'center' });
+        pdf.setFont('helvetica', 'bold'); pdf.setFontSize(36);
+        pdf.text(`${score}`, pageWidth / 2, 37, { align: 'center' });
+        pdf.setFontSize(11);
+        pdf.text(`/ 100`, pageWidth / 2 + pdf.getTextWidth(`${score}`) / 2 + 3, 37);
+        pdf.setFontSize(10); pdf.text(tierLabel.toUpperCase(), pageWidth / 2, 45, { align: 'center' });
+        y = 58;
+
+        // Meta row
+        pdf.setFont('helvetica', 'normal'); pdf.setFontSize(8.5); pdf.setTextColor(...C.muted);
+        pdf.text(`Target Role: ${data.jobRole || 'General'}`, margin, y);
+        pdf.text(`Report Date: ${dateStr}`, pageWidth - margin, y, { align: 'right' }); y += 8;
+
+        // Score interpretation box
+        pdf.setFillColor(248, 250, 252); pdf.roundedRect(margin, y - 3, contentWidth, 14, 3, 3, 'F');
+        pdf.setFillColor(...tierColor); pdf.roundedRect(margin, y - 3, 3, 14, 1.5, 1.5, 'F');
+        pdf.setFont('helvetica', 'normal'); pdf.setFontSize(8.5); pdf.setTextColor(...C.dark);
+        const interpLines = pdf.splitTextToSize(getScoreInterpretation(score), contentWidth - 10);
+        interpLines.forEach(line => { pdf.text(line, margin + 7, y + 2); y += 4; }); y += 6;
+
+        // ── SCORE BREAKDOWN ──
+        drawSectionTitle('Score Breakdown', C.primary);
+        drawProgressRow('Keyword Match', data.keywordMatchPercentage || 0);
+        drawProgressRow('Structure', data.structureScore || 0);
+        drawProgressRow('Experience', data.experienceScore || 0);
+        drawProgressRow('Soft Skills', data.softSkillsScore || 0); y += 2;
+
+        // ── ATS COMPATIBILITY ──
+        drawSectionTitle('ATS Compatibility', C.secondary);
+        drawProgressRow('Formatting', data.formattingScore || 0);
+        drawProgressRow('Parsability', data.parsabilityScore || 0);
+        drawProgressRow('Contact Info', data.contactInfoScore || 0);
+        drawProgressRow('Section Organization', data.sectionOrganizationScore || 0);
+        drawProgressRow('Keyword Density', data.keywordDensityScore || 0); y += 2;
+
+        // ATS Issues & Tips side by side
+        const issues = (data.atsIssues || []).filter(i => i);
+        const tips = (data.atsTips || []).filter(t => t);
+        if (issues.length > 0 || tips.length > 0) {
+            needsPage(20);
+            const boxW = (contentWidth - 4) / 2; const issueStartY = y;
+            if (issues.length > 0) {
+                pdf.setFillColor(254, 242, 242); pdf.roundedRect(margin, y - 3, boxW, 6 + issues.length * 5.5, 2, 2, 'F');
+                pdf.setFillColor(...C.danger); pdf.roundedRect(margin, y - 3, 2.5, 6 + issues.length * 5.5, 1, 1, 'F');
+                pdf.setFont('helvetica', 'bold'); pdf.setFontSize(8); pdf.setTextColor(...C.danger);
+                pdf.text('Issues Found', margin + 5, y + 1); let iy = y + 6;
+                pdf.setFont('helvetica', 'normal'); pdf.setFontSize(7.5); pdf.setTextColor(153, 27, 27);
+                issues.forEach(issue => { const iL = pdf.splitTextToSize(`• ${issue}`, boxW - 8); iL.forEach(l => { pdf.text(l, margin + 5, iy); iy += 4; }); iy += 1; });
+            }
+            if (tips.length > 0) {
+                const tipX = margin + boxW + 4;
+                pdf.setFillColor(236, 253, 245); pdf.roundedRect(tipX, issueStartY - 3, boxW, 6 + tips.length * 5.5, 2, 2, 'F');
+                pdf.setFillColor(...C.success); pdf.roundedRect(tipX, issueStartY - 3, 2.5, 6 + tips.length * 5.5, 1, 1, 'F');
+                pdf.setFont('helvetica', 'bold'); pdf.setFontSize(8); pdf.setTextColor(...C.success);
+                pdf.text('Optimization Tips', tipX + 5, issueStartY + 1); let ty = issueStartY + 6;
+                pdf.setFont('helvetica', 'normal'); pdf.setFontSize(7.5); pdf.setTextColor(6, 95, 70);
+                tips.forEach(tip => { const tL = pdf.splitTextToSize(`• ${tip}`, boxW - 8); tL.forEach(l => { pdf.text(l, tipX + 5, ty); ty += 4; }); ty += 1; });
+            }
+            y = issueStartY + Math.max(issues.length > 0 ? 6 + issues.length * 5.5 : 0, tips.length > 0 ? 6 + tips.length * 5.5 : 0) + 4;
         }
 
-        // Suggestions
-        if (data.suggestions && data.suggestions.length > 0) {
-            h.sectionHeader('Improvement Suggestions', [102, 126, 234]);
-            h.renderList(data.suggestions, [60, 60, 60]);
+        // ── SKILLS ANALYSIS ──
+        if ((data.topMatchedSkills && data.topMatchedSkills.length > 0) || (data.criticalMissingSkills && data.criticalMissingSkills.length > 0)) {
+            drawSectionTitle('Skills Analysis', C.success);
+            if (data.topMatchedSkills && data.topMatchedSkills.length > 0) {
+                needsPage(10); pdf.setFont('helvetica', 'bold'); pdf.setFontSize(8.5); pdf.setTextColor(...C.success);
+                pdf.text('Matched Skills', margin + 2, y); y += 5;
+                drawKeywordTags(data.topMatchedSkills, [6, 95, 70], [209, 250, 229]);
+            }
+            if (data.criticalMissingSkills && data.criticalMissingSkills.length > 0) {
+                needsPage(10); pdf.setFont('helvetica', 'bold'); pdf.setFontSize(8.5); pdf.setTextColor(...C.danger);
+                pdf.text('Critical Missing Skills', margin + 2, y); y += 5;
+                drawKeywordTags(data.criticalMissingSkills, [153, 27, 27], [254, 226, 226]);
+            }
         }
 
-        // Competitive Analysis
+        // ── KEYWORD ANALYSIS ──
+        if ((data.matchedKeywords && data.matchedKeywords.length > 0) || (data.missingKeywords && data.missingKeywords.length > 0)) {
+            drawSectionTitle('Keyword Analysis', C.info);
+            if (data.matchedKeywords && data.matchedKeywords.length > 0) {
+                needsPage(10); const mc = data.matchedKeywords.length; const tc = mc + (data.missingKeywords || []).length;
+                pdf.setFont('helvetica', 'bold'); pdf.setFontSize(8.5); pdf.setTextColor(...C.success);
+                pdf.text(`Matched Keywords (${mc}/${tc})`, margin + 2, y); y += 5;
+                drawKeywordTags(data.matchedKeywords, [6, 95, 70], [209, 250, 229]);
+            }
+            if (data.missingKeywords && data.missingKeywords.length > 0) {
+                needsPage(10); pdf.setFont('helvetica', 'bold'); pdf.setFontSize(8.5); pdf.setTextColor(...C.danger);
+                pdf.text(`Missing Keywords (${data.missingKeywords.length})`, margin + 2, y); y += 5;
+                drawKeywordTags(data.missingKeywords, [153, 27, 27], [254, 226, 226]);
+            }
+        }
+
+        // ── SKILL GAPS ──
+        if (data.skillGaps && data.skillGaps.length > 0) { drawSectionTitle('Skill Gaps Identified', C.warning); drawNumberedList(data.skillGaps, C.dark); }
+
+        // ── SUGGESTIONS ──
+        if (data.suggestions && data.suggestions.length > 0) { drawSectionTitle('Improvement Suggestions', C.primary); drawNumberedList(data.suggestions, C.dark); }
+
+        // ── COMPETITIVE ANALYSIS ──
         if (data.competitiveAnalysis) {
-            h.sectionHeader('Competitive Analysis', [118, 75, 162]);
-            h.renderText(data.competitiveAnalysis, [60, 60, 60]);
+            drawSectionTitle('Competitive Analysis', C.secondary);
+            needsPage(12); pdf.setFillColor(245, 243, 255);
+            const caLines = pdf.splitTextToSize(String(data.competitiveAnalysis), contentWidth - 14);
+            const caH = caLines.length * 4.5 + 6;
+            pdf.roundedRect(margin, y - 4, contentWidth, caH, 3, 3, 'F');
+            pdf.setFillColor(...C.secondary); pdf.roundedRect(margin, y - 4, 3, caH, 1.5, 1.5, 'F');
+            pdf.setFont('helvetica', 'normal'); pdf.setFontSize(8.5); pdf.setTextColor(...C.dark);
+            caLines.forEach(line => { needsPage(4.5); pdf.text(line, margin + 7, y); y += 4.5; }); y += 5;
         }
 
-        // Overall Feedback
+        // ── OVERALL FEEDBACK ──
         if (data.overallFeedback) {
-            h.sectionHeader('Overall Feedback', [102, 126, 234]);
-            h.renderText(data.overallFeedback, [50, 50, 50]);
+            drawSectionTitle('Overall Feedback', C.primary);
+            needsPage(12); pdf.setFillColor(238, 242, 255);
+            const ofLines = pdf.splitTextToSize(String(data.overallFeedback), contentWidth - 14);
+            const ofH = ofLines.length * 4.5 + 6;
+            pdf.roundedRect(margin, y - 4, contentWidth, ofH, 3, 3, 'F');
+            pdf.setFillColor(...C.primary); pdf.roundedRect(margin, y - 4, 3, ofH, 1.5, 1.5, 'F');
+            pdf.setFont('helvetica', 'normal'); pdf.setFontSize(8.5); pdf.setTextColor(...C.dark);
+            ofLines.forEach(line => { needsPage(4.5); pdf.text(line, margin + 7, y); y += 4.5; }); y += 5;
         }
 
-        h.addFooters();
+        // ── FOOTER ──
+        const totalPages = pdf.internal.getNumberOfPages();
+        for (let i = 1; i <= totalPages; i++) {
+            pdf.setPage(i);
+            pdf.setDrawColor(...C.barBg); pdf.setLineWidth(0.3);
+            pdf.line(margin, pageHeight - 12, pageWidth - margin, pageHeight - 12);
+            pdf.setFont('helvetica', 'normal'); pdf.setFontSize(7); pdf.setTextColor(...C.muted);
+            pdf.text(`ResuMentor AI  •  ${dateStr}  •  Page ${i} of ${totalPages}`, pageWidth / 2, pageHeight - 8, { align: 'center' });
+        }
 
         const roleName = (data.jobRole || 'report').replace(/\s+/g, '-').toLowerCase();
         pdf.save(`resume-analysis-${roleName}-${new Date().toISOString().split('T')[0]}.pdf`);

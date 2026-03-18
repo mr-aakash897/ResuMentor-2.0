@@ -152,18 +152,18 @@
                     <div class="results-header">
                         <h2>Analysis Results</h2>
                         <div class="results-actions">
-                            <button class="btn btn-export-resume" onclick="exportResumePDF()">📄 Download Report</button>
-                            <button class="btn btn-secondary" onclick="resetAnalyzer()">Analyze Another Resume</button>
+                            <button class="btn btn-export-resume" onclick="exportResumePDF()">Download PDF Report</button>
+                            <button class="btn btn-secondary" onclick="resetAnalyzer()">Analyze Another</button>
                         </div>
                     </div>
 
-                    <!-- ATS Score Card -->
+                    <!-- ATS Score Hero Card -->
                     <div class="ats-score-card">
-                        <div class="score-circle" id="scoreCircle">
-                            <div class="score-value" id="scoreValue">0</div>
-                            <div class="score-label">ATS Score</div>
+                        <div class="score-ring-container" id="scoreRing">
+                            <!-- SVG ring injected by JS -->
                         </div>
                         <div class="score-info">
+                            <div class="tier-badge" id="scoreTierBadge">--</div>
                             <p id="scoreInterpretation"></p>
                         </div>
                     </div>
@@ -172,77 +172,95 @@
                     <div class="analysis-grid">
                         <!-- Score Breakdown Card -->
                         <div class="analysis-card full-width">
-                            <h3>📊 Score Breakdown</h3>
+                            <h3 class="card-title"><span class="card-icon card-icon--blue"></span> Score Breakdown</h3>
                             <div class="score-breakdown-grid">
                                 <div class="score-item">
-                                    <div class="score-item-label">Keyword Match</div>
+                                    <div class="score-item-header">
+                                        <span class="score-item-label">Keyword Match</span>
+                                        <span class="score-item-value" id="keywordMatchValue">0%</span>
+                                    </div>
                                     <div class="progress-bar">
                                         <div class="progress-fill" id="keywordMatchBar" style="width: 0%"></div>
                                     </div>
-                                    <div class="score-item-value" id="keywordMatchValue">0%</div>
                                 </div>
                                 <div class="score-item">
-                                    <div class="score-item-label">Resume Structure</div>
+                                    <div class="score-item-header">
+                                        <span class="score-item-label">Resume Structure</span>
+                                        <span class="score-item-value" id="structureValue">0%</span>
+                                    </div>
                                     <div class="progress-bar">
                                         <div class="progress-fill" id="structureBar" style="width: 0%"></div>
                                     </div>
-                                    <div class="score-item-value" id="structureValue">0%</div>
                                 </div>
                                 <div class="score-item">
-                                    <div class="score-item-label">Experience Quality</div>
+                                    <div class="score-item-header">
+                                        <span class="score-item-label">Experience Quality</span>
+                                        <span class="score-item-value" id="experienceValue">0%</span>
+                                    </div>
                                     <div class="progress-bar">
                                         <div class="progress-fill" id="experienceBar" style="width: 0%"></div>
                                     </div>
-                                    <div class="score-item-value" id="experienceValue">0%</div>
                                 </div>
                                 <div class="score-item">
-                                    <div class="score-item-label">Soft Skills</div>
+                                    <div class="score-item-header">
+                                        <span class="score-item-label">Soft Skills</span>
+                                        <span class="score-item-value" id="softSkillsValue">0%</span>
+                                    </div>
                                     <div class="progress-bar">
                                         <div class="progress-fill" id="softSkillsBar" style="width: 0%"></div>
                                     </div>
-                                    <div class="score-item-value" id="softSkillsValue">0%</div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- ATS Compatibility Breakdown Card -->
                         <div class="analysis-card full-width">
-                            <h3>🤖 ATS Compatibility Breakdown</h3>
+                            <h3 class="card-title"><span class="card-icon card-icon--purple"></span> ATS Compatibility</h3>
                             <div class="score-breakdown-grid">
                                 <div class="score-item">
-                                    <div class="score-item-label">Formatting</div>
+                                    <div class="score-item-header">
+                                        <span class="score-item-label">Formatting</span>
+                                        <span class="score-item-value" id="formattingValue">0%</span>
+                                    </div>
                                     <div class="progress-bar">
                                         <div class="progress-fill" id="formattingBar" style="width: 0%"></div>
                                     </div>
-                                    <div class="score-item-value" id="formattingValue">0%</div>
                                 </div>
                                 <div class="score-item">
-                                    <div class="score-item-label">Parsability</div>
+                                    <div class="score-item-header">
+                                        <span class="score-item-label">Parsability</span>
+                                        <span class="score-item-value" id="parsabilityValue">0%</span>
+                                    </div>
                                     <div class="progress-bar">
                                         <div class="progress-fill" id="parsabilityBar" style="width: 0%"></div>
                                     </div>
-                                    <div class="score-item-value" id="parsabilityValue">0%</div>
                                 </div>
                                 <div class="score-item">
-                                    <div class="score-item-label">Contact Info</div>
+                                    <div class="score-item-header">
+                                        <span class="score-item-label">Contact Info</span>
+                                        <span class="score-item-value" id="contactInfoValue">0%</span>
+                                    </div>
                                     <div class="progress-bar">
                                         <div class="progress-fill" id="contactInfoBar" style="width: 0%"></div>
                                     </div>
-                                    <div class="score-item-value" id="contactInfoValue">0%</div>
                                 </div>
                                 <div class="score-item">
-                                    <div class="score-item-label">Section Organization</div>
+                                    <div class="score-item-header">
+                                        <span class="score-item-label">Section Organization</span>
+                                        <span class="score-item-value" id="sectionOrgValue">0%</span>
+                                    </div>
                                     <div class="progress-bar">
                                         <div class="progress-fill" id="sectionOrgBar" style="width: 0%"></div>
                                     </div>
-                                    <div class="score-item-value" id="sectionOrgValue">0%</div>
                                 </div>
                                 <div class="score-item">
-                                    <div class="score-item-label">Keyword Density</div>
+                                    <div class="score-item-header">
+                                        <span class="score-item-label">Keyword Density</span>
+                                        <span class="score-item-value" id="keywordDensityValue">0%</span>
+                                    </div>
                                     <div class="progress-bar">
                                         <div class="progress-fill" id="keywordDensityBar" style="width: 0%"></div>
                                     </div>
-                                    <div class="score-item-value" id="keywordDensityValue">0%</div>
                                 </div>
                             </div>
                             <div class="ats-feedback">
@@ -253,57 +271,57 @@
 
                         <!-- Top Matched Skills -->
                         <div class="analysis-card">
-                            <h3>✅ Top Matched Skills</h3>
-                            <div id="topMatchedSkills" class="keywords-list success"></div>
+                            <h3 class="card-title"><span class="card-icon card-icon--green"></span> Matched Skills</h3>
+                            <div id="topMatchedSkills" class="keywords-list"></div>
                         </div>
 
                         <!-- Critical Missing Skills -->
                         <div class="analysis-card">
-                            <h3>🔴 Critical Missing Skills</h3>
-                            <div id="criticalMissingSkills" class="keywords-list danger"></div>
+                            <h3 class="card-title"><span class="card-icon card-icon--red"></span> Missing Skills</h3>
+                            <div id="criticalMissingSkills" class="keywords-list"></div>
                         </div>
 
                         <!-- Matched Keywords -->
                         <div class="analysis-card">
-                            <h3>✅ All Matched Keywords</h3>
+                            <h3 class="card-title"><span class="card-icon card-icon--green"></span> Matched Keywords</h3>
                             <div id="matchedKeywords" class="keywords-list"></div>
                         </div>
 
                         <!-- Missing Keywords -->
                         <div class="analysis-card">
-                            <h3>❌ Missing Keywords</h3>
+                            <h3 class="card-title"><span class="card-icon card-icon--red"></span> Missing Keywords</h3>
                             <div id="missingKeywords" class="keywords-list"></div>
                         </div>
 
                         <!-- Skill Gaps -->
                         <div class="analysis-card full-width">
-                            <h3>⚠️ Skill Gaps Analysis</h3>
+                            <h3 class="card-title"><span class="card-icon card-icon--amber"></span> Skill Gaps Analysis</h3>
                             <div id="skillGaps" class="items-list"></div>
                         </div>
 
                         <!-- Suggestions -->
                         <div class="analysis-card full-width">
-                            <h3>💡 Suggestions for Improvement</h3>
+                            <h3 class="card-title"><span class="card-icon card-icon--blue"></span> Suggestions for Improvement</h3>
                             <div id="suggestions" class="items-list"></div>
                         </div>
 
                         <!-- Competitive Analysis -->
                         <div class="analysis-card full-width">
-                            <h3>📈 Competitive Analysis</h3>
+                            <h3 class="card-title"><span class="card-icon card-icon--purple"></span> Competitive Analysis</h3>
                             <pre id="competitiveAnalysis" class="competitive-text"></pre>
                         </div>
 
                         <!-- Overall Feedback -->
                         <div class="analysis-card full-width">
-                            <h3>📋 Overall Feedback</h3>
+                            <h3 class="card-title"><span class="card-icon card-icon--blue"></span> Overall Feedback</h3>
                             <pre id="overallFeedback" class="feedback-text"></pre>
                         </div>
                     </div>
 
                     <!-- Action Buttons -->
                     <div class="action-buttons">
-                        <button class="btn btn-primary" onclick="exportResumePDF()">📥 Download PDF Report</button>
-                        <button class="btn btn-secondary" onclick="viewOnDashboard()">📊 View on Dashboard</button>
+                        <button class="btn btn-primary" onclick="exportResumePDF()">Download PDF Report</button>
+                        <button class="btn btn-secondary" onclick="viewOnDashboard()">View on Dashboard</button>
                     </div>
                 </div>
 

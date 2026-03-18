@@ -174,62 +174,124 @@
     align-items: center;
     gap: 8px;
     padding: 10px 20px;
-    background: linear-gradient(135deg, #00d4aa, #00b894);
+    background: linear-gradient(135deg, #10b981, #059669);
     color: white;
     border: none;
     border-radius: 8px;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
+    letter-spacing: 0.3px;
 }
 
 .btn-export-resume:hover {
     transform: translateY(-2px);
-    box-shadow: 0 5px 20px rgba(0, 212, 170, 0.4);
+    box-shadow: 0 5px 20px rgba(16, 185, 129, 0.4);
 }
 
-/* ==================== ATS Score Card ==================== */
+/* ==================== ATS Score Hero Card ==================== */
 .ats-score-card {
     display: grid;
     grid-template-columns: auto 1fr;
     gap: 30px;
-    background-color: var(--card-bg);
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px var(--shadow);
-    margin-bottom: 40px;
+    background: var(--card-bg);
+    padding: 32px;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px var(--shadow);
+    margin-bottom: 28px;
     align-items: center;
+    border: 1px solid var(--border-color);
 }
 
-.score-circle {
-    width: 180px;
-    height: 180px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    border-radius: 50%;
-    color: white;
+/* ==================== SVG Score Ring ==================== */
+.score-ring-container {
+    width: 150px;
+    height: 150px;
     position: relative;
+    flex-shrink: 0;
 }
 
-.score-value {
-    font-size: 60px;
-    font-weight: bold;
+.score-ring-svg {
+    width: 100%;
+    height: 100%;
 }
 
-.score-label {
-    font-size: 14px;
-    opacity: 0.9;
-    margin-top: 5px;
+.score-ring-fill {
+    transition: stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.score-ring-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    line-height: 1;
+}
+
+.score-ring-value {
+    font-size: 42px;
+    font-weight: 800;
+    color: var(--text-primary);
+    display: block;
+}
+
+.score-ring-label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    display: block;
+    margin-top: 2px;
+    font-weight: 500;
+}
+
+/* ==================== Tier Badge ==================== */
+.tier-badge {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.tier-badge.tier-excellent {
+    background: rgba(16, 185, 129, 0.12);
+    color: #059669;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.tier-badge.tier-strong {
+    background: rgba(59, 130, 246, 0.12);
+    color: #2563eb;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.tier-badge.tier-good {
+    background: rgba(245, 158, 11, 0.12);
+    color: #d97706;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.tier-badge.tier-average {
+    background: rgba(249, 115, 22, 0.12);
+    color: #ea580c;
+    border: 1px solid rgba(249, 115, 22, 0.3);
+}
+
+.tier-badge.tier-needs-work {
+    background: rgba(239, 68, 68, 0.12);
+    color: #dc2626;
+    border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
 .score-info p {
-    font-size: 16px;
-    line-height: 1.8;
-    color: var(--text-primary);
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    margin: 0;
 }
 
 /* ==================== Analysis Grid ==================== */
@@ -241,50 +303,112 @@
 
 .analysis-card {
     background-color: var(--card-bg);
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px var(--shadow);
+    padding: 24px;
+    border-radius: 14px;
+    box-shadow: 0 2px 12px var(--shadow);
     border: 1px solid var(--border-color);
+    transition: box-shadow 0.3s ease;
+}
+
+.analysis-card:hover {
+    box-shadow: 0 4px 20px var(--shadow);
 }
 
 .analysis-card.full-width {
     grid-column: 1 / -1;
 }
 
-.analysis-card h3 {
-    margin-bottom: 15px;
-    color: var(--primary-color);
-    font-size: 18px;
+/* ==================== Card Title with Icon ==================== */
+.card-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text-primary);
 }
 
-/* ==================== Keywords List ==================== */
+.card-icon {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.card-icon--blue { background: #4f46e5; }
+.card-icon--purple { background: #7c3aed; }
+.card-icon--green { background: #10b981; }
+.card-icon--red { background: #ef4444; }
+.card-icon--amber { background: #f59e0b; }
+
+/* ==================== Keyword Tags ==================== */
 .keywords-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 8px;
 }
 
-.keywords-list span {
-    background-color: var(--section-bg);
-    padding: 8px 12px;
-    border-radius: 20px;
+.keyword-tag {
+    padding: 6px 12px;
+    border-radius: 6px;
     font-size: 13px;
+    font-weight: 500;
+    line-height: 1.3;
+}
+
+.keyword-tag--success {
+    background: rgba(16, 185, 129, 0.1);
+    color: #059669;
+    border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.keyword-tag--danger {
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+    border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.keyword-tag--neutral {
+    background: var(--section-bg);
+    color: var(--text-secondary);
     border: 1px solid var(--border-color);
+}
+
+/* Dark theme adjustments */
+html[data-theme="dark"] .keyword-tag--success {
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+    border-color: rgba(16, 185, 129, 0.3);
+}
+
+html[data-theme="dark"] .keyword-tag--danger {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border-color: rgba(239, 68, 68, 0.3);
 }
 
 /* ==================== Items List ==================== */
 .items-list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
 }
 
 .items-list li {
     list-style: none;
-    padding: 10px;
+    padding: 12px 14px;
     background-color: var(--section-bg);
-    border-radius: 5px;
+    border-radius: 8px;
     border-left: 3px solid var(--primary-color);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-primary);
+    transition: background-color 0.2s ease;
+}
+
+.items-list li:hover {
+    background-color: var(--card-bg);
 }
 
 .feedback-text {
@@ -296,72 +420,64 @@
     border: none;
     margin: 0;
     padding: 0;
+    font-size: 14px;
 }
 
 /* ==================== Score Breakdown Grid ==================== */
 .score-breakdown-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
+    gap: 16px;
 }
 
 .score-item {
     background: var(--section-bg);
-    padding: 15px;
-    border-radius: 8px;
+    padding: 14px 16px;
+    border-radius: 10px;
+}
+
+.score-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
 }
 
 .score-item-label {
-    font-size: 14px;
+    font-size: 13px;
     color: var(--text-secondary);
-    margin-bottom: 10px;
+    font-weight: 500;
 }
 
 .score-item-value {
-    font-size: 18px;
-    font-weight: bold;
+    font-size: 15px;
+    font-weight: 700;
     color: var(--primary-color);
-    text-align: right;
-    margin-top: 5px;
 }
 
 .progress-bar {
-    height: 10px;
+    height: 8px;
     background: var(--border-color);
-    border-radius: 5px;
+    border-radius: 4px;
     overflow: hidden;
 }
 
 .progress-fill {
     height: 100%;
-    border-radius: 5px;
-    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-    transition: width 0.5s ease;
+    border-radius: 4px;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .progress-fill.high {
-    background: linear-gradient(90deg, #4caf50, #8bc34a);
+    background: linear-gradient(90deg, #10b981, #34d399);
 }
 
 .progress-fill.medium {
-    background: linear-gradient(90deg, #ff9800, #ffc107);
+    background: linear-gradient(90deg, #f59e0b, #fbbf24);
 }
 
 .progress-fill.low {
-    background: linear-gradient(90deg, #f44336, #ff5722);
-}
-
-/* ==================== Keywords List Variants ==================== */
-.keywords-list.success span {
-    background: #e8f5e9;
-    color: #2e7d32;
-    border-color: #4caf50;
-}
-
-.keywords-list.danger span {
-    background: #ffebee;
-    color: #c62828;
-    border-color: #f44336;
+    background: linear-gradient(90deg, #ef4444, #f87171);
 }
 
 /* ==================== Competitive Analysis ==================== */
@@ -370,12 +486,75 @@
     color: var(--text-primary);
     white-space: pre-wrap;
     font-family: inherit;
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.04), rgba(79, 70, 229, 0.04));
     padding: 20px;
-    border-radius: 8px;
-    border-left: 4px solid var(--primary-color);
+    border-radius: 10px;
+    border-left: 4px solid var(--secondary-color);
+    margin: 0;
+    font-size: 14px;
+}
+
+/* ==================== ATS Feedback Cards ==================== */
+.ats-feedback {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.ats-issues, .ats-tips {
+    padding: 16px;
+    border-radius: 10px;
+}
+
+.ats-issues {
+    background: rgba(239, 68, 68, 0.06);
+    border-left: 3px solid #ef4444;
+}
+
+.ats-tips {
+    background: rgba(16, 185, 129, 0.06);
+    border-left: 3px solid #10b981;
+}
+
+.ats-issues h4, .ats-tips h4 {
+    margin: 0 0 10px 0;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.ats-issues h4 { color: #dc2626; }
+.ats-tips h4 { color: #059669; }
+
+.ats-ok-msg {
+    font-size: 13px;
+    color: #059669;
     margin: 0;
 }
+
+.ats-issues ul, .ats-tips ul {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+.ats-issues li { color: #b91c1c; }
+.ats-tips li { color: #047857; }
+
+html[data-theme="dark"] .ats-issues {
+    background: rgba(239, 68, 68, 0.1);
+}
+
+html[data-theme="dark"] .ats-tips {
+    background: rgba(16, 185, 129, 0.1);
+}
+
+html[data-theme="dark"] .ats-issues li { color: #fca5a5; }
+html[data-theme="dark"] .ats-tips li { color: #6ee7b7; }
+html[data-theme="dark"] .ats-issues h4 { color: #f87171; }
+html[data-theme="dark"] .ats-tips h4 { color: #34d399; }
+html[data-theme="dark"] .ats-ok-msg { color: #34d399; }
 
 /* ==================== Action Buttons ==================== */
 .action-buttons {
@@ -399,133 +578,6 @@
     min-height: 400px;
 }
 
-/* ==================== ATS Friendliness Card ==================== */
-.ats-friendly-card {
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
-    border: 1px solid rgba(99, 102, 241, 0.3);
-}
-
-.ats-friendly-header {
-    display: flex;
-    align-items: center;
-    gap: 30px;
-    margin-bottom: 25px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.ats-score-circle {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    flex-shrink: 0;
-    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
-}
-
-.ats-score-circle span {
-    font-size: 32px;
-    font-weight: bold;
-    line-height: 1;
-}
-
-.ats-score-circle small {
-    font-size: 10px;
-    opacity: 0.9;
-    margin-top: 4px;
-}
-
-.ats-score-circle.high {
-    background: linear-gradient(135deg, #4caf50, #8bc34a);
-    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
-}
-
-.ats-score-circle.medium {
-    background: linear-gradient(135deg, #ff9800, #ffc107);
-    box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4);
-}
-
-.ats-score-circle.low {
-    background: linear-gradient(135deg, #f44336, #ff5722);
-    box-shadow: 0 4px 15px rgba(244, 67, 54, 0.4);
-}
-
-.ats-summary {
-    flex: 1;
-}
-
-.ats-summary p {
-    margin: 0;
-    font-size: 15px;
-    line-height: 1.6;
-    color: var(--text-primary);
-}
-
-.ats-feedback {
-    margin-top: 20px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-}
-
-.ats-issues, .ats-tips {
-    padding: 15px;
-    border-radius: 10px;
-}
-
-.ats-issues {
-    background: rgba(244, 67, 54, 0.1);
-    border-left: 3px solid #f44336;
-}
-
-.ats-tips {
-    background: rgba(76, 175, 80, 0.1);
-    border-left: 3px solid #4caf50;
-}
-
-.ats-issues h4, .ats-tips h4 {
-    margin: 0 0 10px 0;
-    font-size: 14px;
-    font-weight: 600;
-}
-
-.ats-issues h4 { color: #f44336; }
-.ats-tips h4 { color: #4caf50; }
-
-.ats-issues ul, .ats-tips ul {
-    margin: 0;
-    padding-left: 18px;
-    font-size: 13px;
-    line-height: 1.8;
-}
-
-.ats-issues li { color: #c62828; }
-.ats-tips li { color: #2e7d32; }
-
-html[data-theme="light"] .ats-issues {
-    background: rgba(244, 67, 54, 0.08);
-}
-
-html[data-theme="light"] .ats-tips {
-    background: rgba(76, 175, 80, 0.08);
-}
-
-@media (max-width: 768px) {
-    .ats-friendly-header {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .ats-feedback {
-        grid-template-columns: 1fr;
-    }
-}
-
 /* ==================== Responsive ==================== */
 @media (max-width: 768px) {
     .upload-section {
@@ -536,18 +588,28 @@ html[data-theme="light"] .ats-tips {
     .ats-score-card {
         grid-template-columns: 1fr;
         text-align: center;
+        gap: 20px;
     }
 
-    .score-circle {
-        width: 150px;
-        height: 150px;
+    .score-ring-container {
+        width: 130px;
+        height: 130px;
+        margin: 0 auto;
     }
 
-    .score-value {
-        font-size: 45px;
+    .score-ring-value {
+        font-size: 36px;
     }
 
     .analysis-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .score-breakdown-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ats-feedback {
         grid-template-columns: 1fr;
     }
 
