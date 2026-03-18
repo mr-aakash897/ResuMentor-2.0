@@ -566,23 +566,19 @@ public class InterviewService {
         int baseScore = 50;
         
         // Check for excellent/outstanding indicators
-        if (feedbackLower.contains("excellent") || feedbackLower.contains("outstanding") || 
-            feedbackLower.contains("★★★")) {
+        if (feedbackLower.contains("excellent") || feedbackLower.contains("outstanding")) {
             baseScore = 85 + new java.util.Random().nextInt(15); // 85-100
         } 
         // Check for good indicators
-        else if (feedbackLower.contains("good answer") || feedbackLower.contains("good -") ||
-                 feedbackLower.contains("★★☆")) {
+        else if (feedbackLower.contains("good answer") || feedbackLower.contains("good -")) {
             baseScore = 70 + new java.util.Random().nextInt(15); // 70-85
         } 
         // Check for decent/satisfactory indicators
-        else if (feedbackLower.contains("decent") || feedbackLower.contains("satisfactory") ||
-                 feedbackLower.contains("★★☆")) {
+        else if (feedbackLower.contains("decent") || feedbackLower.contains("satisfactory")) {
             baseScore = 55 + new java.util.Random().nextInt(15); // 55-70
         }
         // Check for needs improvement indicators
-        else if (feedbackLower.contains("needs improvement") || feedbackLower.contains("needs work") ||
-                 feedbackLower.contains("★☆☆")) {
+        else if (feedbackLower.contains("needs improvement") || feedbackLower.contains("needs work")) {
             baseScore = 35 + new java.util.Random().nextInt(20); // 35-55
         }
         
@@ -642,73 +638,73 @@ public class InterviewService {
         
         // Performance tier
         if (score >= 85) {
-            feedback.append("🌟 OUTSTANDING PERFORMANCE\n\n");
+            feedback.append("OUTSTANDING PERFORMANCE\n\n");
             feedback.append("Congratulations! You've demonstrated exceptional interview skills. ");
             feedback.append("Your responses showed deep technical knowledge, clear communication, and strong problem-solving abilities. ");
             feedback.append("You're well-prepared for senior-level positions.\n\n");
         } else if (score >= 70) {
-            feedback.append("✅ STRONG PERFORMANCE\n\n");
+            feedback.append("STRONG PERFORMANCE\n\n");
             feedback.append("Great job! You've shown solid technical competence and good communication skills. ");
             feedback.append("With some refinement in specific areas, you'll be ready for challenging roles. ");
             feedback.append("Focus on adding more depth and examples to your answers.\n\n");
         } else if (score >= 55) {
-            feedback.append("👍 SATISFACTORY PERFORMANCE\n\n");
+            feedback.append("SATISFACTORY PERFORMANCE\n\n");
             feedback.append("You've demonstrated foundational knowledge but have room for growth. ");
             feedback.append("Your answers covered basics but lacked depth in some areas. ");
             feedback.append("Practice explaining concepts more thoroughly with real examples.\n\n");
         } else if (score >= 40) {
-            feedback.append("⚠️ NEEDS IMPROVEMENT\n\n");
+            feedback.append("NEEDS IMPROVEMENT\n\n");
             feedback.append("Your performance indicates gaps in preparation. ");
             feedback.append("Several answers were too brief or missed key technical points. ");
             feedback.append("Dedicate time to strengthening fundamentals and practicing structured responses.\n\n");
         } else {
-            feedback.append("📚 MORE PREPARATION NEEDED\n\n");
+            feedback.append("MORE PREPARATION NEEDED\n\n");
             feedback.append("Your responses suggest you need more study and practice before interviews. ");
             feedback.append("Focus on core concepts, take online courses, and practice with the STAR method. ");
             feedback.append("Don't be discouraged - everyone starts somewhere!\n\n");
         }
         
         // Statistical breakdown
-        feedback.append("📊 DETAILED BREAKDOWN\n");
-        feedback.append("────────────────────\n");
-        feedback.append(String.format("• Questions Answered: %d of %d\n", (correct + partial + incorrect), total));
-        feedback.append(String.format("• Strong Answers (80%%+): %d (%.1f%%)\n", correct, correctRate));
-        feedback.append(String.format("• Partial Answers (50-79%%): %d (%.1f%%)\n", partial, total > 0 ? (partial * 100.0) / total : 0));
-        feedback.append(String.format("• Weak Answers (<50%%): %d (%.1f%%)\n\n", incorrect, total > 0 ? (incorrect * 100.0) / total : 0));
+        feedback.append("DETAILED BREAKDOWN\n");
+        feedback.append("--------------------\n");
+        feedback.append(String.format("- Questions Answered: %d of %d\n", (correct + partial + incorrect), total));
+        feedback.append(String.format("- Strong Answers (80%%+): %d (%.1f%%)\n", correct, correctRate));
+        feedback.append(String.format("- Partial Answers (50-79%%): %d (%.1f%%)\n", partial, total > 0 ? (partial * 100.0) / total : 0));
+        feedback.append(String.format("- Weak Answers (<50%%): %d (%.1f%%)\n\n", incorrect, total > 0 ? (incorrect * 100.0) / total : 0));
         
         // Personalized recommendations
-        feedback.append("🎯 PERSONALIZED RECOMMENDATIONS\n");
-        feedback.append("────────────────────────────────\n");
+        feedback.append("PERSONALIZED RECOMMENDATIONS\n");
+        feedback.append("----------------------------\n");
         
         if (correct < total / 2) {
-            feedback.append("• Technical Depth: Review core concepts for your target role\n");
-            feedback.append("• Practice: Use the STAR method (Situation, Task, Action, Result) for behavioral questions\n");
+            feedback.append("- Technical Depth: Review core concepts for your target role\n");
+            feedback.append("- Practice: Use the STAR method (Situation, Task, Action, Result) for behavioral questions\n");
         }
         if (partial > correct) {
-            feedback.append("• Completeness: Your answers often missed key details - practice expanding your responses\n");
-            feedback.append("• Examples: Include more specific, quantifiable achievements\n");
+            feedback.append("- Completeness: Your answers often missed key details - practice expanding your responses\n");
+            feedback.append("- Examples: Include more specific, quantifiable achievements\n");
         }
         if (incorrect > 3) {
-            feedback.append("• Fundamentals: Focus on strengthening your core knowledge\n");
-            feedback.append("• Confidence: Practice speaking about technical topics out loud\n");
+            feedback.append("- Fundamentals: Focus on strengthening your core knowledge\n");
+            feedback.append("- Confidence: Practice speaking about technical topics out loud\n");
         }
         if (score >= 70) {
-            feedback.append("• Polish: Work on adding metrics and specific outcomes to your stories\n");
-            feedback.append("• Leadership: Start incorporating examples of mentoring or leading initiatives\n");
+            feedback.append("- Polish: Work on adding metrics and specific outcomes to your stories\n");
+            feedback.append("- Leadership: Start incorporating examples of mentoring or leading initiatives\n");
         }
         
-        feedback.append("\n💡 NEXT STEPS\n");
-        feedback.append("──────────────\n");
+        feedback.append("\nNEXT STEPS\n");
+        feedback.append("----------\n");
         if (score >= 70) {
-            feedback.append("• Apply to roles confidently - you're interview-ready!\n");
-            feedback.append("• Consider targeting senior or lead positions\n");
+            feedback.append("- Apply to roles confidently - you're interview-ready!\n");
+            feedback.append("- Consider targeting senior or lead positions\n");
         } else if (score >= 50) {
-            feedback.append("• Continue practicing with mock interviews\n");
-            feedback.append("• Review feedback on weaker questions and prepare better answers\n");
+            feedback.append("- Continue practicing with mock interviews\n");
+            feedback.append("- Review feedback on weaker questions and prepare better answers\n");
         } else {
-            feedback.append("• Take structured courses on your target technology stack\n");
-            feedback.append("• Practice daily with interview prep platforms\n");
-            feedback.append("• Build projects to gain practical experience\n");
+            feedback.append("- Take structured courses on your target technology stack\n");
+            feedback.append("- Practice daily with interview prep platforms\n");
+            feedback.append("- Build projects to gain practical experience\n");
         }
         
         return feedback.toString();

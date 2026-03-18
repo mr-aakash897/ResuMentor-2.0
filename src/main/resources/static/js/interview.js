@@ -33,7 +33,8 @@ document.addEventListener('DOMContentLoaded', () => {
 // ==================== Webcam ====================
 async function initWebcam() {
     try {
-        webcamStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        // Avoid locking the microphone; speech recognition needs its own audio access.
+        webcamStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
         const videoEl = document.getElementById('userVideo');
         videoEl.srcObject = webcamStream;
         document.getElementById('cameraDot').classList.add('green');

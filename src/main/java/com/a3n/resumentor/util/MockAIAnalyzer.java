@@ -145,37 +145,37 @@ public class MockAIAnalyzer {
         StringBuilder analysis = new StringBuilder();
         
         if (atsScore >= 85) {
-            analysis.append("🏆 TOP TIER CANDIDATE\n\n");
+            analysis.append("TOP TIER CANDIDATE\n\n");
             analysis.append("Your resume places you in the top 10-15% of applicants for ").append(jobRole).append(" positions. ");
             analysis.append("With ").append(matched).append(" matching skills and strong ATS optimization, ");
             analysis.append("you're highly likely to pass automated screening systems.\n\n");
-            analysis.append("💼 Expected Callback Rate: 60-80%\n");
-            analysis.append("🎯 Recommended: Apply to senior-level positions and negotiate confidently.");
+            analysis.append("Expected Callback Rate: 60-80%\n");
+            analysis.append("Recommended: Apply to senior-level positions and negotiate confidently.");
         } else if (atsScore >= 70) {
-            analysis.append("✅ COMPETITIVE CANDIDATE\n\n");
+            analysis.append("COMPETITIVE CANDIDATE\n\n");
             analysis.append("Your resume is well-positioned among applicants for ").append(jobRole).append(" roles. ");
             analysis.append("You have ").append(matched).append(" relevant skills, putting you ahead of average candidates. ");
             analysis.append("Addressing ").append(Math.min(missing, 3)).append(" key skill gaps could elevate you to top-tier status.\n\n");
-            analysis.append("💼 Expected Callback Rate: 35-55%\n");
-            analysis.append("🎯 Recommended: Target mid to senior-level positions.");
+            analysis.append("Expected Callback Rate: 35-55%\n");
+            analysis.append("Recommended: Target mid to senior-level positions.");
         } else if (atsScore >= 55) {
-            analysis.append("👍 MODERATE CANDIDATE\n\n");
+            analysis.append("MODERATE CANDIDATE\n\n");
             analysis.append("Your resume shows potential but faces competition for ").append(jobRole).append(" positions. ");
             analysis.append("With ").append(matched).append(" matching skills, you meet basic requirements but ");
             analysis.append("need ").append(missing).append(" additional skills to stand out.\n\n");
-            analysis.append("💼 Expected Callback Rate: 15-30%\n");
-            analysis.append("🎯 Recommended: Focus on skill development before applying widely.");
+            analysis.append("Expected Callback Rate: 15-30%\n");
+            analysis.append("Recommended: Focus on skill development before applying widely.");
         } else if (atsScore >= 40) {
-            analysis.append("⚠️ BELOW AVERAGE FIT\n\n");
+            analysis.append("BELOW AVERAGE FIT\n\n");
             analysis.append("Your resume shows limited alignment with typical ").append(jobRole).append(" job requirements. ");
             analysis.append("Many applications may be filtered out by ATS systems. Consider:\n");
-            analysis.append("• Taking relevant courses or certifications\n");
-            analysis.append("• Gaining project experience in missing skill areas\n");
-            analysis.append("• Targeting entry-level or adjacent roles\n\n");
-            analysis.append("💼 Expected Callback Rate: 5-15%\n");
-            analysis.append("🎯 Recommended: Build skills before applying.");
+            analysis.append("- Taking relevant courses or certifications\n");
+            analysis.append("- Gaining project experience in missing skill areas\n");
+            analysis.append("- Targeting entry-level or adjacent roles\n\n");
+            analysis.append("Expected Callback Rate: 5-15%\n");
+            analysis.append("Recommended: Build skills before applying.");
         } else {
-            analysis.append("📚 SIGNIFICANT PREPARATION NEEDED\n\n");
+            analysis.append("SIGNIFICANT PREPARATION NEEDED\n\n");
             analysis.append("Your current resume is unlikely to pass ATS screening for ").append(jobRole).append(" positions. ");
             analysis.append("This isn't a reflection of your potential - it means the resume needs substantial revision.\n\n");
             analysis.append("Action Plan:\n");
@@ -183,8 +183,8 @@ public class MockAIAnalyzer {
             analysis.append("2. Build 2-3 portfolio projects demonstrating key skills\n");
             analysis.append("3. Obtain relevant certifications\n");
             analysis.append("4. Consider internships or entry-level adjacent roles\n\n");
-            analysis.append("💼 Expected Callback Rate: <5%\n");
-            analysis.append("🎯 Recommended: Invest 3-6 months in skill building.");
+            analysis.append("Expected Callback Rate: <5%\n");
+            analysis.append("Recommended: Invest 3-6 months in skill building.");
         }
         
         return analysis.toString();
@@ -532,71 +532,71 @@ public class MockAIAnalyzer {
             // Group missing skills by category
             Map<String, List<String>> categorizedMissing = categorizeMissingSkills(missing, jobRole);
             
-            suggestions.add("🎯 MISSING KEYWORDS - HOW TO ADD THEM NATURALLY\n");
+            suggestions.add("MISSING KEYWORDS - HOW TO ADD THEM NATURALLY\n");
             
             // Technical skills with placement guidance
             if (categorizedMissing.containsKey("technical")) {
                 List<String> techSkills = categorizedMissing.get("technical");
-                suggestions.add("📋 Technical Skills (" + String.join(", ", techSkills.subList(0, Math.min(4, techSkills.size()))) + "):");
-                suggestions.add("   → Add to Skills section: Group by category (Languages, Frameworks, Tools)");
-                suggestions.add("   → Integrate in Experience: 'Developed REST APIs using Spring Boot...'");
-                suggestions.add("   → Include in Projects: 'Built microservice architecture with Docker/Kubernetes'");
+                suggestions.add("Technical Skills (" + String.join(", ", techSkills.subList(0, Math.min(4, techSkills.size()))) + "):");
+                suggestions.add("   - Add to Skills section: Group by category (Languages, Frameworks, Tools)");
+                suggestions.add("   - Integrate in Experience: 'Developed REST APIs using Spring Boot...'");
+                suggestions.add("   - Include in Projects: 'Built microservice architecture with Docker/Kubernetes'");
             }
             
             // Soft skills with integration examples
             if (categorizedMissing.containsKey("soft")) {
                 List<String> softSkills = categorizedMissing.get("soft");
-                suggestions.add("💬 Soft Skills (" + String.join(", ", softSkills.subList(0, Math.min(3, softSkills.size()))) + "):");
-                suggestions.add("   → Show through achievements: 'Led cross-functional team of 5 engineers'");
-                suggestions.add("   → Demonstrate in action: 'Collaborated with stakeholders to define requirements'");
-                suggestions.add("   → Quantify impact: 'Mentored 3 junior developers, reducing onboarding time by 40%'");
+                suggestions.add("Soft Skills (" + String.join(", ", softSkills.subList(0, Math.min(3, softSkills.size()))) + "):");
+                suggestions.add("   - Show through achievements: 'Led cross-functional team of 5 engineers'");
+                suggestions.add("   - Demonstrate in action: 'Collaborated with stakeholders to define requirements'");
+                suggestions.add("   - Quantify impact: 'Mentored 3 junior developers, reducing onboarding time by 40%'");
             }
             
             // Tool/Platform skills
             if (categorizedMissing.containsKey("tools")) {
                 List<String> tools = categorizedMissing.get("tools");
-                suggestions.add("🔧 Tools & Platforms (" + String.join(", ", tools.subList(0, Math.min(3, tools.size()))) + "):");
-                suggestions.add("   → Add dedicated Tools section under Skills");
-                suggestions.add("   → Reference in achievements: 'Automated CI/CD pipeline using Jenkins/GitHub Actions'");
-                suggestions.add("   → Include certifications if available");
+                suggestions.add("Tools and Platforms (" + String.join(", ", tools.subList(0, Math.min(3, tools.size()))) + "):");
+                suggestions.add("   - Add dedicated Tools section under Skills");
+                suggestions.add("   - Reference in achievements: 'Automated CI/CD pipeline using Jenkins/GitHub Actions'");
+                suggestions.add("   - Include certifications if available");
             }
         }
 
         // ========== SPECIFIC PLACEMENT RECOMMENDATIONS ==========
-        suggestions.add("\n📍 WHERE TO PLACE KEYWORDS:\n");
+        suggestions.add("\nWHERE TO PLACE KEYWORDS:\n");
         
         // Summary section
         if (!textLower.contains("summary") && !textLower.contains("objective")) {
-            suggestions.add("📝 Professional Summary (Add at top):");
+            suggestions.add("Professional Summary (Add at top):");
             suggestions.add("   Template: '[Years] experienced [Role] skilled in [Top 3-4 Keywords].");
             suggestions.add("   Proven track record of [Achievement with keyword]. Seeking to leverage");
             suggestions.add("   [Keyword] expertise as [Target Role] at [Company].'");
         } else {
-            suggestions.add("📝 Professional Summary: Front-load with your strongest matching keywords");
+            suggestions.add("Professional Summary: Front-load with your strongest matching keywords");
         }
         
         // Skills section
         if (!textLower.contains("technical skills") && !textLower.contains("core competencies")) {
-            suggestions.add("🔑 Skills Section (Organize by category):");
-            suggestions.add("   • Languages: Java, Python, JavaScript");
-            suggestions.add("   • Frameworks: Spring Boot, React, Node.js");
-            suggestions.add("   • Tools: Git, Docker, Jenkins, AWS");
-            suggestions.add("   • Databases: MySQL, MongoDB, Redis");
+            suggestions.add("Skills Section (Organize by category):");
+            suggestions.add("   - Languages: Java, Python, JavaScript");
+            suggestions.add("   - Frameworks: Spring Boot, React, Node.js");
+            suggestions.add("   - Tools: Git, Docker, Jenkins, AWS");
+            suggestions.add("   - Databases: MySQL, MongoDB, Redis");
         }
         
         // Experience section keyword density
-        suggestions.add("💼 Experience Section: Aim for 2-3 keywords per bullet point");
+        suggestions.add("Experience Section: Aim for 2-3 keywords per bullet point");
         suggestions.add("   Before: 'Worked on backend services'");
         suggestions.add("   After: 'Designed and deployed RESTful microservices using Spring Boot and Docker'");
 
         // Quantifiable achievements
         Pattern numberPattern = Pattern.compile("\\d+%|\\$\\d+");
         if (!numberPattern.matcher(text).find()) {
-            suggestions.add("\n📊 ADD METRICS (Critical for ATS & Impact):");
-            suggestions.add("   • Performance: 'Improved API response time by 60%'");
-            suggestions.add("   • Scale: 'Processed 1M+ daily transactions'");
-            suggestions.add("   • Team: 'Led team of 8 engineers across 3 time zones'");
-            suggestions.add("   • Business: 'Reduced infrastructure costs by $50K annually'");
+            suggestions.add("\nADD METRICS (Critical for ATS and Impact):");
+            suggestions.add("   - Performance: 'Improved API response time by 60%'");
+            suggestions.add("   - Scale: 'Processed 1M+ daily transactions'");
+            suggestions.add("   - Team: 'Led team of 8 engineers across 3 time zones'");
+            suggestions.add("   - Business: 'Reduced infrastructure costs by $50K annually'");
         }
 
         // Action verbs
@@ -606,15 +606,15 @@ public class MockAIAnalyzer {
             if (textLower.contains(verb)) hasStrongVerbs = true;
         }
         if (!hasStrongVerbs) {
-            suggestions.add("\n💪 USE POWER VERBS:");
-            suggestions.add("   Replace: 'Worked on' → 'Architected', 'Spearheaded', 'Engineered'");
-            suggestions.add("   Replace: 'Helped with' → 'Drove', 'Championed', 'Accelerated'");
-            suggestions.add("   Replace: 'Was responsible for' → 'Owned', 'Directed', 'Orchestrated'");
+            suggestions.add("\nUSE POWER VERBS:");
+            suggestions.add("   Replace: 'Worked on' -> 'Architected', 'Spearheaded', 'Engineered'");
+            suggestions.add("   Replace: 'Helped with' -> 'Drove', 'Championed', 'Accelerated'");
+            suggestions.add("   Replace: 'Was responsible for' -> 'Owned', 'Directed', 'Orchestrated'");
         }
 
         // Project section
         if (!textLower.contains("project") && !textLower.contains("portfolio")) {
-            suggestions.add("\n🚀 ADD PROJECTS SECTION:");
+            suggestions.add("\nADD PROJECTS SECTION:");
             suggestions.add("   Format: Project Name | Technologies Used (keyword-rich)");
             suggestions.add("   • Describe problem solved using technical keywords");
             suggestions.add("   • Include metrics: users, performance, scale");
@@ -623,31 +623,31 @@ public class MockAIAnalyzer {
 
         // Certifications
         if (!textLower.contains("certification") && !textLower.contains("certified")) {
-            suggestions.add("\n🏆 CERTIFICATIONS (Boosts ATS Score):");
+            suggestions.add("\nCERTIFICATIONS (Boosts ATS Score):");
             suggestions.add("   Consider: AWS Certified, Google Cloud, Azure, Kubernetes (CKA)");
             suggestions.add("   Format: 'AWS Certified Solutions Architect - Associate (2024)'");
         }
 
         // LinkedIn
         if (!textLower.contains("linkedin")) {
-            suggestions.add("\n🔗 ADD LINKEDIN URL:");
+            suggestions.add("\nADD LINKEDIN URL:");
             suggestions.add("   Customize your URL: linkedin.com/in/yourname");
             suggestions.add("   Ensure LinkedIn keywords match resume for consistency");
         }
 
         // Keywords already good
         if (matched.size() >= 8) {
-            suggestions.add("\n✅ STRONG KEYWORD PRESENCE:");
+            suggestions.add("\nSTRONG KEYWORD PRESENCE:");
             suggestions.add("   Your resume already matches " + matched.size() + " key terms.");
             suggestions.add("   Focus on context and demonstrating impact with these skills.");
         }
 
         // ATS formatting reminder
-        suggestions.add("\n📋 ATS-FRIENDLY FORMATTING:");
-        suggestions.add("   • Use standard fonts (Arial, Calibri, Times New Roman)");
-        suggestions.add("   • Avoid tables, graphics, headers/footers");
-        suggestions.add("   • Use standard section headers (Experience, Education, Skills)");
-        suggestions.add("   • Save as PDF or DOCX (PDF preferred for formatting)");
+        suggestions.add("\nATS-FRIENDLY FORMATTING:");
+        suggestions.add("   - Use standard fonts (Arial, Calibri, Times New Roman)");
+        suggestions.add("   - Avoid tables, graphics, headers/footers");
+        suggestions.add("   - Use standard section headers (Experience, Education, Skills)");
+        suggestions.add("   - Save as PDF or DOCX (PDF preferred for formatting)");
 
         return suggestions;
     }
@@ -702,7 +702,7 @@ public class MockAIAnalyzer {
         List<String> gaps = new ArrayList<>();
         
         if (missing.isEmpty()) {
-            gaps.add("✅ You have strong coverage of essential skills for " + jobRole);
+            gaps.add("You have strong coverage of essential skills for " + jobRole);
             return gaps;
         }
 
@@ -722,13 +722,13 @@ public class MockAIAnalyzer {
         }
 
         if (!critical.isEmpty()) {
-            gaps.add("🔴 Critical Gaps (Must Address): " + String.join(", ", critical));
-            gaps.add("💡 These are core requirements - consider online courses, certifications, or project experience");
+            gaps.add("Critical Gaps (Must Address): " + String.join(", ", critical));
+            gaps.add("These are core requirements - consider online courses, certifications, or project experience");
         }
 
         if (!important.isEmpty()) {
-            gaps.add("🟡 Nice-to-Have Gaps: " + String.join(", ", important.subList(0, Math.min(5, important.size()))));
-            gaps.add("💡 These boost competitiveness but aren't dealbreakers");
+            gaps.add("Nice-to-Have Gaps: " + String.join(", ", important.subList(0, Math.min(5, important.size()))));
+            gaps.add("These boost competitiveness but aren't dealbreakers");
         }
 
         return gaps;
@@ -740,31 +740,31 @@ public class MockAIAnalyzer {
         
         // Score-based assessment
         if (atsScore >= 85) {
-            feedback.append("🌟 EXCELLENT MATCH!\n\n");
+            feedback.append("EXCELLENT MATCH!\n\n");
             feedback.append("Your resume is exceptionally well-aligned with ").append(jobRole).append(" requirements. ");
             feedback.append("You demonstrate strong technical expertise with ").append(matched.size()).append(" matching skills. ");
             feedback.append("Your profile stands out among applicants, and you're likely to pass ATS screening with flying colors.\n\n");
-            feedback.append("📈 Competitive Advantage: Top 15% of applicants for this role.");
+            feedback.append("Competitive Advantage: Top 15% of applicants for this role.");
         } else if (atsScore >= 70) {
-            feedback.append("✅ STRONG CANDIDATE\n\n");
+            feedback.append("STRONG CANDIDATE\n\n");
             feedback.append("Your resume shows solid alignment with ").append(jobRole).append(" requirements. ");
             feedback.append("With ").append(matched.size()).append(" relevant skills, you have a good foundation. ");
             feedback.append("However, addressing ").append(Math.min(missing.size(), 3)).append(" key missing skills could significantly improve your chances.\n\n");
-            feedback.append("📈 Market Position: Top 35% of applicants.");
+            feedback.append("Market Position: Top 35% of applicants.");
         } else if (atsScore >= 50) {
-            feedback.append("⚠️ MODERATE MATCH\n\n");
+            feedback.append("MODERATE MATCH\n\n");
             feedback.append("Your resume has partial alignment with ").append(jobRole).append(" requirements. ");
             feedback.append("While you have ").append(matched.size()).append(" relevant skills, the role expects more specialized expertise. ");
             feedback.append("Focus on acquiring ").append(Math.min(missing.size(), 5)).append(" critical skills through courses or projects before applying.\n\n");
-            feedback.append("📈 Market Position: Average applicant pool.");
+            feedback.append("Market Position: Average applicant pool.");
         } else {
-            feedback.append("⛔ NEEDS IMPROVEMENT\n\n");
+            feedback.append("NEEDS IMPROVEMENT\n\n");
             feedback.append("Your resume shows limited alignment with ").append(jobRole).append(" requirements. ");
             feedback.append("There are significant skill gaps that need addressing. Consider:\n");
-            feedback.append("• Taking online courses in core technologies\n");
-            feedback.append("• Building portfolio projects demonstrating required skills\n");
-            feedback.append("• Seeking entry-level or adjacent roles to build experience\n\n");
-            feedback.append("📈 Recommendation: Strengthen your profile before applying to this role.");
+            feedback.append("- Taking online courses in core technologies\n");
+            feedback.append("- Building portfolio projects demonstrating required skills\n");
+            feedback.append("- Seeking entry-level or adjacent roles to build experience\n\n");
+            feedback.append("Recommendation: Strengthen your profile before applying to this role.");
         }
 
         return feedback.toString();
@@ -1147,75 +1147,75 @@ public class MockAIAnalyzer {
         // ========== BUILD DETAILED FEEDBACK ==========
         // Overall assessment header
         if (qualityScore >= 5) {
-            feedback.append("🌟 EXCELLENT RESPONSE\n\n");
+            feedback.append("EXCELLENT RESPONSE\n\n");
         } else if (qualityScore >= 2) {
-            feedback.append("✅ GOOD ANSWER\n\n");
+            feedback.append("GOOD ANSWER\n\n");
         } else if (qualityScore >= 0) {
-            feedback.append("👍 DECENT RESPONSE\n\n");
+            feedback.append("DECENT RESPONSE\n\n");
         } else {
-            feedback.append("💡 NEEDS IMPROVEMENT\n\n");
+            feedback.append("NEEDS IMPROVEMENT\n\n");
         }
 
         // Detailed analysis section
-        feedback.append("📊 DETAILED ANALYSIS\n");
+        feedback.append("DETAILED ANALYSIS\n");
         feedback.append("─────────────────────\n\n");
         
         // Clarity rating
-        feedback.append("🔍 Clarity: ");
+        feedback.append("Clarity: ");
         if (clarityScore >= 2) {
-            feedback.append("★★★ Excellent - Your response was clear and easy to follow.\n");
+            feedback.append("Excellent - Your response was clear and easy to follow.\n");
         } else if (clarityScore >= 0) {
-            feedback.append("★★☆ Good - ");
+            feedback.append("Good - ");
             if (clarityFeedback.length() > 0) feedback.append(clarityFeedback);
             else feedback.append("Response was reasonably clear.\n");
         } else {
-            feedback.append("★☆☆ Needs Work - ").append(clarityFeedback).append("\n");
+            feedback.append("Needs Work - ").append(clarityFeedback).append("\n");
         }
         
         // Conciseness rating
-        feedback.append("📏 Conciseness: ");
+        feedback.append("Conciseness: ");
         if (concisenessScore >= 2) {
-            feedback.append("★★★ Excellent - Well-balanced response length.\n");
+            feedback.append("Excellent - Well-balanced response length.\n");
         } else if (concisenessScore >= 0) {
-            feedback.append("★★☆ Good - ");
+            feedback.append("Good - ");
             if (concisenessFeedback.length() > 0) feedback.append(concisenessFeedback);
             else feedback.append("Acceptable length.\n");
         } else {
-            feedback.append("★☆☆ Needs Work - ").append(concisenessFeedback).append("\n");
+            feedback.append("Needs Work - ").append(concisenessFeedback).append("\n");
         }
         
         // Relevance rating
-        feedback.append("🎯 Relevance: ");
+        feedback.append("Relevance: ");
         if (relevanceScore >= 2) {
-            feedback.append("★★★ Excellent - Directly addressed the question asked.\n");
+            feedback.append("Excellent - Directly addressed the question asked.\n");
         } else if (relevanceScore >= 0) {
-            feedback.append("★★☆ Good - ");
+            feedback.append("Good - ");
             if (relevanceFeedback.length() > 0) feedback.append(relevanceFeedback);
             else feedback.append("Mostly on topic.\n");
         } else {
-            feedback.append("★☆☆ Needs Work - ").append(relevanceFeedback).append("\n");
+            feedback.append("Needs Work - ").append(relevanceFeedback).append("\n");
         }
 
         // Transcript examples
-        feedback.append("\n📝 FROM YOUR ANSWER:\n");
+        feedback.append("\nFROM YOUR ANSWER:\n");
         if (hasExample) {
-            feedback.append("✓ Good use of examples to illustrate points\n");
+            feedback.append("- Good use of examples to illustrate points\n");
         } else {
-            feedback.append("✗ Missing concrete examples - add real scenarios\n");
+            feedback.append("- Missing concrete examples - add real scenarios\n");
         }
         if (hasMetrics) {
-            feedback.append("✓ Included quantifiable metrics (great!)\n");
+            feedback.append("- Included quantifiable metrics (great!)\n");
         } else {
-            feedback.append("✗ No metrics found - add numbers to show impact\n");
+            feedback.append("- No metrics found - add numbers to show impact\n");
         }
         if (hasStructure) {
-            feedback.append("✓ Well-structured with clear transitions\n");
+            feedback.append("- Well-structured with clear transitions\n");
         } else if (wordCount > 60) {
-            feedback.append("✗ Could benefit from structural markers\n");
+            feedback.append("- Could benefit from structural markers\n");
         }
 
         // Actionable improvement tip
-        feedback.append("\n💪 ACTIONABLE TIP:\n");
+        feedback.append("\nACTIONABLE TIP:\n");
         if (!hasExample) {
             feedback.append("Use the STAR method (Situation, Task, Action, Result) - describe a specific situation, your task, the actions you took, and the measurable results.");
         } else if (!hasMetrics) {
@@ -1294,8 +1294,8 @@ public class MockAIAnalyzer {
     }
 
     private String generateEmptyAnswerFeedback() {
-        return "❌ No answer provided. It's important to attempt an answer, even if you're unsure. " +
-               "Try to share your thought process or ask clarifying questions if needed. " +
-               "\n\n💡 Tip: Saying 'I'm not sure, but here's how I would approach it...' shows problem-solving skills.";
+         return "No answer provided. It's important to attempt an answer, even if you're unsure. " +
+             "Try to share your thought process or ask clarifying questions if needed. " +
+             "\n\nTip: Saying 'I'm not sure, but here's how I would approach it...' shows problem-solving skills.";
     }
 }
