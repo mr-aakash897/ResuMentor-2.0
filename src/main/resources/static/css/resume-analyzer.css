@@ -1,4 +1,11 @@
 /* ==================== Resume Analyzer Specific ==================== */
+
+.footer {
+    background: var(--footer-bg);
+    border-top: 1px solid var(--border-color);
+    padding-top: 0rem;
+}
+
 .resume-analyzer {
     margin-top: 40px;
     margin-bottom: 40px;
@@ -376,13 +383,13 @@
 }
 
 /* Dark theme adjustments */
-html[data-theme="dark"] .keyword-tag--success {
+body.dark .keyword-tag--success {
     background: rgba(16, 185, 129, 0.15);
     color: #34d399;
     border-color: rgba(16, 185, 129, 0.3);
 }
 
-html[data-theme="dark"] .keyword-tag--danger {
+body.dark .keyword-tag--danger {
     background: rgba(239, 68, 68, 0.15);
     color: #f87171;
     border-color: rgba(239, 68, 68, 0.3);
@@ -542,19 +549,19 @@ html[data-theme="dark"] .keyword-tag--danger {
 .ats-issues li { color: #b91c1c; }
 .ats-tips li { color: #047857; }
 
-html[data-theme="dark"] .ats-issues {
+body.dark .ats-issues {
     background: rgba(239, 68, 68, 0.1);
 }
 
-html[data-theme="dark"] .ats-tips {
+body.dark .ats-tips {
     background: rgba(16, 185, 129, 0.1);
 }
 
-html[data-theme="dark"] .ats-issues li { color: #fca5a5; }
-html[data-theme="dark"] .ats-tips li { color: #6ee7b7; }
-html[data-theme="dark"] .ats-issues h4 { color: #f87171; }
-html[data-theme="dark"] .ats-tips h4 { color: #34d399; }
-html[data-theme="dark"] .ats-ok-msg { color: #34d399; }
+body.dark .ats-issues li { color: #fca5a5; }
+body.dark .ats-tips li { color: #6ee7b7; }
+body.dark .ats-issues h4 { color: #f87171; }
+body.dark .ats-tips h4 { color: #34d399; }
+body.dark .ats-ok-msg { color: #34d399; }
 
 /* ==================== Action Buttons ==================== */
 .action-buttons {
@@ -626,3 +633,30 @@ html[data-theme="dark"] .ats-ok-msg { color: #34d399; }
         width: 100%;
     }
 }
+
+/* ==================== Theme Harmonization ==================== */
+.upload-card,
+.analysis-card,
+.score-card,
+.results-card {
+    background: var(--card-bg);
+    border-color: var(--border-color);
+    box-shadow: var(--shadow-soft);
+}
+
+.upload-zone:hover,
+.analysis-card:hover,
+.action-buttons .btn:hover {
+    box-shadow: var(--shadow-hover);
+}
+
+.keyword-tag--success {
+    background: color-mix(in srgb, var(--success-color) 18%, transparent);
+    border-color: color-mix(in srgb, var(--success-color) 35%, var(--border-color));
+}
+
+.keyword-tag--danger {
+    background: color-mix(in srgb, var(--error-color) 16%, transparent);
+    border-color: color-mix(in srgb, var(--error-color) 35%, var(--border-color));
+}
+

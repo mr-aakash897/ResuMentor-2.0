@@ -17,7 +17,7 @@
 
 ## About
 
-**ResuMentor** is a comprehensive career development platform that helps job seekers optimize their resumes and practice for interviews. Using AI-powered analysis (OpenAI GPT-3.5 with intelligent rule-based fallback), it provides actionable feedback to improve your chances of landing your dream job.
+**ResuMentor** is a comprehensive career development platform that helps job seekers optimize resumes and practice interviews. It combines AI-powered analysis (OpenAI GPT-3.5 with intelligent rule-based fallback), deterministic scoring guardrails, and webcam-based presence metrics to provide reliable, actionable feedback.
 
 ### Problem Statement
 - Many job seekers struggle with ATS (Applicant Tracking System) optimization
@@ -29,8 +29,9 @@ ResuMentor provides:
 - Real-time ATS score analysis with detailed breakdown
 - AI-powered resume feedback (OpenAI GPT-3.5 or rule-based fallback)
 - Voice-enabled mock interviews with webcam body language tracking
+- Hybrid interview scoring (AI-parsed signal clamped by deterministic guardrails)
 - Dynamic AI follow-up questions based on your answers
-- PDF report downloads for both resume analysis and interview performance
+- Complete interview reports and PDF downloads, including question-by-question detail and body-language metrics
 - Progress tracking with achievements and trend visualization
 
 ---
@@ -54,13 +55,15 @@ ResuMentor provides:
 - **Voice-Enabled Interviews** - Practice with Web Speech API speech recognition and synthesis
 - **AI-Generated Questions** - Role-specific technical and behavioral questions based on your resume
 - **Dynamic Follow-Up Questions** - OpenAI generates conversational follow-ups based on your answers
-- **Real-time Feedback** - Instant AI evaluation and scoring of each answer
+- **Hybrid Scoring Engine** - AI-evaluation signals blended with deterministic scoring guardrails for more stable, consistent results
+- **Real-time Feedback** - Instant AI evaluation with per-answer score updates
 - **30-Minute Time Limit** - Count-up timer with automatic session completion
 - **Body Language Tracking** - Webcam-based eye contact and face centering analysis via face-api.js
+- **Hugging Face Face Metrics** - Engagement and confidence metrics captured server-side and included in final analysis
 - **Performance Tiers** - Outstanding / Strong / Satisfactory / Needs Improvement / Requires Preparation
 - **Comprehensive Reports** - Breakdown by difficulty level, technical vs behavioral scores, communication rating, strength areas, improvement areas, skill gaps, and actionable recommendations
 - **Question-by-Question Review** - Detailed feedback for every question with your answers and AI assessment
-- **PDF Report Download** - Full interview performance report with all metrics
+- **PDF Report Download** - Full interview performance report with all metrics and expanded question review details
 
 ### Dashboard & Progress
 - **User Profile** - Editable profile with tech role, experience level, skills, social links, and bio
@@ -96,6 +99,7 @@ ResuMentor provides:
 | **MySQL 8** | Relational database |
 | **JWT (jjwt 0.11.5)** | Token-based authentication |
 | **OpenAI GPT-3.5-turbo** | AI-powered analysis and follow-up questions |
+| **Hugging Face Inference API** | Face engagement/confidence metrics for interview analysis |
 | **Apache PDFBox 2.0.30** | PDF text extraction |
 | **Apache POI 5.2.3** | Word document processing |
 | **iTextPDF 5.5.13** | Server-side PDF generation |
@@ -177,6 +181,10 @@ spring.security.oauth2.client.registration.google.client-secret=YOUR_GOOGLE_CLIE
 # OpenAI API Key (optional - enables AI-powered analysis and follow-up questions)
 openai.api.Key=YOUR_OPENAI_API_KEY
 
+# Hugging Face (optional - enables server-side interview face metrics)
+huggingface.api.token=YOUR_HUGGINGFACE_API_TOKEN
+huggingface.api.model-url=https://api-inference.huggingface.co/models/trpakov/vit-face-expression
+
 # File Upload
 spring.servlet.multipart.max-file-size=10MB
 spring.servlet.multipart.max-request-size=10MB
@@ -215,6 +223,8 @@ http://localhost:8080
 | `spring.security.oauth2.client.registration.google.client-id` | Google OAuth Client ID |
 | `spring.security.oauth2.client.registration.google.client-secret` | Google OAuth Client Secret |
 | `openai.api.Key` | OpenAI API key for GPT-3.5-turbo features |
+| `huggingface.api.token` | Hugging Face API token for interview face metrics |
+| `huggingface.api.model-url` | Hugging Face model endpoint URL |
 
 ### Google OAuth Setup
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
@@ -232,6 +242,7 @@ export JWT_SECRET=your_secret
 export GOOGLE_CLIENT_ID=your_client_id
 export GOOGLE_CLIENT_SECRET=your_client_secret
 export OPENAI_API_KEY=your_openai_key
+export HUGGINGFACE_API_TOKEN=your_huggingface_token
 ```
 
 ---
@@ -260,7 +271,7 @@ export OPENAI_API_KEY=your_openai_key
 | `POST` | `/api/interview/start` | Start new interview session |
 | `GET` | `/api/interview/{sessionId}/question` | Get next question |
 | `POST` | `/api/interview/submit-answer` | Submit answer with feedback |
-| `POST` | `/api/interview/{sessionId}/end` | End interview (with optional body language metrics) |
+| `POST` | `/api/interview/{sessionId}/end` | End interview (optional eye contact, centering, HF engagement/confidence metrics) |
 | `GET` | `/api/interview/{sessionId}/report` | Get performance report |
 | `GET` | `/api/interview/user/history` | Get user's interview history |
 | `DELETE` | `/api/interview/{sessionId}` | Delete interview session |
@@ -281,6 +292,17 @@ export OPENAI_API_KEY=your_openai_key
 | `GET` | `/actuator/health` | Application health status |
 
 > All `/api/**` endpoints (except `/api/auth/**`) require a valid JWT token in the `Authorization: Bearer <token>` header.
+
+Example body for `POST /api/interview/{sessionId}/end`:
+
+```json
+{
+  "eyeContactPercentage": 82,
+  "faceCenteringScore": 76,
+  "hfFaceEngagementScore": 71,
+  "hfFaceConfidenceScore": 68
+}
+```
 
 ---
 
@@ -316,6 +338,8 @@ export OPENAI_API_KEY=your_openai_key
                              │ duration_minutes         │
                              │ eye_contact_percentage   │
                              │ face_centering_score     │
+                              │ hf_face_engagement_score │
+                              │ hf_face_confidence_score │
                              │ transcript (LONGTEXT)    │
                              │ feedback_report (LONGTEXT│
                              └─────────────────────────┘
@@ -415,10 +439,10 @@ resumentor-2.0/
 3. Click **Start Interview**
 4. (Optional) Enable webcam for body language tracking
 5. Answer 12 questions using voice or text (4 Basic, 4 Intermediate, 4 Advanced)
-6. Receive instant AI feedback after each answer
+6. Receive instant AI feedback and hybrid score updates after each answer
 7. AI generates follow-up questions based on your responses
 8. Complete all questions or let the 30-minute timer end the session
-9. Review your comprehensive performance report
+9. Review your comprehensive performance report (including Hugging Face engagement/confidence when available)
 10. Download the PDF report
 
 ### 4. Track Progress
@@ -483,6 +507,9 @@ Ensure `uploads/` directory exists and has write permissions. The application cr
 
 **OpenAI Features Not Working**
 If `openai.api.Key` is not set or invalid, the app automatically falls back to rule-based analysis. Check your API key and ensure you have credits available.
+
+**Hugging Face Metrics Missing in Report**
+If `huggingface.api.token` is missing/invalid, interview scoring still works but HF engagement/confidence fields may be unavailable in the final report.
 
 **Port Already in Use**
 ```bash

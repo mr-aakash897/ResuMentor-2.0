@@ -452,27 +452,28 @@
     
     <!-- Navigation Bar -->
     <nav class="navbar" id="navbar">
-        <div class="navbar-container">
+        <div class="navbar-container container">
             <a href="../index.html" class="navbar-logo">
-                <img src="../assets/logo-icon.svg" alt="" class="logo-icon"> ResuMentor
+                <img src="../assets/logo-icon.svg" alt="" class="logo-icon">
+                <span class="brand-wordmark"><span class="brand-resu">Resu</span><span class="brand-mentor">Mentor</span></span>
             </a>
             
             <!-- Mobile Menu Toggle -->
-            <button class="menu-toggle" id="menuToggle" onclick="toggleMobileMenu()">
+            <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation menu" aria-controls="navMenu" aria-expanded="false">
                 <span></span>
                 <span></span>
                 <span></span>
             </button>
             
-            <ul class="nav-menu" id="navMenu">
+            <ul class="nav-menu" id="navMenu" aria-label="Primary">
                 <li><a href="../index.html" class="nav-link">Home</a></li>
                 <li><a href="../pages/resume-analyzer.html" class="nav-link">Resume Analyzer</a></li>
-                <li><a href="../pages/interview.html" class="nav-link">Interview</a></li>
+                <li><a href="../pages/interview.html" class="nav-link active" aria-current="page">Interview</a></li>
                 <li><a href="../pages/tips.html" class="nav-link">Tips</a></li>
                 <li><a href="../pages/dashboard.html" class="nav-link">Dashboard</a></li>
             </ul>
             <div class="navbar-controls">
-                <button id="theme-toggle" class="theme-btn" onclick="toggleTheme()">🌙</button>
+                <button id="theme-toggle" class="theme-btn" type="button" aria-label="Toggle theme">🌙</button>
                 <button id="logout-btn" class="login-btn" onclick="logout()">Logout</button>
             </div>
         </div>
@@ -512,7 +513,7 @@
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="value" id="totalQuestions">0</div>
-                        <div class="label">Questions Asked</div>
+                        <div class="label">Answered / Generated</div>
                     </div>
                     <div class="stat-card correct">
                         <div class="value" id="correctAnswers">0</div>
@@ -536,7 +537,7 @@
                         <div class="score-breakdown">
                             <div>
                                 <div class="score-row">
-                                    <span class="label">Basic Questions (1-6)</span>
+                                    <span class="label">Basic Questions</span>
                                     <span class="value" id="basicScore">0%</span>
                                 </div>
                                 <div class="progress-bar">
@@ -545,7 +546,7 @@
                             </div>
                             <div>
                                 <div class="score-row">
-                                    <span class="label">Intermediate Questions (7-12)</span>
+                                    <span class="label">Intermediate Questions</span>
                                     <span class="value" id="intermediateScore">0%</span>
                                 </div>
                                 <div class="progress-bar">
@@ -554,20 +555,13 @@
                             </div>
                             <div>
                                 <div class="score-row">
-                                    <span class="label">Advanced Questions (13-18)</span>
+                                    <span class="label">Advanced Questions</span>
                                     <span class="value" id="advancedScore">0%</span>
                                 </div>
                                 <div class="progress-bar">
                                     <div class="fill" id="advancedBar" style="width: 0%"></div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Technical vs Behavioral -->
-                    <div class="analysis-card">
-                        <h3>🎯 Question Type Analysis</h3>
-                        <div class="score-breakdown">
                             <div>
                                 <div class="score-row">
                                     <span class="label">Technical Questions</span>
@@ -639,6 +633,20 @@
                                     <div class="progress-fill" id="faceCenteringBar" style="width: 0%; height: 8px; border-radius: 4px;"></div>
                                 </div>
                                 <span class="score-value-text" id="faceCenteringScoreValue">0%</span>
+                            </div>
+                            <div class="score-item-row">
+                                <span class="score-label-text">Engagement (HF)</span>
+                                <div class="progress-bar" style="flex:1; margin: 0 10px;">
+                                    <div class="progress-fill" id="hfEngagementBar" style="width: 0%; height: 8px; border-radius: 4px;"></div>
+                                </div>
+                                <span class="score-value-text" id="hfEngagementScore">N/A</span>
+                            </div>
+                            <div class="score-item-row">
+                                <span class="score-label-text">Confidence (HF)</span>
+                                <div class="progress-bar" style="flex:1; margin: 0 10px;">
+                                    <div class="progress-fill" id="hfConfidenceBar" style="width: 0%; height: 8px; border-radius: 4px;"></div>
+                                </div>
+                                <span class="score-value-text" id="hfConfidenceScore">N/A</span>
                             </div>
                         </div>
                         <div style="margin-top: 15px;">
@@ -730,7 +738,11 @@
             document.getElementById('readinessLevel').textContent = report.interviewReadinessLevel || 'Assessment Complete';
 
             // Basic stats
-            document.getElementById('totalQuestions').textContent = report.totalQuestionsAsked || 0;
+            const totalQuestionsAsked = report.totalQuestionsAsked || 0;
+            const answeredQuestions = report.answeredQuestions != null
+                ? report.answeredQuestions
+                : (report.questionFeedbacks ? report.questionFeedbacks.filter(q => q.userAnswer && q.userAnswer.trim().length > 0).length : 0);
+            document.getElementById('totalQuestions').textContent = `${answeredQuestions}/${totalQuestionsAsked}`;
             document.getElementById('correctAnswers').textContent = report.correctAnswers || 0;
             document.getElementById('partialAnswers').textContent = report.partialAnswers || 0;
             document.getElementById('incorrectAnswers').textContent = report.incorrectAnswers || 0;
@@ -764,7 +776,12 @@
             renderList('recommendationsList', report.actionableRecommendations || [], 'recommendation', '💡');
 
             // Body Language Analysis
-            if (report.eyeContactPercentage != null || report.faceCenteringScore != null) {
+            const hasBodyLanguage = report.eyeContactPercentage != null ||
+                report.faceCenteringScore != null ||
+                report.hfFaceEngagementScore != null ||
+                report.hfFaceConfidenceScore != null;
+
+            if (hasBodyLanguage) {
                 document.getElementById('bodyLanguageSection').style.display = 'grid';
                 const eyeContact = report.eyeContactPercentage || 0;
                 const centering = report.faceCenteringScore || 0;
@@ -772,8 +789,13 @@
                 document.getElementById('eyeContactBar').style.width = eyeContact + '%';
                 document.getElementById('faceCenteringScoreValue').textContent = centering + '%';
                 document.getElementById('faceCenteringBar').style.width = centering + '%';
+                setBodyMetric('hfEngagementScore', 'hfEngagementBar', report.hfFaceEngagementScore);
+                setBodyMetric('hfConfidenceScore', 'hfConfidenceBar', report.hfFaceConfidenceScore);
                 if (report.bodyLanguageFeedback) {
                     document.getElementById('bodyLanguageFeedbackText').textContent = report.bodyLanguageFeedback;
+                } else if (report.hfFaceEngagementScore != null || report.hfFaceConfidenceScore != null) {
+                    document.getElementById('bodyLanguageFeedbackText').textContent =
+                        'Face-analysis metrics were captured from Hugging Face. Maintain a centered and engaged presence to maximize interview impact.';
                 }
                 renderList('bodyLanguageTipsList', report.bodyLanguageTips || [], 'tip', '💡');
             }
@@ -786,10 +808,9 @@
             questionList.innerHTML = '';
             
             // Update the question review header with actual count
-            const totalQs = report.questionFeedbacks ? report.questionFeedbacks.length : 0;
-            const answeredQs = report.questionFeedbacks ? 
-                report.questionFeedbacks.filter(q => q.userAnswer && q.userAnswer.trim().length > 0).length : 0;
-            document.getElementById('questionReviewHeader').textContent = 
+            const totalQs = totalQuestionsAsked;
+            const answeredQs = answeredQuestions;
+            document.getElementById('questionReviewHeader').textContent =
                 `📝 Question-by-Question Review (${answeredQs}/${totalQs} Answered)`;
 
             if (report.questionFeedbacks && report.questionFeedbacks.length > 0) {
@@ -816,15 +837,23 @@
                         <div class="question-body" id="questionBody${index}">
                             <div class="q-section">
                                 <h4>Question</h4>
-                                <p>${q.question || 'Question not available'}</p>
+                                <p>${escapeHtml(q.question || 'Question not available')}</p>
                             </div>
                             <div class="q-section">
                                 <h4>Your Answer</h4>
-                                <p>${q.userAnswer || '<em>No answer provided</em>'}</p>
+                                <p>${q.userAnswer ? escapeHtml(q.userAnswer) : '<em>No answer provided</em>'}</p>
                             </div>
                             <div class="q-section">
                                 <h4>AI Feedback</h4>
-                                <div class="ai-feedback">${q.aiFeedback || 'No feedback available'}</div>
+                                <div class="ai-feedback">${escapeHtml(q.aiFeedback || 'No feedback available')}</div>
+                            </div>
+                            <div class="q-section">
+                                <h4>What Went Well</h4>
+                                <p>${(q.keyPointsCovered && q.keyPointsCovered.length ? q.keyPointsCovered.map(i => `• ${escapeHtml(i)}`).join('<br>') : '• No notable strengths captured')}</p>
+                            </div>
+                            <div class="q-section">
+                                <h4>What To Improve</h4>
+                                <p>${(q.missedPoints && q.missedPoints.length ? q.missedPoints.map(i => `• ${escapeHtml(i)}`).join('<br>') : '• No major improvement points')}</p>
                             </div>
                         </div>
                     `;
@@ -847,8 +876,14 @@
         }
 
         function setProgressBar(labelId, barId, value) {
-            document.getElementById(labelId).textContent = value + '%';
+            const label = document.getElementById(labelId);
+            if (label) {
+                label.textContent = value + '%';
+            }
             const bar = document.getElementById(barId);
+            if (!bar) {
+                return;
+            }
             bar.style.width = value + '%';
             bar.className = 'fill ' + (value >= 70 ? 'high' : value >= 50 ? 'medium' : 'low');
         }
@@ -860,8 +895,31 @@
                 return;
             }
             container.innerHTML = items.map(item => 
-                `<div class="list-item ${className}">${icon} ${item}</div>`
+                `<div class="list-item ${className}">${icon} ${escapeHtml(item)}</div>`
             ).join('');
+        }
+
+        function escapeHtml(value) {
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function setBodyMetric(labelId, barId, value) {
+            const label = document.getElementById(labelId);
+            const bar = document.getElementById(barId);
+            if (!label || !bar) return;
+            if (value == null) {
+                label.textContent = 'N/A';
+                bar.style.width = '0%';
+                return;
+            }
+            const safeValue = Math.max(0, Math.min(100, Number(value) || 0));
+            label.textContent = safeValue + '%';
+            bar.style.width = safeValue + '%';
         }
 
         function toggleQuestion(index) {
@@ -882,127 +940,59 @@
             btn.innerHTML = '⏳ Generating PDF...';
             btn.classList.add('generating');
 
+            const reportRoot = document.getElementById('reportContent');
+            if (!reportRoot || reportRoot.style.display === 'none') {
+                if (typeof Toast !== 'undefined') Toast.error('Report is not ready yet.');
+                btn.innerHTML = originalText;
+                btn.classList.remove('generating');
+                return;
+            }
+
+            let expandedBodies = [];
             try {
+                expandedBodies = Array.from(document.querySelectorAll('.question-body.expanded'));
+                document.querySelectorAll('.question-body').forEach(el => el.classList.add('expanded'));
+
+                const canvas = await html2canvas(reportRoot, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: '#ffffff',
+                    scrollX: 0,
+                    scrollY: -window.scrollY
+                });
+
+                const imgData = canvas.toDataURL('image/png');
                 const { jsPDF } = window.jspdf;
                 const pdf = new jsPDF('p', 'mm', 'a4');
-                
+
                 const pageWidth = pdf.internal.pageSize.getWidth();
-                const margin = 20;
-                let yPos = 20;
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                const margin = 8;
+                const contentWidth = pageWidth - margin * 2;
+                const contentHeight = (canvas.height * contentWidth) / canvas.width;
 
-                // Header
-                pdf.setFillColor(102, 126, 234);
-                pdf.rect(0, 0, pageWidth, 50, 'F');
-                
-                pdf.setTextColor(255, 255, 255);
-                pdf.setFontSize(24);
-                pdf.setFont('helvetica', 'bold');
-                pdf.text('Interview Report', pageWidth / 2, 20, { align: 'center' });
-                
-                pdf.setFontSize(12);
-                pdf.setFont('helvetica', 'normal');
-                pdf.text('ResuMentor - AI Mock Interview', pageWidth / 2, 30, { align: 'center' });
-                
-                const score = document.getElementById('totalScore').textContent;
-                pdf.setFontSize(16);
-                pdf.text(`Overall Score: ${score}`, pageWidth / 2, 42, { align: 'center' });
+                let heightLeft = contentHeight;
+                let position = margin;
 
-                yPos = 60;
-                pdf.setTextColor(0, 0, 0);
+                pdf.addImage(imgData, 'PNG', margin, position, contentWidth, contentHeight);
+                heightLeft -= (pageHeight - margin * 2);
 
-                // Job Role & Performance
-                pdf.setFontSize(14);
-                pdf.setFont('helvetica', 'bold');
-                pdf.text('Performance Summary', margin, yPos);
-                yPos += 10;
-
-                pdf.setFontSize(11);
-                pdf.setFont('helvetica', 'normal');
-                const jobRole = document.getElementById('jobRole').textContent;
-                const tier = document.getElementById('performanceTier').textContent;
-                const readiness = document.getElementById('readinessLevel').textContent;
-                
-                pdf.text(`Role: ${jobRole}`, margin, yPos); yPos += 7;
-                pdf.text(`Performance: ${tier}`, margin, yPos); yPos += 7;
-                pdf.text(`Readiness: ${readiness}`, margin, yPos); yPos += 15;
-
-                // Statistics
-                pdf.setFontSize(14);
-                pdf.setFont('helvetica', 'bold');
-                pdf.text('Statistics', margin, yPos);
-                yPos += 10;
-
-                pdf.setFontSize(11);
-                pdf.setFont('helvetica', 'normal');
-                const totalQ = document.getElementById('totalQuestions').textContent;
-                const correct = document.getElementById('correctAnswers').textContent;
-                const partial = document.getElementById('partialAnswers').textContent;
-                const incorrect = document.getElementById('incorrectAnswers').textContent;
-
-                pdf.text(`Total Questions: ${totalQ}`, margin, yPos); yPos += 7;
-                pdf.text(`Excellent Answers (80%+): ${correct}`, margin, yPos); yPos += 7;
-                pdf.text(`Good Answers (50-79%): ${partial}`, margin, yPos); yPos += 7;
-                pdf.text(`Needs Improvement (<50%): ${incorrect}`, margin, yPos); yPos += 15;
-
-                // Strengths
-                const strengthsList = document.getElementById('strengthsList');
-                if (strengthsList) {
-                    pdf.setFontSize(14);
-                    pdf.setFont('helvetica', 'bold');
-                    pdf.text('Key Strengths', margin, yPos);
-                    yPos += 10;
-
-                    pdf.setFontSize(10);
-                    pdf.setFont('helvetica', 'normal');
-                    const strengths = strengthsList.querySelectorAll('.list-item');
-                    strengths.forEach(s => {
-                        const text = s.textContent.trim();
-                        if (text && yPos < 270) {
-                            pdf.text(`• ${text}`, margin, yPos);
-                            yPos += 6;
-                        }
-                    });
-                    yPos += 10;
+                while (heightLeft > 0) {
+                    position = heightLeft - contentHeight + margin;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', margin, position, contentWidth, contentHeight);
+                    heightLeft -= (pageHeight - margin * 2);
                 }
 
-                // Areas to Improve
-                const weaknessList = document.getElementById('weaknessList');
-                if (weaknessList && yPos < 260) {
-                    pdf.setFontSize(14);
-                    pdf.setFont('helvetica', 'bold');
-                    pdf.text('Areas to Improve', margin, yPos);
-                    yPos += 10;
-
-                    pdf.setFontSize(10);
-                    pdf.setFont('helvetica', 'normal');
-                    const weaknesses = weaknessList.querySelectorAll('.list-item');
-                    weaknesses.forEach(w => {
-                        const text = w.textContent.trim();
-                        if (text && yPos < 270) {
-                            pdf.text(`• ${text}`, margin, yPos);
-                            yPos += 6;
-                        }
-                    });
-                }
-
-                // Footer
-                pdf.setFontSize(8);
-                pdf.setTextColor(128, 128, 128);
-                pdf.text(`Generated by ResuMentor on ${new Date().toLocaleDateString()}`, pageWidth / 2, 285, { align: 'center' });
-
-                // Save
                 const filename = `interview-report-${new Date().toISOString().split('T')[0]}.pdf`;
                 pdf.save(filename);
-
-                if (typeof Toast !== 'undefined') {
-                    Toast.success('PDF downloaded successfully!');
-                }
+                if (typeof Toast !== 'undefined') Toast.success('Full report PDF downloaded successfully!');
             } catch (error) {
                 console.error('PDF generation failed:', error);
-                if (typeof Toast !== 'undefined') {
-                    Toast.error('Failed to generate PDF. Please try again.');
-                }
+                if (typeof Toast !== 'undefined') Toast.error('Failed to generate PDF. Please try again.');
             } finally {
+                document.querySelectorAll('.question-body').forEach(el => el.classList.remove('expanded'));
+                expandedBodies.forEach(el => el.classList.add('expanded'));
                 btn.innerHTML = originalText;
                 btn.classList.remove('generating');
             }
@@ -1052,10 +1042,18 @@
             }
         }
     </script>
+
+    <footer class="footer">
+        <div class="footer-bottom">
+            <p>&copy; 2026 ResuMentor. All rights reserved.</p>
+        </div>
+    </footer>
+
     <script src="../js/ui-utils.js"></script>
     <!-- THREE.JS DISABLED - Uncomment to enable particle background
     <script src="../js/particles.js"></script>
     -->
     <script src="../js/theme.js"></script>
+    <script src="../js/auth.js"></script>
 </body>
 </html>

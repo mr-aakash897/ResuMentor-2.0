@@ -169,6 +169,10 @@ class APIClient {
         return this.get(`/interview/${sessionId}/report`);
     }
 
+    async analyzeFaceFrame(sessionId, imageData) {
+        return this.post(`/interview/${sessionId}/face-analysis`, { imageData });
+    }
+
     async deleteInterview(sessionId) {
         return this.delete(`/interview/${sessionId}`);
     }

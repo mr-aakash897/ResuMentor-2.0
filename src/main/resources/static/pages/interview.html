@@ -7,8 +7,14 @@
     <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/navbar.css">
     <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
     <style>
+        .footer {
+            background: var(--footer-bg);
+            border-top: 1px solid var(--border-color);
+            padding-top: 0rem;
+        }
         .interview-layout {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -491,27 +497,33 @@
             .interview-layout { grid-template-columns: 1fr; }
             .webcam-container { aspect-ratio: 16/9; }
         }
+
+        .footer {
+            background: var(--footer-bg);
+            border-top: 1px solid var(--border-color);
+        }
     </style>
 </head>
 <body>
     <!-- Navigation Bar -->
     <nav class="navbar" id="navbar">
-        <div class="navbar-container">
+        <div class="navbar-container container">
             <a href="../index.html" class="navbar-logo">
-                <img src="../assets/logo-icon.svg" alt="" class="logo-icon"> ResuMentor
+                <img src="../assets/logo-icon.svg" alt="" class="logo-icon">
+                <span class="brand-wordmark"><span class="brand-resu">Resu</span><span class="brand-mentor">Mentor</span></span>
             </a>
-            <button class="menu-toggle" id="menuToggle" onclick="toggleMobileMenu()">
+            <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation menu" aria-controls="navMenu" aria-expanded="false">
                 <span></span><span></span><span></span>
             </button>
-            <ul class="nav-menu" id="navMenu">
+            <ul class="nav-menu" id="navMenu" aria-label="Primary">
                 <li><a href="../index.html" class="nav-link">Home</a></li>
                 <li><a href="../pages/resume-analyzer.html" class="nav-link">Resume Analyzer</a></li>
-                <li><a href="#" class="nav-link">Interview</a></li>
+                <li><a href="../pages/interview.html" class="nav-link active" aria-current="page">Interview</a></li>
                 <li><a href="../pages/tips.html" class="nav-link">Tips</a></li>
                 <li><a href="../pages/dashboard.html" class="nav-link">Dashboard</a></li>
             </ul>
             <div class="navbar-controls">
-                <button id="theme-toggle" class="theme-btn" onclick="toggleTheme()">&#127769;</button>
+                <button id="theme-toggle" class="theme-btn" type="button" aria-label="Toggle theme">&#127769;</button>
                 <button id="logout-btn" class="login-btn" onclick="logout()">Logout</button>
             </div>
         </div>
@@ -631,13 +643,8 @@
     </div>
 
     <footer class="footer">
-        <div class="container">
+        <div class="footer-bottom">
             <p>&copy; 2026 ResuMentor. All rights reserved.</p>
-            <div class="footer-links">
-                <a href="#privacy">Privacy Policy</a>
-                <a href="#terms">Terms of Service</a>
-                <a href="#contact">Contact Us</a>
-            </div>
         </div>
     </footer>
 

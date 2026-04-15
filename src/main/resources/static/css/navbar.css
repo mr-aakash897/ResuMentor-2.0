@@ -1,0 +1,70 @@
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1200;
+    background: transparent;
+    border-bottom: 1px solid transparent;
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.navbar.scrolled {
+    background: color-mix(in srgb, var(--bg-color) 88%, transparent);
+    border-bottom-color: var(--border-color);
+    box-shadow: 0 10px 26px color-mix(in srgb, var(--text-color) 9%, transparent);
+    backdrop-filter: blur(8px);
+}
+
+.navbar-container {
+    height: 76px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.navbar-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.navbar-logo:hover {
+    color: var(--primary-color);
+}
+
+.logo-icon {
+    width: 40px;
+    height: 40px;
+    filter: drop-shadow(0 3px 10px color-mix(in srgb, var(--primary-color) 35%, transparent));
+    transition: transform 0.25s ease, filter 0.25s ease;
+}
+
+.navbar-logo:hover .logo-icon {
+    transform: translateY(-1px) scale(1.06);
+    filter: drop-shadow(0 6px 14px color-mix(in srgb, var(--primary-color) 45%, transparent));
+}
+
+.brand-wordmark {
+    display: inline-flex;
+    align-items: baseline;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+}
+
+.brand-resu {
+    color: var(--primary-color);
+}
+
+.brand-mentor {
+    color: var(--text-color);
+}
+
+.nav-menu {
+    list-style: none;
+    display: flex;
+    gap: 0.5rem;
+    margin-inline: auto;
+    align-items: center;
+}

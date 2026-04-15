@@ -1,170 +1,160 @@
-// ==================== Main JavaScript ====================
-
-// Mobile Menu Toggle
-function toggleMobileMenu() {
-    const menuToggle = document.getElementById('menuToggle');
-    const navMenu = document.getElementById('navMenu');
-    
-    if (menuToggle && navMenu) {
-        menuToggle.classList.toggle('active');
-        navMenu.classList.toggle('active');
-    }
-}
-
-// Close mobile menu when clicking a link
-document.addEventListener('DOMContentLoaded', function() {
-    const navLinks = document.querySelectorAll('.nav-link');
-    navLinks.forEach(link => {
-        link.addEventListener('click', () => {
-            const menuToggle = document.getElementById('menuToggle');
-            const navMenu = document.getElementById('navMenu');
-            if (menuToggle && navMenu) {
-                menuToggle.classList.remove('active');
-                navMenu.classList.remove('active');
-            }
-        });
-    });
-});
-
-// Smooth scrolling for navigation links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
-    });
-});
-
-// Redirect functions for hero buttons
 function redirectToResume() {
-    const token = localStorage.getItem('jwtToken');
+    const token = localStorage.getItem("jwtToken");
     if (token) {
-        window.location.href = '/pages/resume-analyzer.html';
+        window.location.href = "/pages/resume-analyzer.html";
     } else {
         showLoginModal();
     }
 }
 
 function redirectToInterview() {
-    const token = localStorage.getItem('jwtToken');
+    const token = localStorage.getItem("jwtToken");
     if (token) {
-        window.location.href = '/pages/interview.html';
+        window.location.href = "/pages/interview.html";
     } else {
         showLoginModal();
     }
 }
 
-// Contact form handler
 function handleContactForm(event) {
     event.preventDefault();
     const form = event.target;
-    const formData = new FormData(form);
-    
-    // For now, just show a success message
-    Toast.success('Thank you for your message! We will get back to you soon.');
+    const successCard = document.getElementById("feedbackSuccessCard");
+
+    const name = form.querySelector('input[name="name"]')?.value.trim() || "";
+    const email = form.querySelector('input[name="email"]')?.value.trim() || "";
+    const message = form.querySelector('textarea[name="message"]')?.value.trim() || "";
+
+    if (!name || !email || !message) {
+        if (successCard) {
+            successCard.hidden = true;
+        }
+        if (typeof Toast !== "undefined" && Toast.error) {
+            Toast.error("Please fill name, email, and feedback message.");
+        }
+        return;
+    }
+
+    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if (!isValidEmail) {
+        if (successCard) {
+            successCard.hidden = true;
+        }
+        if (typeof Toast !== "undefined" && Toast.error) {
+            Toast.error("Please enter a valid email address.");
+        }
+        return;
+    }
+
+    if (message.length < 10) {
+        if (successCard) {
+            successCard.hidden = true;
+        }
+        if (typeof Toast !== "undefined" && Toast.error) {
+            Toast.error("Please add a little more detail in your feedback.");
+        }
+        return;
+    }
+
+    if (typeof Toast !== "undefined" && Toast.success) {
+        Toast.success("Thanks for the feedback! We will review it soon.");
+    }
+
+    if (successCard) {
+        successCard.hidden = false;
+    }
+
     form.reset();
 }
 
-// Navbar scroll effect
-window.addEventListener('scroll', function() {
-    const navbar = document.querySelector('.navbar');
-    if (navbar) {
-        if (window.scrollY > 50) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
-        }
+function initFeedbackFormState() {
+    const feedbackForm = document.querySelector(".feedback-form");
+    const successCard = document.getElementById("feedbackSuccessCard");
+    if (!feedbackForm || !successCard) {
+        return;
     }
-});
 
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', function() {
-    // Check if user is already logged in
-    const token = localStorage.getItem('jwtToken');
-    const loginBtn = document.getElementById('login-btn');
-    
-    if (token && loginBtn) {
-        loginBtn.textContent = 'Dashboard';
-        loginBtn.onclick = function() {
-            window.location.href = '/pages/dashboard.html';
+    feedbackForm.addEventListener("input", () => {
+        if (!successCard.hidden) {
+            successCard.hidden = true;
+        }
+    });
+}
+
+function initRevealAnimations() {
+    const revealItems = document.querySelectorAll(".reveal");
+    if (!revealItems.length) {
+        return;
+    }
+
+    const observer = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("visible");
+                    observer.unobserve(entry.target);
+                }
+            });
+        },
+        { threshold: 0.15 }
+    );
+
+    revealItems.forEach((item) => observer.observe(item));
+}
+
+function updateAuthButtonState() {
+    const token = localStorage.getItem("jwtToken");
+    const loginBtn = document.getElementById("login-btn");
+    if (!loginBtn) {
+        return;
+    }
+
+    if (token) {
+        loginBtn.textContent = "Dashboard";
+        loginBtn.onclick = () => {
+            window.location.href = "/pages/dashboard.html";
         };
     }
-    
-    // Initialize counter animations for stat items
-    if (typeof animateCounters === 'function') {
-        animateCounters();
-    }
-    
-    // Initialize scroll-to-top button
-    if (typeof initScrollToTop === 'function') {
-        initScrollToTop();
-    }
-    
-    // Initialize scroll animations for feature cards
-    const animatedElements = document.querySelectorAll('.feature-card, .stat-item, .about-text p');
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry, index) => {
-            if (entry.isIntersecting) {
-                // Add staggered animation delay
-                setTimeout(() => {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }, index * 100);
+}
+
+function initSmoothAnchors() {
+    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (event) {
+            const hash = this.getAttribute("href");
+            if (!hash || hash === "#") {
+                return;
             }
+
+            const target = document.querySelector(hash);
+            if (!target) {
+                return;
+            }
+
+            event.preventDefault();
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
         });
-    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-    
-    // Set initial state for animated elements
-    animatedElements.forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(30px)';
-        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(el);
     });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    updateAuthButtonState();
+    initRevealAnimations();
+    initSmoothAnchors();
+    initFeedbackFormState();
 });
 
-// Utility function to format numbers
-function formatNumber(num) {
-    if (num >= 1000000) {
-        return (num / 1000000).toFixed(1) + 'M';
-    } else if (num >= 1000) {
-        return (num / 1000).toFixed(1) + 'K';
-    }
-    return num.toString();
-}
+window.redirectToResume = redirectToResume;
+window.redirectToInterview = redirectToInterview;
+window.handleContactForm = handleContactForm;
 
-// Loading spinner functions
-function showLoading() {
-    const spinner = document.getElementById('loading-spinner');
-    if (spinner) {
-        spinner.style.display = 'flex';
-    }
-}
-
-function hideLoading() {
-    const spinner = document.getElementById('loading-spinner');
-    if (spinner) {
-        spinner.style.display = 'none';
-    }
-}
-
-// FAQ Toggle function
 function toggleFaq(button) {
     const faqItem = button.parentElement;
-    const isActive = faqItem.classList.contains('active');
-    
-    // Close all other FAQ items
-    document.querySelectorAll('.faq-item').forEach(item => {
-        item.classList.remove('active');
-    });
-    
-    // Toggle current item
+    const isActive = faqItem.classList.contains("active");
+    document.querySelectorAll(".faq-item").forEach((item) => item.classList.remove("active"));
     if (!isActive) {
-        faqItem.classList.add('active');
+        faqItem.classList.add("active");
     }
 }
+
+window.toggleFaq = toggleFaq;
+

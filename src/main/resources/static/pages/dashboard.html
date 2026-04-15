@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/theme.css">
     <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/navbar.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <!-- THREE.JS DISABLED - Uncomment to enable particle background
@@ -21,27 +22,28 @@
     
     <!-- Navigation Bar -->
     <nav class="navbar" id="navbar">
-        <div class="navbar-container">
+        <div class="navbar-container container">
             <a href="../index.html" class="navbar-logo">
-                <img src="../assets/logo-icon.svg" alt="" class="logo-icon"> ResuMentor
+                <img src="../assets/logo-icon.svg" alt="" class="logo-icon">
+                <span class="brand-wordmark"><span class="brand-resu">Resu</span><span class="brand-mentor">Mentor</span></span>
             </a>
             
             <!-- Mobile Menu Toggle -->
-            <button class="menu-toggle" id="menuToggle" onclick="toggleMobileMenu()">
+            <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation menu" aria-controls="navMenu" aria-expanded="false">
                 <span></span>
                 <span></span>
                 <span></span>
             </button>
             
-            <ul class="nav-menu" id="navMenu">
+            <ul class="nav-menu" id="navMenu" aria-label="Primary">
                 <li><a href="../index.html" class="nav-link">Home</a></li>
                 <li><a href="../pages/resume-analyzer.html" class="nav-link">Resume Analyzer</a></li>
                 <li><a href="../pages/interview.html" class="nav-link">Interview</a></li>
                 <li><a href="../pages/tips.html" class="nav-link">Tips</a></li>
-                <li><a href="#" class="nav-link">Dashboard</a></li>
+                <li><a href="../pages/dashboard.html" class="nav-link active" aria-current="page">Dashboard</a></li>
             </ul>
             <div class="navbar-controls">
-                <button id="theme-toggle" class="theme-btn" onclick="toggleTheme()">🌙</button>
+                <button id="theme-toggle" class="theme-btn" type="button" aria-label="Toggle theme">🌙</button>
                 <button id="logout-btn" class="login-btn" onclick="logout()">Logout</button>
             </div>
         </div>
@@ -383,7 +385,39 @@
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="container">
+<!--        <div class="container footer-grid">-->
+<!--            <div>-->
+<!--                <a href="../index.html" class="footer-brand">-->
+<!--                    <img src="../assets/logo-icon.svg" alt="ResuMentor logo"> ResuMentor-->
+<!--                </a>-->
+<!--                <p>Premium AI support for smarter applications and stronger interviews.</p>-->
+<!--            </div>-->
+<!--            <div>-->
+<!--                <h4>Platform</h4>-->
+<!--                <ul>-->
+<!--                    <li><a href="../pages/resume-analyzer.html">Resume Analyzer</a></li>-->
+<!--                    <li><a href="../pages/interview.html">Interview</a></li>-->
+<!--                    <li><a href="../pages/dashboard.html">Dashboard</a></li>-->
+<!--                </ul>-->
+<!--            </div>-->
+<!--            <div>-->
+<!--                <h4>Resources</h4>-->
+<!--                <ul>-->
+<!--                    <li><a href="../pages/tips.html">Career Tips</a></li>-->
+<!--                    <li><a href="../index.html#about">About</a></li>-->
+<!--                    <li><a href="../index.html#home">Getting Started</a></li>-->
+<!--                </ul>-->
+<!--            </div>-->
+<!--            <div>-->
+<!--                <h4>Legal</h4>-->
+<!--                <ul>-->
+<!--                    <li><a href="../index.html#privacy">Privacy Policy</a></li>-->
+<!--                    <li><a href="../index.html#terms">Terms of Service</a></li>-->
+<!--                    <li><a href="../index.html#contact">Support</a></li>-->
+<!--                </ul>-->
+<!--            </div>-->
+<!--        </div>-->
+        <div class="footer-bottom">
             <p>&copy; 2026 ResuMentor. All rights reserved.</p>
         </div>
     </footer>

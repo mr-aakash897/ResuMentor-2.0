@@ -1,90 +1,155 @@
-// ==================== Theme Management ==================== 
+const THEME_KEY = "theme";
+
+function getPreferredTheme() {
+    const savedTheme = localStorage.getItem(THEME_KEY);
+    if (savedTheme === "light" || savedTheme === "dark") {
+        return savedTheme;
+    }
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+
+function updateThemeButton(theme) {
+    const themeBtn = document.getElementById("theme-toggle");
+    if (!themeBtn) {
+        return;
+    }
+
+    const darkMode = theme === "dark";
+    themeBtn.textContent = darkMode ? "🌞" : "🌙";
+    themeBtn.setAttribute("aria-label", darkMode ? "Switch to light mode" : "Switch to dark mode");
+    themeBtn.classList.add("spin");
+    setTimeout(() => themeBtn.classList.remove("spin"), 260);
+}
+
+function applyTheme(theme) {
+    const darkMode = theme === "dark";
+    document.body.classList.toggle("dark", darkMode);
+    document.documentElement.setAttribute("data-theme", theme);
+    updateThemeButton(theme);
+}
+
 function toggleTheme() {
-    const currentTheme = localStorage.getItem('theme') || 'light';
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-
-    updateThemeButton();
-    
-    // Update particle colors if particles exist
-    if (typeof updateParticleTheme === 'function') {
-        updateParticleTheme(newTheme === 'dark');
-    }
+    const nextTheme = document.body.classList.contains("dark") ? "light" : "dark";
+    localStorage.setItem(THEME_KEY, nextTheme);
+    applyTheme(nextTheme);
 }
 
-function updateThemeButton() {
-    const theme = localStorage.getItem('theme') || 'light';
-    const themeBtn = document.getElementById('theme-toggle');
-    if (themeBtn) {
-        themeBtn.textContent = theme === 'light' ? '🌙' : '☀️';
-    }
-}
-
-// ==================== Mobile Menu Toggle ====================
 function toggleMobileMenu() {
-    const menuToggle = document.getElementById('menuToggle');
-    const navMenu = document.getElementById('navMenu');
-    
-    if (menuToggle && navMenu) {
-        menuToggle.classList.toggle('active');
-        navMenu.classList.toggle('active');
+    const menuToggle = document.getElementById("menuToggle");
+    const navMenu = document.getElementById("navMenu");
+
+    if (!menuToggle || !navMenu) {
+        return;
     }
+
+    const isOpen = navMenu.classList.toggle("active");
+    menuToggle.classList.toggle("active", isOpen);
+    menuToggle.setAttribute("aria-expanded", String(isOpen));
 }
 
-// Close mobile menu when clicking a nav link
 function closeMobileMenu() {
-    const menuToggle = document.getElementById('menuToggle');
-    const navMenu = document.getElementById('navMenu');
-    if (menuToggle && navMenu) {
-        menuToggle.classList.remove('active');
-        navMenu.classList.remove('active');
+    const menuToggle = document.getElementById("menuToggle");
+    const navMenu = document.getElementById("navMenu");
+
+    if (!menuToggle || !navMenu) {
+        return;
     }
+
+    menuToggle.classList.remove("active");
+    navMenu.classList.remove("active");
+    menuToggle.setAttribute("aria-expanded", "false");
 }
 
-// ==================== Navbar Scroll Effect ====================
-function initNavbarScroll() {
-    window.addEventListener('scroll', function() {
-        const navbar = document.querySelector('.navbar');
-        if (navbar) {
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
+function updateNavbarOnScroll() {
+    const navbar = document.getElementById("navbar");
+    if (!navbar) {
+        return;
+    }
+    navbar.classList.toggle("scrolled", window.scrollY > 20);
+}
+
+function setActiveNavLink(targetId) {
+    const links = document.querySelectorAll('.nav-link[href^="#"]');
+    links.forEach((link) => {
+        const isActive = link.getAttribute("href") === `#${targetId}`;
+        link.classList.toggle("active", isActive);
+        if (isActive) {
+            link.setAttribute("aria-current", "page");
+        } else {
+            link.removeAttribute("aria-current");
         }
     });
 }
 
-// Initialize all UI features on page load
-document.addEventListener('DOMContentLoaded', () => {
-    // Initialize theme
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-    updateThemeButton();
-    
-    // Initialize navbar scroll effect
-    initNavbarScroll();
-    
-    // Close mobile menu when clicking nav links
-    const navLinks = document.querySelectorAll('.nav-link');
-    navLinks.forEach(link => {
-        link.addEventListener('click', closeMobileMenu);
-    });
-    
-    // Close mobile menu when clicking outside
-    document.addEventListener('click', function(event) {
-        const navMenu = document.getElementById('navMenu');
-        const menuToggle = document.getElementById('menuToggle');
-        
-        if (navMenu && menuToggle) {
-            const isClickInsideMenu = navMenu.contains(event.target);
-            const isClickOnToggle = menuToggle.contains(event.target);
-            
-            if (!isClickInsideMenu && !isClickOnToggle && navMenu.classList.contains('active')) {
-                closeMobileMenu();
-            }
+function updateActiveNavLinkOnScroll() {
+    const sections = document.querySelectorAll("main section[id]");
+    if (!sections.length) {
+        return;
+    }
+
+    const navbar = document.getElementById("navbar");
+    const offset = (navbar ? navbar.offsetHeight : 72) + 24;
+    let activeId = sections[0].id;
+
+    sections.forEach((section) => {
+        if (window.scrollY >= section.offsetTop - offset) {
+            activeId = section.id;
         }
     });
+
+    setActiveNavLink(activeId);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    applyTheme(getPreferredTheme());
+
+    const themeBtn = document.getElementById("theme-toggle");
+    if (themeBtn) {
+        themeBtn.addEventListener("click", toggleTheme);
+    }
+
+    const menuToggle = document.getElementById("menuToggle");
+    if (menuToggle) {
+        menuToggle.addEventListener("click", toggleMobileMenu);
+    }
+
+    const navLinks = document.querySelectorAll(".nav-link");
+    navLinks.forEach((link) => {
+        link.addEventListener("click", () => {
+            closeMobileMenu();
+            const sectionId = link.getAttribute("href")?.replace("#", "");
+            if (sectionId) {
+                setActiveNavLink(sectionId);
+            }
+        });
+    });
+
+    document.addEventListener("click", (event) => {
+        const menu = document.getElementById("navMenu");
+        const toggle = document.getElementById("menuToggle");
+        if (!menu || !toggle || !menu.classList.contains("active")) {
+            return;
+        }
+
+        if (!menu.contains(event.target) && !toggle.contains(event.target)) {
+            closeMobileMenu();
+        }
+    });
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+            closeMobileMenu();
+        }
+    });
+
+    window.addEventListener("scroll", () => {
+        updateNavbarOnScroll();
+        updateActiveNavLinkOnScroll();
+    });
+
+    updateNavbarOnScroll();
+    updateActiveNavLinkOnScroll();
 });
+
+window.toggleTheme = toggleTheme;
+

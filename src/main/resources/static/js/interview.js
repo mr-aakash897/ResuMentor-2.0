@@ -18,6 +18,9 @@ let webcamStream = null;
 let faceTrackingInterval = null;
 let faceStats = { detected: 0, total: 0, centerScores: [] };
 let faceApiLoaded = false;
+let hfFaceInterval = null;
+let hfFaceBusy = false;
+let hfFaceSamples = [];
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
@@ -25,9 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeSpeech();
     initializeInterview();
 
-    if (typeof initScrollToTop === 'function') {
-        initScrollToTop();
-    }
 });
 
 // ==================== Webcam ====================
@@ -404,6 +404,8 @@ async function startInterviewSession(resumeId) {
 
         const response = await apiClient.startInterview(resumeId);
         currentSession = response.sessionId;
+        hfFaceSamples = [];
+        startHuggingFaceFaceAnalysis();
 
         document.getElementById('loadingSection').style.display = 'none';
         document.getElementById('interviewSection').style.display = 'block';
@@ -427,58 +429,7 @@ async function startInterviewSession(resumeId) {
 async function getNextQuestion() {
     try {
         const response = await apiClient.getNextQuestion(currentSession);
-        currentQuestion = response;
-
-        if (currentQuestionIndex === 0) {
-            document.getElementById('roleInfo').textContent = `Role: ${response.jobRole || 'Technical Interview'}`;
-        }
-
-        // Update difficulty badge
-        const badge = document.getElementById('difficultyBadge');
-        badge.textContent = response.difficultyLevel || 'BASIC';
-        badge.className = `difficulty-badge ${(response.difficultyLevel || 'BASIC').toLowerCase()}`;
-
-        // Show/hide follow-up badge
-        const followUpBadge = document.getElementById('followUpBadge');
-        if (response.isFollowUp) {
-            followUpBadge.style.display = 'block';
-        } else {
-            followUpBadge.style.display = 'none';
-        }
-
-        // Display question
-        document.getElementById('currentQuestion').textContent = response.currentQuestion;
-
-        // Clear previous answer
-        document.getElementById('userAnswer').value = '';
-        document.getElementById('liveTranscript').textContent = 'Start speaking...';
-        currentTranscript = '';
-        document.getElementById('submitBtn').disabled = true;
-
-        // Update progress
-        currentQuestionIndex = response.questionNumber - 1;
-        document.getElementById('questionCount').textContent = `${response.questionNumber}/${response.totalQuestions}`;
-        const progress = (response.questionNumber / response.totalQuestions) * 100;
-        document.getElementById('progressFill').style.width = progress + '%';
-
-        // Check if completed
-        if (response.isCompleted) {
-            await completeInterview();
-            return;
-        }
-
-        // Speak the question
-        const prefix = response.isFollowUp ? "Follow-up: " : "";
-        await speakText(prefix + response.currentQuestion);
-
-        addToTranscript('AI', response.currentQuestion);
-
-        if (!recognition) {
-            showTextFallback();
-            document.getElementById('micStatus').textContent = 'Voice unavailable - type your answer';
-        } else {
-            document.getElementById('micStatus').textContent = 'Click mic to answer';
-        }
+        await processInterviewResponse(response);
 
     } catch (error) {
         console.error('Error getting question:', error);
@@ -489,6 +440,11 @@ async function getNextQuestion() {
 }
 
 async function submitAnswer() {
+    if (!currentQuestion || !currentQuestion.questionId) {
+        if (typeof Toast !== 'undefined') Toast.error('Question is not ready yet. Please wait a moment.');
+        return;
+    }
+
     const answer = currentTranscript.trim() || document.getElementById('userAnswer').value.trim();
 
     if (!answer) {
@@ -510,19 +466,174 @@ async function submitAnswer() {
         document.getElementById('liveTranscript').textContent = '';
         currentTranscript = '';
 
-        if (response.feedback) {
-            await speakText(response.feedback);
-        }
-
-        setTimeout(() => {
-            getNextQuestion();
-        }, 1000);
+        await processInterviewResponse(response);
 
     } catch (error) {
         console.error('Error submitting answer:', error);
         if (typeof Toast !== 'undefined') Toast.error('Error submitting answer');
         document.getElementById('submitBtn').disabled = false;
+        document.getElementById('micStatus').textContent = 'Submission failed. Please try again.';
     }
+}
+
+async function processInterviewResponse(response) {
+    if (!response) {
+        return;
+    }
+
+    currentQuestion = response;
+
+    if (currentQuestionIndex === 0) {
+        document.getElementById('roleInfo').textContent = `Role: ${response.jobRole || 'Technical Interview'}`;
+    }
+
+    if (response.currentScore !== null && response.currentScore !== undefined) {
+        document.getElementById('micStatus').textContent = `Last answer score: ${response.currentScore}%`;
+    }
+
+    // Update difficulty badge
+    const badge = document.getElementById('difficultyBadge');
+    badge.textContent = response.difficultyLevel || 'BASIC';
+    badge.className = `difficulty-badge ${(response.difficultyLevel || 'BASIC').toLowerCase()}`;
+
+    // Show/hide follow-up badge
+    const followUpBadge = document.getElementById('followUpBadge');
+    followUpBadge.style.display = response.isFollowUp ? 'block' : 'none';
+
+    // Update progress
+    const questionNumber = response.questionNumber || 1;
+    const totalQuestions = response.totalQuestions || 1;
+    currentQuestionIndex = questionNumber - 1;
+    document.getElementById('questionCount').textContent = `${questionNumber}/${totalQuestions}`;
+    const progress = (questionNumber / totalQuestions) * 100;
+    document.getElementById('progressFill').style.width = progress + '%';
+
+    if (response.isCompleted) {
+        await completeInterview();
+        return;
+    }
+
+    const questionText = normalizeQuestionText(response.currentQuestion);
+
+    // Display question
+    document.getElementById('currentQuestion').textContent = questionText;
+
+    // Clear previous answer
+    document.getElementById('userAnswer').value = '';
+    document.getElementById('liveTranscript').textContent = 'Start speaking...';
+    currentTranscript = '';
+    document.getElementById('submitBtn').disabled = true;
+
+    // Speak the question and add transcript
+    const prefix = response.isFollowUp ? 'Follow-up: ' : '';
+    await speakText(prefix + questionText);
+    addToTranscript('AI', questionText);
+
+    if (!recognition) {
+        showTextFallback();
+        document.getElementById('micStatus').textContent = 'Voice unavailable - type your answer';
+    } else {
+        document.getElementById('micStatus').textContent = 'Click mic to answer';
+    }
+}
+
+function normalizeQuestionText(rawText) {
+    const normalized = String(rawText || '').replace(/\s+/g, ' ').trim();
+    if (!normalized) {
+        return 'Could you share more details about your experience relevant to this role?';
+    }
+
+    const questionMatch = normalized.match(/[^.!?]*\?/);
+    if (questionMatch && questionMatch[0].trim().length >= 8) {
+        return questionMatch[0].trim();
+    }
+
+    return normalized.length > 220 ? normalized.slice(0, 220).trim() + '...' : normalized;
+}
+
+function startHuggingFaceFaceAnalysis() {
+    if (hfFaceInterval || !currentSession) {
+        return;
+    }
+
+    hfFaceInterval = setInterval(async () => {
+        if (hfFaceBusy || !webcamStream || !currentSession) {
+            return;
+        }
+
+        const video = document.getElementById('userVideo');
+        if (!video || video.readyState < 2) {
+            return;
+        }
+
+        hfFaceBusy = true;
+        try {
+            const imageData = captureFaceFrame(video);
+            if (!imageData) {
+                return;
+            }
+
+            const result = await apiClient.analyzeFaceFrame(currentSession, imageData);
+            if (result && result.available) {
+                hfFaceSamples.push({
+                    engagement: Number(result.engagementScore) || 0,
+                    confidence: Number(result.confidenceScore) || 0,
+                    emotion: result.emotion || 'neutral'
+                });
+
+                const faceBadge = document.getElementById('faceDetectBadge');
+                if (faceBadge) {
+                    faceBadge.style.display = 'flex';
+                    const label = `Face: ${result.emotion || 'neutral'} (${result.engagementScore || 0}%)`;
+                    const textSpan = faceBadge.querySelector('span:last-child');
+                    if (textSpan) textSpan.textContent = label;
+                }
+            }
+        } catch (error) {
+            // Keep interview smooth even when face API fails
+            console.debug('Face analysis unavailable:', error?.message || error);
+        } finally {
+            hfFaceBusy = false;
+        }
+    }, 12000);
+}
+
+function stopHuggingFaceFaceAnalysis() {
+    if (hfFaceInterval) {
+        clearInterval(hfFaceInterval);
+        hfFaceInterval = null;
+    }
+    hfFaceBusy = false;
+}
+
+function captureFaceFrame(videoEl) {
+    try {
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.max(videoEl.videoWidth || 0, 1);
+        canvas.height = Math.max(videoEl.videoHeight || 0, 1);
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+            return null;
+        }
+        ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
+        return canvas.toDataURL('image/jpeg', 0.65);
+    } catch (e) {
+        return null;
+    }
+}
+
+function getHuggingFaceFaceMetrics() {
+    if (!hfFaceSamples.length) {
+        return { hfFaceEngagementScore: null, hfFaceConfidenceScore: null };
+    }
+
+    const engagementAvg = Math.round(hfFaceSamples.reduce((sum, s) => sum + s.engagement, 0) / hfFaceSamples.length);
+    const confidenceAvg = Math.round(hfFaceSamples.reduce((sum, s) => sum + s.confidence, 0) / hfFaceSamples.length);
+
+    return {
+        hfFaceEngagementScore: Math.max(0, Math.min(100, engagementAvg)),
+        hfFaceConfidenceScore: Math.max(0, Math.min(100, confidenceAvg))
+    };
 }
 
 function addToTranscript(speaker, message) {
@@ -579,11 +690,12 @@ async function endInterview() {
     closeConfirmModal();
     stopRecording();
     stopFaceTracking();
+    stopHuggingFaceFaceAnalysis();
     synthesis.cancel();
 
     try {
         const bodyMetrics = getBodyLanguageMetrics();
-        await apiClient.endInterview(currentSession, bodyMetrics);
+        await apiClient.endInterview(currentSession, { ...bodyMetrics, ...getHuggingFaceFaceMetrics() });
         await speakText("Thank you for completing the interview. Let me prepare your performance report.");
         await loadReport();
     } catch (error) {
@@ -596,10 +708,11 @@ async function completeInterview() {
     clearInterval(interviewTimer);
     stopRecording();
     stopFaceTracking();
+    stopHuggingFaceFaceAnalysis();
 
     try {
         const bodyMetrics = getBodyLanguageMetrics();
-        await apiClient.endInterview(currentSession, bodyMetrics);
+        await apiClient.endInterview(currentSession, { ...bodyMetrics, ...getHuggingFaceFaceMetrics() });
         await speakText("Congratulations! You have completed all the interview questions. Let me prepare your detailed performance report.");
         await loadReport();
     } catch (error) {
@@ -617,7 +730,8 @@ async function loadReport() {
         document.getElementById('completionSection').style.display = 'block';
 
         document.getElementById('finalScore').textContent = report.totalScore + '%';
-        document.getElementById('questionsAnswered').textContent = report.totalQuestionsAsked;
+        document.getElementById('questionsAnswered').textContent =
+            report.answeredQuestions != null ? report.answeredQuestions : report.totalQuestionsAsked;
         document.getElementById('sessionDuration').textContent = report.durationMinutes || Math.round(elapsedSeconds / 60);
 
         document.getElementById('reportBtn').style.display = 'inline-block';
@@ -628,7 +742,7 @@ async function loadReport() {
 }
 
 function viewDetailedReport() {
-    window.open(`/pages/report.html?sessionId=${currentSession}`, '_blank');
+    window.location.href = `/pages/report.html?sessionId=${currentSession}`;
 }
 
 function goToDashboard() {
@@ -651,6 +765,7 @@ function showError(message) {
 window.addEventListener('beforeunload', () => {
     if (recognition) recognition.stop();
     if (synthesis) synthesis.cancel();
+    stopHuggingFaceFaceAnalysis();
     stopWebcam();
     stopFaceTracking();
 });

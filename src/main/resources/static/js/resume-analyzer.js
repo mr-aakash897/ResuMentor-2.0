@@ -6,10 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
     checkAuthentication();
     setupFileUpload();
 
-    // Initialize scroll-to-top button
-    if (typeof initScrollToTop === 'function') {
-        initScrollToTop();
-    }
 });
 
 function setupFileUpload() {

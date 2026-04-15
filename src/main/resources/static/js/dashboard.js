@@ -9,10 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
     showSkeletonLoaders();
     loadDashboardData();
 
-    // Initialize scroll-to-top button
-    if (typeof initScrollToTop === 'function') {
-        initScrollToTop();
-    }
 
     // Auto-open analysis if redirected from resume analyzer
     const urlParams = new URLSearchParams(window.location.search);
@@ -1586,10 +1582,17 @@ function downloadInterviewPDF() {
         h.yPos += 5;
 
         // Body Language Analysis
-        if (report.eyeContactPercentage != null || report.faceCenteringScore != null) {
+        if (report.eyeContactPercentage != null || report.faceCenteringScore != null ||
+            report.hfFaceEngagementScore != null || report.hfFaceConfidenceScore != null) {
             h.sectionHeader('Body Language Analysis', [33, 150, 243]);
             h.drawProgressBar('Eye Contact', report.eyeContactPercentage || 0);
             h.drawProgressBar('Face Centering', report.faceCenteringScore || 0);
+            if (report.hfFaceEngagementScore != null) {
+                h.drawProgressBar('Engagement (HF)', report.hfFaceEngagementScore || 0);
+            }
+            if (report.hfFaceConfidenceScore != null) {
+                h.drawProgressBar('Confidence (HF)', report.hfFaceConfidenceScore || 0);
+            }
             if (report.bodyLanguageFeedback) {
                 h.renderText(report.bodyLanguageFeedback, [50, 50, 50]);
             }

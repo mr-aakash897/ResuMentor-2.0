@@ -141,31 +141,6 @@ function animateCounter(element) {
     requestAnimationFrame(updateCounter);
 }
 
-// ==================== Scroll to Top Button ====================
-function initScrollToTop() {
-    // Create button if it doesn't exist
-    let scrollBtn = document.querySelector('.scroll-to-top');
-    if (!scrollBtn) {
-        scrollBtn = document.createElement('button');
-        scrollBtn.className = 'scroll-to-top';
-        scrollBtn.innerHTML = '↑';
-        scrollBtn.setAttribute('aria-label', 'Scroll to top');
-        scrollBtn.onclick = () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        };
-        document.body.appendChild(scrollBtn);
-    }
-    
-    // Show/hide based on scroll position
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 400) {
-            scrollBtn.classList.add('visible');
-        } else {
-            scrollBtn.classList.remove('visible');
-        }
-    });
-}
-
 // ==================== Skeleton Loader Helpers ====================
 const Skeleton = {
     // Create a skeleton card
@@ -227,9 +202,6 @@ const Skeleton = {
 
 // ==================== Initialize All UI Utils ====================
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize scroll to top button
-    initScrollToTop();
-    
     // Initialize counter animations (only on pages with stat-items)
     if (document.querySelector('.stat-item h3')) {
         animateCounters();

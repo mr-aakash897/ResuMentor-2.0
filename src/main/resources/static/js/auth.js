@@ -54,9 +54,42 @@ function signInWithGoogle() {
     window.location.href = '/index.html#login';
 }
 
+function handleAuthClick() {
+    const token = localStorage.getItem('jwtToken');
+    if (token) {
+        window.location.href = '/pages/dashboard.html';
+    } else {
+        signInWithGoogle();
+    }
+}
+
+function initNavbarAuthState() {
+    const token = localStorage.getItem('jwtToken');
+    const authBtn = document.getElementById('auth-btn');
+    const logoutBtn = document.getElementById('logout-btn');
+
+    if (authBtn) {
+        authBtn.classList.add('login-btn');
+        if (token) {
+            authBtn.textContent = 'Dashboard';
+            authBtn.onclick = () => {
+                window.location.href = '/pages/dashboard.html';
+            };
+        } else {
+            authBtn.textContent = 'Sign In';
+            authBtn.onclick = handleAuthClick;
+        }
+    }
+
+    if (logoutBtn) {
+        logoutBtn.classList.add('login-btn', 'logout-btn');
+    }
+}
+
 // Make functions globally available for inline onclick handlers
 window.signInWithGoogle = signInWithGoogle;
 window.logout = logout;
+window.handleAuthClick = handleAuthClick;
 
 function checkAuthentication() {
     const token = localStorage.getItem('jwtToken');
@@ -116,8 +149,6 @@ function redirectToInterview() {
     }
 }
 
-function handleContactForm(event) {
-    event.preventDefault();
-    Toast.success('Thank you for reaching out! We will get back to you soon.');
-    event.target.reset();
-}
+
+document.addEventListener('DOMContentLoaded', initNavbarAuthState);
+

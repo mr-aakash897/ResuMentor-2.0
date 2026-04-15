@@ -50,6 +50,10 @@ spring.websocket.servlet.path=/ws
 # OpenAI Configuration
 openai.api.Key=YOUR_OPENAI_API_KEY
 
+# Hugging Face Configuration (used server-side for interview face analysis)
+huggingface.api.token=YOUR_HUGGINGFACE_API_TOKEN
+huggingface.api.model-url=https://api-inference.huggingface.co/models/trpakov/vit-face-expression
+
 # Mail Configuration (Optional)
 spring.mail.host=smtp.gmail.com
 spring.mail.port=587
